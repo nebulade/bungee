@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <title> QuickJS </title>
+
+        <script type="text/javascript" src="quick_tokenizer.js"></script>
+        <script type="text/javascript" src="quick_compiler.js"></script>
+        <script type="text/javascript" src="quick_dom.js"></script>
+        <script type="text/javascript" src="quick.js"></script>
+
+        <script type="text/javascript">
+
+        function compile () {
+
+            var textarea = window.document.getElementById("jml");
+
+            var tokens = Quick.Tokenizer.parse(textarea.value);
+            Quick.Tokenizer.dumpTokens();
+
+            var compiler = Quick.Compiler;
+            compiler.render(tokens, function (error, result) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    document.getElementById("output").innerHTML = result;
+                    eval(result);
+                }
+            });
+        }
+
+        </script>
+    </head>
+
+    <body onload="">
+
+<textarea id="jml" cols="80" rows="20">
+Element {
+    id: elem
+    width: 100;
+    height: 100;
+    left: 200;
+    top: if (this.left === 200) return 190;
+    background-color: "#ffff00";
+
+    Element {
+        id: child
+        width: this.elem.width * 2.0;
+        height: this.child2.subchild.height;
+        left: 400;
+        top: 100;
+        background-color: "#ff00ff";
+        text: "QuickJS";
+        onclick: alert('something');
+    }
+
+    Element {
+        id: child2
+        width: this.child.width / 3.;
+        height: 100;
+        left: 10;
+        top: 10;
+        background-color: "#00ffff";
+
+        Element {
+            id: subchild
+            width: 30;
+            height: 30;
+            left: 10;
+            top: 10;
+            background-color: "#3300ff";
+        }
+    }
+}
+</textarea>
+
+        <input type="button" value="compile" onclick="compile()"/>
+
+<pre id="output">
+
+</pre>
+
+    </body>
+</html>
+
