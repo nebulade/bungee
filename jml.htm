@@ -49,7 +49,10 @@ Element {
         top: 100;
         background-color: "#ff00ff";
         text: "QuickJS";
-        onclick: alert('something');
+        onclick: ^(
+            alert("something");
+            alert("another thing");
+        )^;
     }
 
     Element {
@@ -67,6 +70,7 @@ Element {
             left: 10;
             top: 10;
             background-color: "#3300ff";
+            onclick: ^(alert("block"); alert("in one line"); )^;
         }
     }
 }

@@ -64,6 +64,26 @@ if (!Quick.Tokenizer) {
             return expression;
         }
 
+        function parseInlineBlock () {
+            var block = "";
+
+            advance();
+
+            while (c) {
+                // TODO guard i+1
+                if (c === ')' && exp[i+1] === '^') {
+                    advance();
+                    break;
+                }
+
+                block += c;
+
+                advance();
+            }
+
+            return block;
+        }
+
         // Convenience function to advance the current tokenizer character
         function advance () {
             c = exp[++i];
@@ -118,6 +138,12 @@ if (!Quick.Tokenizer) {
 
                 if (c === '}') {
                     addToken("SCOPE_END");
+                    continue;
+                }
+
+                if (c === '^' && exp[i+1] === '(') {
+                    advance();
+                    addToken("EXPRESSION", parseInlineBlock());
                     continue;
                 }
 

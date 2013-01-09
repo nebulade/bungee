@@ -76,7 +76,7 @@ Quick.Compiler = (function () {
         output += ".addEventHandler(\"" + property + "\", ";
         output += "function () {\n";
         addIndentation();
-        output += value + ";\n";
+        output += value + "\n";
         addIndentation();
         output += "});\n";
     };
@@ -96,7 +96,7 @@ Quick.Compiler = (function () {
         output += "function () {\n";
         addIndentation(1);
         if (String(value).indexOf("return") !== -1) {
-            output += value + ";\n";
+            output += value + "\n";
         } else {
             output += "return " + value + ";\n";
         }
