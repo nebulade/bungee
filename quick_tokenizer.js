@@ -71,7 +71,7 @@ if (!Quick.Tokenizer) {
 
             while (c) {
                 // TODO guard i+1
-                if (c === ')' && exp[i+1] === '^') {
+                if (c === '}' && exp[i+1] === '^') {
                     advance();
                     break;
                 }
@@ -141,7 +141,7 @@ if (!Quick.Tokenizer) {
                     continue;
                 }
 
-                if (c === '^' && exp[i+1] === '(') {
+                if (c === '^' && exp[i+1] === '{') {
                     advance();
                     addToken("EXPRESSION", parseInlineBlock());
                     continue;

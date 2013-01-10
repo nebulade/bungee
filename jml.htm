@@ -49,10 +49,10 @@ Element {
         top: 100;
         background-color: "#ff00ff";
         text: "QuickJS";
-        onclick: ^(
+        onclick: ^{
             alert("something");
-            alert("another thing");
-        )^;
+            console.log("another thing");
+        }^;
     }
 
     Element {
@@ -62,9 +62,9 @@ Element {
         left: 600;
         top: 10;
         containsMouse: false;
-        background-color: ^( console.log("background-color: " + this.containsMouse); return this.containsMouse ? "purple" : "blue"; )^;
-        onmousedown: ^( this.containsMouse = true; console.log(this.containsMouse); )^;
-        onmouseup: ^( this.containsMouse = false; console.log(this.containsMouse); )^;
+        background-color: ^{ console.log("background-color: " + this.containsMouse); return this.containsMouse ? "purple" : "blue"; }^;
+        onmousedown: ^{ this.containsMouse = true; console.log(this.containsMouse); }^;
+        onmouseup: ^{ this.containsMouse = false; console.log(this.containsMouse); }^;
 
         Rectangle {
             id: subchild
@@ -73,7 +73,7 @@ Element {
             left: 10;
             top: 10;
             border-radius: 10;
-            onclick: ^(alert("block"); alert("in one line"); )^;
+            onclick: ^{ alert("block"); alert("in one line"); }^;
         }
     }
 }
