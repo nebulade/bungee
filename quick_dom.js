@@ -44,6 +44,8 @@ QuickRendererDOM.prototype.createElement = function (typeHint, object) {
     elem.onclick = function () { object.emit('click'); };
     elem.onmouseover = function () { object.emit('mouseover'); };
     elem.onmouseout = function () { object.emit('mouseout'); };
+    elem.onmousedown = function () { object.emit('mousedown'); };
+    elem.onmouseup = function () { object.emit('mouseup'); };
 
     return elem;
 };

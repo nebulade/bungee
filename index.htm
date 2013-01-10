@@ -43,8 +43,6 @@
                 scope.elem1.left = left - step;
                 scope.elem2.width = scope.elem2.width - step/2;
             }
-
-            scope.elem.render();
         }
 
         function init () {
@@ -76,7 +74,6 @@
             scope.elem4.addProperty('height', 30);
             scope.elem4.addProperty('background-color', '#0000ff');
             scope.elem4.addProperty('text', function () { return this.parent.width > 150 ? 'foo' : 'bar'; });
-
 
             scope.elem.initializeBindings();
 

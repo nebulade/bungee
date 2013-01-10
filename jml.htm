@@ -45,7 +45,7 @@ Element {
         id: child
         width: this.elem.width * 2.0;
         height: this.child2.subchild.height;
-        left: 400;
+        left: 500;
         top: 100;
         background-color: "#ff00ff";
         text: "QuickJS";
@@ -59,9 +59,12 @@ Element {
         id: child2
         width: this.child.width / 3.;
         height: 100;
-        left: 10;
+        left: 600;
         top: 10;
-        background-color: "#00ffff";
+        containsMouse: false;
+        background-color: ^( console.log("background-color: " + this.containsMouse); return this.containsMouse ? "purple" : "blue"; )^;
+        onmousedown: ^( this.containsMouse = true; console.log(this.containsMouse); )^;
+        onmouseup: ^( this.containsMouse = false; console.log(this.containsMouse); )^;
 
         Rectangle {
             id: subchild
