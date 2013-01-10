@@ -63,13 +63,13 @@ Element {
         top: 10;
         background-color: "#00ffff";
 
-        Element {
+        Rectangle {
             id: subchild
             width: 30;
-            height: 30;
+            height: 60;
             left: 10;
             top: 10;
-            background-color: "#3300ff";
+            border-radius: 10;
             onclick: ^(alert("block"); alert("in one line"); )^;
         }
     }

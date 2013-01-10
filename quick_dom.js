@@ -5,6 +5,23 @@
 
 /*
  **************************************************
+ * Rectangle Element
+ **************************************************
+ */
+function Rectangle (id, parent) {
+    var elem = new Element(id, parent);
+
+    elem.addProperty("background-color", "white");
+    elem.addProperty("border-color", "black");
+    elem.addProperty("border-style", "dotted");
+    elem.addProperty("border-width", 1);
+    elem.addProperty("border-radius", 0);
+
+    return elem;
+}
+
+/*
+ **************************************************
  * DOM renderer
  **************************************************
  */

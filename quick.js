@@ -71,7 +71,6 @@ if (!Quick.Engine) {
     }());
 }
 
-
 /*
  **************************************************
  * Basic Element
@@ -191,29 +190,31 @@ Element.prototype.addProperty = function (name, value) {
     // register property
     this.properties[this.properties.length] = { name: name, value: value };
 
-    Object.defineProperty(this, name, {
-        get: function() {
-            // console.log("getter: ", that.id, name);
-            if (Quick.Engine.magicBindingState) {
-                Quick.Engine.addCalledGetter(that, name);
+    if (typeof this.name !== "undefined") {
+        Object.defineProperty(this, name, {
+            get: function() {
+                // console.log("getter: ", that.id, name);
+                if (Quick.Engine.magicBindingState) {
+                    Quick.Engine.addCalledGetter(that, name);
+                }
+
+                if (typeof valueStore === 'function')
+                    return valueStore.apply(that);
+                else
+                    return valueStore;
+            },
+            set: function(val) {
+                // console.log("setter: ", that.id, name, val);
+                if (valueStore === val)
+                    return;
+
+                valueStore = val;
+
+                // connections are called like the properties
+                that.emit(name);
             }
-
-            if (typeof valueStore === 'function')
-                return valueStore.apply(that);
-            else
-                return valueStore;
-        },
-        set: function(val) {
-            // console.log("setter: ", that.id, name, val);
-            if (valueStore === val)
-                return;
-
-            valueStore = val;
-
-            // connections are called like the properties
-            that.emit(name);
-        }
-    });
+        });
+    }
 };
 
 // initial set of all properties and binding evaluation
