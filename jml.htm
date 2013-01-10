@@ -44,37 +44,28 @@ Element {
     Element {
         id: child
         width: this.elem.width * 2.0;
-        height: this.child2.subchild.height;
+        height: 200;
         left: 500;
         top: 100;
         background-color: "#ff00ff";
         text: "QuickJS";
         onclick: ^{
-            alert("something");
-            console.log("another thing");
+            alert("YAY");
+            console.log("some output");
         }^;
     }
 
-    Element {
+    Rectangle {
         id: child2
-        width: this.child.width / 3.;
-        height: 100;
+        width: this.child.width * 2.;
+        height: 50;
         left: 600;
-        top: 10;
+        top: 0;
         containsMouse: false;
-        background-color: ^{ console.log("background-color: " + this.containsMouse); return this.containsMouse ? "purple" : "blue"; }^;
+        border-radius: this.containsMouse ? 20 : 10;
+        background-color: ^{ console.log("background-color: " + this.containsMouse); return this.containsMouse ? "lightgray" : "gray"; }^;
         onmousedown: ^{ this.containsMouse = true; console.log(this.containsMouse); }^;
         onmouseup: ^{ this.containsMouse = false; console.log(this.containsMouse); }^;
-
-        Rectangle {
-            id: subchild
-            width: 30;
-            height: 60;
-            left: 10;
-            top: 10;
-            border-radius: 10;
-            onclick: ^{ alert("block"); alert("in one line"); }^;
-        }
     }
 }
 </textarea>
