@@ -33,7 +33,7 @@
     <body onload="">
 
 <textarea id="jml" cols="80" rows="20">
-Element {
+Item {
     id: elem
     width: 100;
     height: 100;
@@ -41,7 +41,7 @@ Element {
     top: if (this.left === 200) return 190;
     background-color: "#ffff00";
 
-    Element {
+    Rectangle {
         id: child
         width: this.elem.width * 2.0;
         height: 200;
@@ -55,17 +55,22 @@ Element {
         }^;
     }
 
-    Rectangle {
+    Button {
         id: child2
-        width: this.child.width * 2.;
-        height: 50;
+        width: 100;
+        height: 20;
         left: 600;
         top: 0;
-        containsMouse: false;
-        border-radius: this.containsMouse ? 20 : 10;
-        background-color: ^{ console.log("background-color: " + this.containsMouse); return this.containsMouse ? "lightgray" : "gray"; }^;
-        onmousedown: ^{ this.containsMouse = true; console.log(this.containsMouse); }^;
-        onmouseup: ^{ this.containsMouse = false; console.log(this.containsMouse); }^;
+        text: "Button"
+        mouseHover: false;
+        mousePressed: false
+        border-radius: this.mousePressed ? 4 : 2;
+        border-color: this.mouseHover ? "black" : "gray";
+        background-color: this.mousePressed ? "gray" : "lightgray";
+        onmousedown: this.mousePressed = true;
+        onmouseup: this.mousePressed = false;
+        onmouseout: this.mouseHover = false;
+        onmouseover: this.mouseHover = true;
     }
 }
 </textarea>

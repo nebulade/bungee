@@ -8,14 +8,32 @@
  * Rectangle Element
  **************************************************
  */
-function Rectangle (id, parent) {
+function Item (id, parent) {
     var elem = new Element(id, parent);
+
+    elem.addProperty("-webkit-user-select", "none");
+    elem.addProperty("-moz-user-select", "none");
+
+    return elem;
+}
+
+function Rectangle (id, parent) {
+    var elem = new Item(id, parent);
 
     elem.addProperty("background-color", "white");
     elem.addProperty("border-color", "black");
     elem.addProperty("border-style", "solid");
     elem.addProperty("border-width", 1);
     elem.addProperty("border-radius", 0);
+
+    return elem;
+}
+
+function Button (id, parent) {
+    var elem = new Rectangle(id, parent);
+
+    elem.addProperty("text-align", "center");
+    elem.addProperty("cursor", "pointer");
 
     return elem;
 }

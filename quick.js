@@ -125,9 +125,6 @@ function Element (id, parent) {
     }
 
     Quick.Engine.addElement(this, parent);
-
-    this.addProperty("-webkit-user-select", "none");
-    this.addProperty("-moz-user-select", "none");
 };
 
 Element.prototype.addChild = function (child) {
