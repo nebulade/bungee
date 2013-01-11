@@ -18,6 +18,8 @@ function Item (id, parent) {
     elem.addProperty("mouseAbsY", 0);
     elem.addProperty("mouseRelX", 0);
     elem.addProperty("mouseRelY", 0);
+    elem.addProperty("mouseRelStartX", 0);
+    elem.addProperty("mouseRelStartY", 0);
     elem.addProperty("mousePressed", false);
     elem.addProperty("containsMouse", false);
 
@@ -95,8 +97,18 @@ QuickRendererDOM.prototype.createElement = function (typeHint, object) {
             object.emit('mouseout');
         }
     };
-    elem.onmousedown = function () { object.mousePressed = true; object.emit('mousedown'); };
-    elem.onmouseup = function () { object.mousePressed = false; object.emit('mouseup'); };
+    elem.onmousedown = function (event) {
+        object.mousePressed = true;
+        object.mouseRelStartX = event.offsetX;
+        object.mouseRelStartY = event.offsetY;
+        object.emit('mousedown');
+    };
+    elem.onmouseup = function (event) {
+        object.mousePressed = false;
+        object.mouseRelStartX = 0;
+        object.mouseRelStartY = 0;
+        object.emit('mouseup');
+    };
     elem.onmousemove = function (event) {
         if (object.hoverEnabled) {
             object.mouseAbsX = event.clientX;

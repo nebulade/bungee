@@ -71,14 +71,11 @@ Item {
         height: 200;
         left: 500;
         top: 100;
-        background-color: "#ff00ff";
-        // save initial mouse position, this only works because mouseRel* is not bound because of a bug ;-)
-        mousePressStartX: this.mousePressed ? this.mouseRelX : 0;
-        mousePressStartY: this.mousePressed ? this.mouseRelY : 0;
+        background-color: this.hoverEnabled ? "#ff00ff" : "#770077";
         onmousemove: ^{
             if (this.mousePressed) {
-                this.left = this.mouseAbsX - this.mousePressStartX;
-                this.top = this.mouseAbsY - this.mousePressStartY;
+                this.left = this.mouseAbsX - this.mouseRelStartX;
+                this.top = this.mouseAbsY - this.mouseRelStartY;
             }
         }^
 
