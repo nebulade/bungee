@@ -158,6 +158,7 @@ Element.prototype.addChanged = function (signal, callback) {
     }
 
     this.connections[signal][this.connections[signal].length] = callback;
+    console.log("connections for " + signal + " " + this.connections[signal].length);
 };
 
 Element.prototype.addBinding = function (name, value) {
@@ -211,6 +212,7 @@ Element.prototype.addProperty = function (name, value) {
     var valueStore;
 
     // register property
+    // FIXME check if it is already added!
     this.properties[this.properties.length] = { name: name, value: value };
 
     if (this.hasOwnProperty(name)) {
@@ -219,9 +221,7 @@ Element.prototype.addProperty = function (name, value) {
         Object.defineProperty(this, name, {
             get: function() {
                 // console.log("getter: ", that.id, name);
-                if (Quick.Engine.magicBindingState) {
-                    Quick.Engine.addCalledGetter(that, name);
-                }
+                Quick.Engine.addCalledGetter(that, name);
 
                 if (typeof valueStore === 'function')
                     return valueStore.apply(that);

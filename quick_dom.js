@@ -29,11 +29,27 @@ function Rectangle (id, parent) {
     return elem;
 }
 
+function Image (id, parent) {
+    var elem = new Item(id, parent);
+
+    elem.addProperty("text-align", "center");
+    elem.addProperty("src", "image.png");
+    elem.addProperty("background-image", function() {
+        if (this.src.indexOf("url('") === 0)
+            return this.src;
+        else
+            return "url('" + this.src + "')"
+    });
+
+    return elem;
+}
+
 function Button (id, parent) {
     var elem = new Rectangle(id, parent);
 
     elem.addProperty("text-align", "center");
     elem.addProperty("cursor", "pointer");
+    elem.addProperty("background-color", "lightgray");
 
     return elem;
 }
