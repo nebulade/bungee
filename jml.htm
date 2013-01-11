@@ -37,41 +37,9 @@ Item {
     id: elem
     width: 100;
     height: 100;
-    left: 200;
-    top: if (this.left === 200) return 190;
+    left: 0;
+    top: 0;
     background-color: "#ffff00";
-
-    Rectangle {
-        id: child
-        width: this.elem.width * 2.0;
-        height: 200;
-        left: 500;
-        top: 100;
-        background-color: "#ff00ff";
-        text: "QuickJS";
-        onclick: ^{
-            alert("YAY");
-            console.log("some output");
-        }^;
-    }
-
-    Button {
-        id: child2
-        width: 100;
-        height: 20;
-        left: 600;
-        top: 0;
-        text: "Button"
-        mouseHover: false;
-        mousePressed: false
-        border-radius: this.mousePressed ? 4 : 2;
-        border-color: this.mouseHover ? "black" : "gray";
-        background-color: this.mousePressed ? "gray" : "lightgray";
-        onmousedown: this.mousePressed = true;
-        onmouseup: this.mousePressed = false;
-        onmouseout: this.mouseHover = false;
-        onmouseover: this.mouseHover = true;
-    }
 
     Image {
         id: image1;
@@ -82,7 +50,6 @@ Item {
     }
 
     Image {
-        id: image2;
         top: 10;
         left: 200;
         width: 128;
@@ -91,12 +58,53 @@ Item {
     }
 
     Image {
-        id: image3;
         top: 10;
         left: 400;
         width: 128;
         height: 128;
         src: "weather-few-clouds-night.png";
+    }
+
+    Rectangle {
+        id: child
+        width: this.elem.width * 2.0;
+        height: 200;
+        left: 500;
+        top: 100;
+        background-color: "#ff00ff";
+        pressed: false;
+        mousePressStartX: this.pressed ? this.mouseRelX : 0;
+        mousePressStartY: this.pressed ? this.mouseRelY : 0;
+        onmousedown: this.pressed = true;
+        onmouseup: this.pressed = false;
+        onmousemove: ^{
+            if (this.pressed) {
+                this.left = this.mouseAbsX - this.mousePressStartX;
+                this.top = this.mouseAbsY - this.mousePressStartY;
+            }
+        }^
+
+        Button {
+            id: child2
+            width: 100;
+            height: 20;
+            left: 0;
+            top: 0;
+            text: "Toggle drag"
+            mouseHover: false;
+            mousePressed: false
+            border-radius: this.mousePressed ? 4 : 2;
+            border-color: this.mouseHover ? "black" : "gray";
+            background-color: this.mousePressed ? "gray" : "lightgray";
+            onmousedown: this.mousePressed = true;
+            onmouseup: this.mousePressed = false;
+            onmouseout: this.mouseHover = false;
+            onmouseover: this.mouseHover = true;
+            onclick: ^{
+                this.parent.hoverEnabled = !this.parent.hoverEnabled;
+                console.log("some output");
+            }^;
+        }
     }
 }
 </textarea>

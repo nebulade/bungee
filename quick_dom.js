@@ -13,6 +13,11 @@ function Item (id, parent) {
 
     elem.addProperty("-webkit-user-select", "none");
     elem.addProperty("-moz-user-select", "none");
+    elem.addProperty("hoverEnabled", false);
+    elem.addProperty("mouseAbsX", 0);
+    elem.addProperty("mouseAbsY", 0);
+    elem.addProperty("mouseRelX", 0);
+    elem.addProperty("mouseRelY", 0);
 
     return elem;
 }
@@ -76,10 +81,19 @@ QuickRendererDOM.prototype.createElement = function (typeHint, object) {
     }
 
     elem.onclick = function () { object.emit('click'); };
-    elem.onmouseover = function () { object.emit('mouseover'); };
-    elem.onmouseout = function () { object.emit('mouseout'); };
+    elem.onmouseover = function () { if (object.hoverEnabled) object.emit('mouseover'); };
+    elem.onmouseout = function () { if (object.hoverEnabled) object.emit('mouseout'); };
     elem.onmousedown = function () { object.emit('mousedown'); };
     elem.onmouseup = function () { object.emit('mouseup'); };
+    elem.onmousemove = function (event) {
+        if (object.hoverEnabled) {
+            object.mouseAbsX = event.clientX;
+            object.mouseAbsY = event.clientY;
+            object.mouseRelX = event.offsetX;
+            object.mouseRelY = event.offsetY;
+            object.emit('mousemove');
+        }
+    };
 
     return elem;
 };
