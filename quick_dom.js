@@ -18,6 +18,8 @@ function Item (id, parent) {
     elem.addProperty("mouseAbsY", 0);
     elem.addProperty("mouseRelX", 0);
     elem.addProperty("mouseRelY", 0);
+    elem.addProperty("mousePressed", false);
+    elem.addProperty("containsMouse", false);
 
     return elem;
 }
@@ -81,10 +83,20 @@ QuickRendererDOM.prototype.createElement = function (typeHint, object) {
     }
 
     elem.onclick = function () { object.emit('click'); };
-    elem.onmouseover = function () { if (object.hoverEnabled) object.emit('mouseover'); };
-    elem.onmouseout = function () { if (object.hoverEnabled) object.emit('mouseout'); };
-    elem.onmousedown = function () { object.emit('mousedown'); };
-    elem.onmouseup = function () { object.emit('mouseup'); };
+    elem.onmouseover = function () {
+        if (object.hoverEnabled) {
+            object.containsMouse = true;
+            object.emit('mouseover');
+        }
+    };
+    elem.onmouseout = function () {
+        if (object.hoverEnabled) {
+            object.containsMouse = false;
+            object.emit('mouseout');
+        }
+    };
+    elem.onmousedown = function () { object.mousePressed = true; object.emit('mousedown'); };
+    elem.onmouseup = function () { object.mousePressed = false; object.emit('mouseup'); };
     elem.onmousemove = function (event) {
         if (object.hoverEnabled) {
             object.mouseAbsX = event.clientX;

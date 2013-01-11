@@ -72,13 +72,11 @@ Item {
         left: 500;
         top: 100;
         background-color: "#ff00ff";
-        pressed: false;
-        mousePressStartX: this.pressed ? this.mouseRelX : 0;
-        mousePressStartY: this.pressed ? this.mouseRelY : 0;
-        onmousedown: this.pressed = true;
-        onmouseup: this.pressed = false;
+        // save initial mouse position, this only works because mouseRel* is not bound because of a bug ;-)
+        mousePressStartX: this.mousePressed ? this.mouseRelX : 0;
+        mousePressStartY: this.mousePressed ? this.mouseRelY : 0;
         onmousemove: ^{
-            if (this.pressed) {
+            if (this.mousePressed) {
                 this.left = this.mouseAbsX - this.mousePressStartX;
                 this.top = this.mouseAbsY - this.mousePressStartY;
             }
@@ -88,21 +86,16 @@ Item {
             id: child2
             width: 100;
             height: 20;
-            left: 0;
-            top: 0;
+            left: 20;
+            top: 20;
             text: "Toggle drag"
-            mouseHover: false;
-            mousePressed: false
+            hoverEnabled: true;
             border-radius: this.mousePressed ? 4 : 2;
-            border-color: this.mouseHover ? "black" : "gray";
+            border-color: this.containsMouse ? "black" : "gray";
             background-color: this.mousePressed ? "gray" : "lightgray";
-            onmousedown: this.mousePressed = true;
-            onmouseup: this.mousePressed = false;
-            onmouseout: this.mouseHover = false;
-            onmouseover: this.mouseHover = true;
             onclick: ^{
                 this.parent.hoverEnabled = !this.parent.hoverEnabled;
-                console.log("some output");
+                console.log("toggle dragging");
             }^;
         }
     }
