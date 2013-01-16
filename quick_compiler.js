@@ -18,6 +18,7 @@ Quick.Compiler = (function () {
     var index;
     var currentHelperElement;
     var toplevelHelperElement;
+    var debug;
 
     var errorCodes = {
         GENERIC:            0,
@@ -51,6 +52,10 @@ Quick.Compiler = (function () {
 
     function renderBegin () {
         output += "(function() {\n";
+        if (debug) {
+            addIndentation(1);
+            output += "debugger;\n";
+        }
     };
 
     function renderEnd () {
@@ -127,20 +132,26 @@ Quick.Compiler = (function () {
     /*
      * Take all tokens and compile it to real elements with properties and bindings
      */
-    compiler.render = function (tokens, callback) {
+    compiler.render = function (tokens, options, callback) {
         var property;
         var token_length = tokens.length;
         var tokens = tokens;
         var elementType = undefined;
 
-        output = "";          // render output, is Javascript which needs to be evaled or sourced
-        index = 0;            // index used for tracking the indentation
-        currentHelperElement = undefined;
-        toplevelHelperElement = undefined;
+        if (typeof options === "function") {
+            callback = options;
+            options = false;
+        }
 
         if (typeof callback !== "function") {
             return;
         }
+
+        debug = options;
+        output = "";          // render output, is Javascript which needs to be evaled or sourced
+        index = 0;            // index used for tracking the indentation
+        currentHelperElement = undefined;
+        toplevelHelperElement = undefined;
 
         renderBegin();
 

@@ -26,6 +26,36 @@ function Item (id, parent) {
     return elem;
 }
 
+function Text (id, parent) {
+    var elem = new Item(id, parent);
+
+    elem.addProperty("font-size", "12pt");
+    elem.addProperty("text", "foobar");
+    elem.addProperty("textWidth", 0);
+    elem.addProperty("textHeight", 0);
+    elem.addProperty("width", "auto");
+    elem.addProperty("height", "auto");
+
+    // all this below for calculating the text width
+    var tmp = window.document.createElement("div");
+    document.body.appendChild(tmp);
+    tmp.style["position"] = "absolute";
+    tmp.style["visibility"] = "hidden";
+    tmp.style["width"] = "auto";
+    tmp.style["height"] = "auto";
+
+    elem.addProperty("_text", function() {
+        tmp.style.fontSize = elem["font-size"];
+        tmp.innerText = elem.text;
+        elem.textWidth = (tmp.clientWidth + 1);
+        elem.textHeight = (tmp.clientHeight + 1);
+        elem.width = (tmp.clientWidth + 1);
+        elem.height = (tmp.clientHeight + 1);
+    });
+
+    return elem;
+}
+
 function Rectangle (id, parent) {
     var elem = new Item(id, parent);
 

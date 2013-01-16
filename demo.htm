@@ -1,0 +1,130 @@
+<html>
+    <head>
+        <title> QuickJS </title>
+
+        <script type="text/javascript" src="quick_tokenizer.js"></script>
+        <script type="text/javascript" src="quick_compiler.js"></script>
+        <script type="text/javascript" src="quick_dom.js"></script>
+        <script type="text/javascript" src="quick.js"></script>
+
+        <script type="text/javascript">
+
+        function compileScriptTag (script) {
+            var tokens = Quick.Tokenizer.parse(script.text);
+            var debug = false;
+            Quick.Compiler.render(tokens, debug, function (error, result) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    try {
+                        console.log("----------------------");
+                        console.log(result);
+                        console.log("----------------------");
+                        eval(result);
+                    } catch (e) {
+                        console.log("Error evaluating: " + e);
+                    }
+                }
+            });
+        }
+
+        function init () {
+
+            for (var i = 0; i < window.document.scripts.length; ++i) {
+                var script = window.document.scripts[i];
+                if (script.type === "text/jml") {
+                    compileScriptTag(script);
+                }
+            }
+        }
+
+        </script>
+
+        <script type="text/jml">
+
+        Item {
+            id: outerTextItem;
+            background-color: "lightgray";
+            width: this.textItem.textWidth * 2;
+            height: this.textItem.textHeight + 20;
+
+            Text {
+                id: textItem;
+                left: (this.parent.width / 2.0) - (this.textWidth / 2.0)
+                top: (this.parent.height / 2.0) - (this.textHeight / 2.0)
+                background-color: "gray";
+                text-color: "white";
+                text: "This is a text element";
+            }
+        }
+
+        </script>
+
+        <script type="text/jml">
+        Item {
+            id: elem
+
+            Image {
+                id: image1;
+                top: 10;
+                left: 10;
+                width: 128;
+                height: 128;
+            }
+
+            Image {
+                top: 10;
+                left: 200;
+                width: 128;
+                height: 128;
+                src: "url('weather-clouds.png')";
+            }
+
+            Image {
+                top: 10;
+                left: 400;
+                width: 128;
+                height: 128;
+                src: "weather-few-clouds-night.png";
+            }
+
+            Rectangle {
+                id: child
+                width: this.child2.width * 3.0;
+                height: 200;
+                left: 500;
+                top: 100;
+                background-color: this.hoverEnabled ? "#ff00ff" : "#770077";
+                onmousemove: ^{
+                    if (this.mousePressed) {
+                        this.left = this.mouseAbsX - this.mouseRelStartX;
+                        this.top = this.mouseAbsY - this.mouseRelStartY;
+                    }
+                }^
+
+                Button {
+                    id: child2
+                    width: 100;
+                    height: 20;
+                    left: 20;
+                    top: 20;
+                    text: "Toggle drag"
+                    hoverEnabled: true;
+                    border-radius: this.mousePressed ? 4 : 2;
+                    border-color: this.containsMouse ? "black" : "gray";
+                    background-color: this.mousePressed ? "gray" : "lightgray";
+                    onclick: ^{
+                        this.parent.hoverEnabled = !this.parent.hoverEnabled;
+                        console.log("toggle dragging");
+                    }^;
+                }
+            }
+        }
+        </script>
+
+    </head>
+
+    <body onload="init();">
+    </body>
+</html>
+
