@@ -22,6 +22,10 @@ function Item (id, parent) {
     elem.addProperty("mouseRelStartY", 0);
     elem.addProperty("mousePressed", false);
     elem.addProperty("containsMouse", false);
+    elem.addProperty("scale", 1)
+    elem.addProperty("-webkit-transform", function() {
+        return "scale("+this.scale+", "+this.scale+")";
+    });
 
     return elem;
 }

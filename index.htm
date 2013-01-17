@@ -43,16 +43,18 @@
             if (move_right) {
                 scope.elem1.left = left + step;
                 scope.elem2.width = scope.elem2.width + step/2;
+                scope.elem2.scale = (left + step) / 800.;
             } else {
                 scope.elem1.left = left - step;
                 scope.elem2.width = scope.elem2.width - step/2;
+                scope.elem2.scale = (left - step) / 800.;
             }
         }
 
         function init () {
             scope.elem = new Element('elem');
 
-            scope.elem2 = new Element('elem2', scope.elem);
+            scope.elem2 = new Item('elem2', scope.elem);
             scope.elem2.addProperty('left', function() { return 800-this.elem1.left/1.5; });
             scope.elem2.addProperty('top', function() { return this.elem1.left/2.0; });
             scope.elem2.addProperty('opacity', function() { return this.elem1.width/100; });

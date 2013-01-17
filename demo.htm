@@ -73,19 +73,21 @@
             }
 
             Image {
-                top: 10;
+                top: 100;
                 left: 200;
                 width: 128;
                 height: 128;
                 src: "url('weather-clouds.png')";
+                scale: this.child.left / 700;
             }
 
             Image {
-                top: 10;
+                top: 100;
                 left: 400;
                 width: 128;
                 height: 128;
                 src: "weather-few-clouds-night.png";
+                scale: 2.5 - (this.child.left / 700);
             }
 
             Rectangle {
