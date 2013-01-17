@@ -15,7 +15,13 @@ if (!Quick.Tokenizer) {
     Quick.Tokenizer = (function () {
         var c, i, line, tokens, bindings, exp, colonOnLine, comment;
         var ret = {};
+        ret.verbose = false;
 
+        function log (msg) {
+            if (ret.verbose) {
+                console.log(msg);
+            }
+        }
 
         // add a found token to the token table
         function addToken (type, data) {
@@ -153,11 +159,20 @@ if (!Quick.Tokenizer) {
                     continue;
                 }
 
+                if (c === '@') {
+                    addToken("IS_A");
+                    continue;
+                }
+
                 if (c === ';') {
                     colonOnLine = false;
                     addToken("SEMICOLON");
                     continue;
                 }
+            }
+
+            if (ret.verbose) {
+                ret.dumpTokens();
             }
 
             return tokens;

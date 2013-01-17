@@ -13,12 +13,15 @@ if (!Quick) {
 }
 
 Quick.Compiler = (function () {
+    // public compiler properties
     var compiler = {};
+    compiler.verbose = false;
+    compiler.debug = false;
+
     var output;
     var index;
     var currentHelperElement;
     var toplevelHelperElement;
-    var debug;
 
     var errorCodes = {
         GENERIC:            0,
@@ -31,6 +34,7 @@ Quick.Compiler = (function () {
     var errorMessages = [];
     errorMessages[errorCodes.UNKNOWN_ELEMENT] = "cannot create element";
     errorMessages[errorCodes.NO_PROPERTY] =     "no property to assing expression";
+    errorMessages[errorCodes.NO_TYPENAME] =     "no typename given to register";
     errorMessages[errorCodes.GENERIC] =         "generic error";
 
     function error (code, token) {
@@ -40,6 +44,12 @@ Quick.Compiler = (function () {
         ret.line = token ? token["LINE"] : -1;
 
         return ret;
+    }
+
+    function log (msg) {
+        if (compiler.verbose) {
+            console.log(msg);
+        }
     }
 
     function addIndentation (additional) {
@@ -52,7 +62,7 @@ Quick.Compiler = (function () {
 
     function renderBegin () {
         output += "(function() {\n";
-        if (debug) {
+        if (compiler.debug) {
             addIndentation(1);
             output += "debugger;\n";
         }
@@ -132,22 +142,16 @@ Quick.Compiler = (function () {
     /*
      * Take all tokens and compile it to real elements with properties and bindings
      */
-    compiler.render = function (tokens, options, callback) {
+    compiler.render = function (tokens, callback) {
         var property;
         var token_length = tokens.length;
         var tokens = tokens;
         var elementType = undefined;
 
-        if (typeof options === "function") {
-            callback = options;
-            options = false;
-        }
-
         if (typeof callback !== "function") {
             return;
         }
 
-        debug = options;
         output = "";          // render output, is Javascript which needs to be evaled or sourced
         index = 0;            // index used for tracking the indentation
         currentHelperElement = undefined;
@@ -160,13 +164,22 @@ Quick.Compiler = (function () {
         for (var i = 0; i < token_length; i += 1) {
             var token = tokens[i];
 
+            if (token["TOKEN"] === "IS_A") {
+                if (elementType) {
+
+                } else {
+                    callback(error(errorCodes.NO_TYPENAME, token), null);
+                    return;
+                }
+            }
+
             if (token["TOKEN"] === "ELEMENT") {
-                console.log("create type " + token["DATA"]);
+                log("create type " + token["DATA"]);
                 elementType = token["DATA"];
             }
 
             if (token["TOKEN"] === "SCOPE_START") {
-                console.log("start element description");
+                log("start element description");
 
                 // only if elementType was found previously
                 if (elementType) {
@@ -201,7 +214,7 @@ Quick.Compiler = (function () {
                 }
             }
             if (token["TOKEN"] === "SCOPE_END") {
-                console.log("end element description");
+                log("end element description");
                 if (currentHelperElement) {
                     currentHelperElement = currentHelperElement.parent;
                 }
@@ -213,7 +226,7 @@ Quick.Compiler = (function () {
                     var next_token = (i+1 < token_length) ? tokens[i+1] : undefined;
                     if (next_token && next_token["TOKEN"] === "COLON") {
                         property = token["DATA"];
-                        console.log("property found", property);
+                        log("property found", property);
                         i += 1;
                         continue;
                     } else {
@@ -221,7 +234,7 @@ Quick.Compiler = (function () {
                         return;
                     }
                 } else {
-                    console.log("right-hand-side expression found for property", property, token["DATA"]);
+                    log("right-hand-side expression found for property", property, token["DATA"]);
                     renderProperty(property, token["DATA"]);
                     property = undefined;
                 }
