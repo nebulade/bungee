@@ -11,8 +11,9 @@
 
         function compileScriptTag (script) {
             var tokens = Quick.Tokenizer.parse(script.text);
-            var debug = false;
-            Quick.Compiler.render(tokens, debug, function (error, result) {
+            Quick.Compiler.debug = false;
+            Quick.Compiler.verbose = false;
+            Quick.Compiler.render(tokens, function (error, result) {
                 if (error) {
                     console.log(error);
                 } else {

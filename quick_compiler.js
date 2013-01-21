@@ -66,6 +66,18 @@ Quick.Compiler = (function () {
             addIndentation(1);
             output += "debugger;\n";
         }
+
+        // add pseudo parent
+        addIndentation();
+        output += "var elem = { addChild: function(child) {\n";
+        addIndentation(2);
+        output += "Quick.Engine.addElement(child);\n";
+        addIndentation(2);
+        output += "return child;\n"
+        addIndentation(1);
+        output += "}\n";
+        addIndentation();
+        output += "}\n";
     };
 
     function renderEnd () {
@@ -76,19 +88,33 @@ Quick.Compiler = (function () {
         output += "}());\n";
     };
 
-    function renderElement (name, id) {
+    function renderBeginElement (name, id) {
         addIndentation();
 
-        output += "var " + currentHelperElement.id + " = new " + currentHelperElement.type + "(";
+        output += "var " + currentHelperElement.id + " = ";
+        output += "elem.addChild((function() {\n";
+
+        ++index;
+        addIndentation();
+
+        output += "var elem = new " + currentHelperElement.type + "(";
         output += id ? "\"" + id + "\"" : "";
-        output += currentHelperElement.parent ? ", " + currentHelperElement.parent.id : "";
         output += ");\n";
+    };
+
+    function renderEndElement () {
+        addIndentation();
+        output += "return elem;\n";
+
+        --index;
+        addIndentation();
+        output += "})());\n"
     };
 
     function renderEventHandler (property, value) {
         addIndentation();
-        output += currentHelperElement.id;
-        output += ".addEventHandler(\"" + property + "\", ";
+        // output += currentHelperElement.id;
+        output += "elem.addEventHandler(\"" + property + "\", ";
         output += "function () {\n";
         addIndentation();
         output += value + "\n";
@@ -106,16 +132,16 @@ Quick.Compiler = (function () {
         }
 
         addIndentation();
-        output += currentHelperElement.id;
-        output += ".addProperty(\"" + property + "\", ";
-        output += "function () {\n";
-        addIndentation(1);
+        // output += currentHelperElement.id;
+        output += "elem.addProperty(\"" + property + "\", ";
+        output += "function () {";
+        // addIndentation(1);
         if (String(value).indexOf("return") !== -1) {
-            output += value + "\n";
+            output += value + "";
         } else {
-            output += "return " + value + ";\n";
+            output += "return " + value + ";";
         }
-        addIndentation();
+        // addIndentation();
         output += "});\n"
     };
 
@@ -147,26 +173,26 @@ Quick.Compiler = (function () {
         var token_length = tokens.length;
         var tokens = tokens;
         var elementType = undefined;
+        var elementTypeDefinition = undefined;
 
         if (typeof callback !== "function") {
             return;
         }
 
         output = "";          // render output, is Javascript which needs to be evaled or sourced
-        index = 0;            // index used for tracking the indentation
+        index = 1;            // index used for tracking the indentation
         currentHelperElement = undefined;
         toplevelHelperElement = undefined;
 
         renderBegin();
-
-        ++index;
 
         for (var i = 0; i < token_length; i += 1) {
             var token = tokens[i];
 
             if (token["TOKEN"] === "IS_A") {
                 if (elementType) {
-
+                    elementTypeDefinition = elementType;
+                    elementType = undefined;
                 } else {
                     callback(error(errorCodes.NO_TYPENAME, token), null);
                     return;
@@ -174,7 +200,6 @@ Quick.Compiler = (function () {
             }
 
             if (token["TOKEN"] === "ELEMENT") {
-                log("create type " + token["DATA"]);
                 elementType = token["DATA"];
             }
 
@@ -194,7 +219,6 @@ Quick.Compiler = (function () {
                         }
                     }
 
-                    ++index;
                     if (currentHelperElement) {
                         var tmpElem = currentHelperElement;
                         currentHelperElement = new HelperElement(elementType, tmpElem);
@@ -209,16 +233,18 @@ Quick.Compiler = (function () {
                     }
 
                     elementType = undefined;
+                    elementTypeDefinition = undefined;
 
-                    renderElement(token["DATA"], tmpId);
+                    renderBeginElement(token["DATA"], tmpId);
                 }
             }
             if (token["TOKEN"] === "SCOPE_END") {
                 log("end element description");
+                renderEndElement();
+
                 if (currentHelperElement) {
                     currentHelperElement = currentHelperElement.parent;
                 }
-                --index;
             }
 
             if (token["TOKEN"] === "EXPRESSION") {

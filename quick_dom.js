@@ -177,3 +177,4 @@ QuickRendererDOM.prototype.renderElement = function (element) {
         }
     }
 };
+

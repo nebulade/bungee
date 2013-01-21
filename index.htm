@@ -87,6 +87,7 @@
             scope.button.addProperty('text', "Toggle");
             scope.button.addEventHandler('onclick', function () { runAnimation = !runAnimation; });
 
+            Quick.Engine.addElement(scope.elem);
             scope.elem.initializeBindings();
 
             advance();

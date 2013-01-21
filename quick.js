@@ -33,7 +33,6 @@ if (!Quick.Engine) {
     Quick.Engine = (function () {
         var ret = {};
         var getterCalled = {};
-        var toplevelElements = {};
         var dirtyElements = [];
         var updateTimer = undefined;
 
@@ -68,17 +67,6 @@ if (!Quick.Engine) {
 
         ret.addCalledGetter = function (element, property) {
             getterCalled[element.id + "." + property] = { element: element, property: property };
-        };
-
-        // make sure we get a handle of toplevel elements
-        // non toplevel elements are tracked by parent/child
-        ret.addTopLevelElement = function (elem) {
-            toplevelElements[elem.id] = elem;
-        };
-
-        // getter for toplevel elements by id
-        ret.getTopLevelElement = function (id) {
-            return toplevelElements[id];
         };
 
         // TODO should be part of the dom renderer?
@@ -120,11 +108,7 @@ function Element (id, parent) {
 
     if (this.parent) {
         this.parent.addChild(this);
-    } else {
-        Quick.Engine.addTopLevelElement(this);
     }
-
-    Quick.Engine.addElement(this, parent);
 };
 
 Element.prototype.addChild = function (child) {
@@ -144,6 +128,11 @@ Element.prototype.addChild = function (child) {
 
     // add newly added child to internal children array
     this.children[this.children.length] = child;
+
+    child.parent = this;
+    Quick.Engine.addElement(child, this);
+
+    return child;
 }
 
 Element.prototype.render = function () {
