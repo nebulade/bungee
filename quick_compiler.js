@@ -37,30 +37,31 @@ Quick.Compiler = (function () {
     errorMessages[errorCodes.NO_TYPENAME] =     "no typename given to register";
     errorMessages[errorCodes.GENERIC] =         "generic error";
 
-    function error (code, token) {
+    function error(code, token) {
         var ret = {};
         ret.code = code;
         ret.message = "Compile error: " + errorMessages[code];
-        ret.line = token ? token["LINE"] : -1;
+        ret.line = token ? token.LINE : -1;
 
         return ret;
     }
 
-    function log (msg) {
+    function log(msg) {
         if (compiler.verbose) {
             console.log(msg);
         }
     }
 
-    function addIndentation (additional) {
+    function addIndentation(additional) {
         var indentLevel = index + (additional ? additional : 0);
+        var i;
 
-        for (var i = indentLevel; i; --i) {
+        for (i = indentLevel; i; --i) {
             output += "    ";
         }
-    };
+    }
 
-    function renderBegin () {
+    function renderBegin() {
         output += "(function() {\n";
         if (compiler.debug) {
             addIndentation(1);
@@ -73,22 +74,22 @@ Quick.Compiler = (function () {
         addIndentation(2);
         output += "Quick.Engine.addElement(child);\n";
         addIndentation(2);
-        output += "return child;\n"
+        output += "return child;\n";
         addIndentation(1);
         output += "}\n";
         addIndentation();
         output += "}\n";
-    };
+    }
 
-    function renderEnd () {
+    function renderEnd() {
         addIndentation();
-        output += toplevelHelperElement.id + ".initializeBindings();\n"
+        output += toplevelHelperElement.id + ".initializeBindings();\n";
         addIndentation();
-        output += toplevelHelperElement.id + ".render();\n"
+        output += toplevelHelperElement.id + ".render();\n";
         output += "}());\n";
-    };
+    }
 
-    function renderBeginElement (name, id) {
+    function renderBeginElement(name, id) {
         addIndentation();
 
         output += "var " + currentHelperElement.id + " = ";
@@ -100,18 +101,18 @@ Quick.Compiler = (function () {
         output += "var elem = new " + currentHelperElement.type + "(";
         output += id ? "\"" + id + "\"" : "";
         output += ");\n";
-    };
+    }
 
-    function renderEndElement () {
+    function renderEndElement() {
         addIndentation();
         output += "return elem;\n";
 
         --index;
         addIndentation();
-        output += "})());\n"
-    };
+        output += "})());\n";
+    }
 
-    function renderEventHandler (property, value) {
+    function renderEventHandler(property, value) {
         addIndentation();
         // output += currentHelperElement.id;
         output += "elem.addEventHandler(\"" + property + "\", ";
@@ -120,13 +121,15 @@ Quick.Compiler = (function () {
         output += value + "\n";
         addIndentation();
         output += "});\n";
-    };
+    }
 
-    function renderProperty (property, value) {
+    function renderProperty(property, value) {
         // special case for ID
         if (property === "id") {
             return;
-        } else if (property.indexOf('on') === 0) {
+        }
+
+        if (property.indexOf('on') === 0) {
             renderEventHandler(property, value);
             return;
         }
@@ -137,30 +140,31 @@ Quick.Compiler = (function () {
         output += "function () {";
         // addIndentation(1);
         if (String(value).indexOf("return") !== -1) {
-            output += value + "";
+            output += value + " ";
         } else {
             output += "return " + value + ";";
         }
         // addIndentation();
-        output += "});\n"
-    };
+        output += "});\n";
+    }
 
-    function HelperElement (type, parent) {
+    function HelperElement(type, parent) {
         this.parent = parent;
         this.type = type;
 
-        function generateId () {
+        function generateId() {
             var ret = [];
             var length = 5;
             var radix = 62;
             var characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+            var i;
 
-            for (var i = 0; i < length; i++) {
-                ret[i] = characters[0 | Math.random()*radix];
+            for (i = 0; i < length; i++) {
+                ret[i] = characters[0 | Math.random() * radix];
             }
 
             return ret.join('');
-        };
+        }
 
         this.id = (parent ? parent.id : "") + "ELEM" + generateId();
     }
@@ -168,12 +172,13 @@ Quick.Compiler = (function () {
     /*
      * Take all tokens and compile it to real elements with properties and bindings
      */
-    compiler.render = function (tokens, callback) {
+    compiler.render = function (tok, callback) {
         var property;
+        var tokens = tok;
         var token_length = tokens.length;
-        var tokens = tokens;
-        var elementType = undefined;
-        var elementTypeDefinition = undefined;
+        var elementType;
+        var elementTypeDefinition;
+        var i, j;
 
         if (typeof callback !== "function") {
             return;
@@ -186,10 +191,10 @@ Quick.Compiler = (function () {
 
         renderBegin();
 
-        for (var i = 0; i < token_length; i += 1) {
+        for (i = 0; i < token_length; i += 1) {
             var token = tokens[i];
 
-            if (token["TOKEN"] === "IS_A") {
+            if (token.TOKEN === "IS_A") {
                 if (elementType) {
                     elementTypeDefinition = elementType;
                     elementType = undefined;
@@ -199,11 +204,11 @@ Quick.Compiler = (function () {
                 }
             }
 
-            if (token["TOKEN"] === "ELEMENT") {
-                elementType = token["DATA"];
+            if (token.TOKEN === "ELEMENT") {
+                elementType = token.DATA;
             }
 
-            if (token["TOKEN"] === "SCOPE_START") {
+            if (token.TOKEN === "SCOPE_START") {
                 log("start element description");
 
                 // only if elementType was found previously
@@ -211,10 +216,10 @@ Quick.Compiler = (function () {
                     var tmpId;
 
                     // FIXME stupid and unsave id search
-                    for (var j = i; j < token_length; ++j) {
+                    for (j = i; j < token_length; ++j) {
                         var tmpToken = tokens[j];
-                        if (tmpToken["TOKEN"] === "EXPRESSION" && tmpToken["DATA"] === "id") {
-                            tmpId = tokens[j+2]["DATA"];
+                        if (tmpToken.TOKEN === "EXPRESSION" && tmpToken.DATA === "id") {
+                            tmpId = tokens[j + 2].DATA;
                             break;
                         }
                     }
@@ -235,10 +240,10 @@ Quick.Compiler = (function () {
                     elementType = undefined;
                     elementTypeDefinition = undefined;
 
-                    renderBeginElement(token["DATA"], tmpId);
+                    renderBeginElement(token.DATA, tmpId);
                 }
             }
-            if (token["TOKEN"] === "SCOPE_END") {
+            if (token.TOKEN === "SCOPE_END") {
                 log("end element description");
                 renderEndElement();
 
@@ -247,21 +252,20 @@ Quick.Compiler = (function () {
                 }
             }
 
-            if (token["TOKEN"] === "EXPRESSION") {
+            if (token.TOKEN === "EXPRESSION") {
                 if (!property) {
-                    var next_token = (i+1 < token_length) ? tokens[i+1] : undefined;
-                    if (next_token && next_token["TOKEN"] === "COLON") {
-                        property = token["DATA"];
+                    var next_token = (i + 1 < token_length) ? tokens[i + 1] : undefined;
+                    if (next_token && next_token.TOKEN === "COLON") {
+                        property = token.DATA;
                         log("property found", property);
                         i += 1;
-                        continue;
                     } else {
                         callback(error(errorCodes.NO_PROPERTY, token), null);
                         return;
                     }
                 } else {
-                    log("right-hand-side expression found for property", property, token["DATA"]);
-                    renderProperty(property, token["DATA"]);
+                    log("right-hand-side expression found for property", property, token.DATA);
+                    renderProperty(property, token.DATA);
                     property = undefined;
                 }
             }
@@ -270,7 +274,7 @@ Quick.Compiler = (function () {
         renderEnd();
 
         callback(null, output);
-    }
+    };
 
     return compiler;
 }());
