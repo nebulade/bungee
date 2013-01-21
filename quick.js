@@ -37,6 +37,13 @@ if (!Quick.Engine) {
         var updateTimer = undefined;
 
         ret.magicBindingState = false;
+        ret.verbose = false;
+
+        function log (msg, error) {
+            if (ret.verbose || error) {
+                console.log("[Quick.Engine] " + msg);
+            }
+        }
 
         // try to create a renderer backend, currently on DOM supported
         try {
@@ -45,7 +52,7 @@ if (!Quick.Engine) {
             ret.addElement = renderer.addElement;
             ret.renderElement = renderer.renderElement;
         } catch (e) {
-            console.log("Cannot create DOM renderer")    ;
+            log("Cannot create DOM renderer", true)    ;
             ret.createElement = function () {};
             ret.addElement = function () {};
             ret.renderElement = function () {};
@@ -53,14 +60,14 @@ if (!Quick.Engine) {
 
         // begin binding detection
         ret.enterMagicBindingState = function () {
-            console.log("enterMagicBindingState")
+            log("enterMagicBindingState")
             getterCalled = {};
             ret.magicBindingState = true;
         };
 
         // end binding detection
         ret.exitMagicBindingState = function () {
-            console.log("exitMagicBindingState\n\n")
+            log("exitMagicBindingState\n\n")
             // ret.magicBindingState = false;
             return getterCalled;
         };
@@ -112,8 +119,6 @@ function Element (id, parent) {
 };
 
 Element.prototype.addChild = function (child) {
-    // console.log("addChild", child.id, "to", this.id);
-
     // adds child id to the namespace
     this[child.id] = child;
 
@@ -136,8 +141,6 @@ Element.prototype.addChild = function (child) {
 }
 
 Element.prototype.render = function () {
-    // console.log("render()");
-
     Quick.Engine.renderElement(this);
 };
 
@@ -147,7 +150,7 @@ Element.prototype.addChanged = function (signal, callback) {
     }
 
     this.connections[signal][this.connections[signal].length] = callback;
-    console.log("connections for " + signal + " " + this.connections[signal].length);
+    // console.log("connections for " + signal + " " + this.connections[signal].length);
 };
 
 Element.prototype.addBinding = function (name, value) {
@@ -160,12 +163,12 @@ Element.prototype.addBinding = function (name, value) {
     //  x: mouseArea.clicked ? a.y() : b:z();
     Quick.Engine.enterMagicBindingState();
     var val = value.apply(this);
-    console.log("addBinding result", name, val);
+    // console.log("addBinding result", name, val);
     var getters = Quick.Engine.exitMagicBindingState();
 
     for (var getter in getters) {
         hasBinding = true;
-        console.log("binding found", getters[getter]);
+        // console.log("binding found", getters[getter]);
         var tmp = getters[getter];
         tmp.element.addChanged(tmp.property, function() {
             that[name] = value.apply(that);
@@ -190,8 +193,6 @@ Element.prototype.addEventHandler = function (event, handler) {
     var callback = function () {
         handler.apply(that);
     }
-
-    console.log("add signal handler for " + signal);
 
     this.addChanged(signal, callback);
 }
@@ -240,19 +241,16 @@ Element.prototype.initializeBindings = function () {
         var name = this. properties[i].name;
         var value = this.properties[i].value;
 
-        console.log("Element.initializeBindings()", name, value);
+        // console.log("Element.initializeBindings()", name, value);
 
         // initial set and binding discovery
         if (typeof value === 'function') {
             if (this.addBinding(name, value)) {
-                // console.log("addProperty:", this.id, name, "binding found, so add function pointer");
                 this[name] = value;
             } else {
-                // console.log("addProperty:", this.id, name, "no binding, so add as simple value");
                 this[name] = value.apply(this);
             }
         } else {
-            // console.log("addProperty:", this.id, name, "simple value passed in");
             this[name] = value;
         }
     }
