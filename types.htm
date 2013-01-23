@@ -1,0 +1,90 @@
+<html>
+    <head>
+        <title> QuickJS </title>
+
+        <script type="text/javascript" src="quick_tokenizer.js"></script>
+        <script type="text/javascript" src="quick_compiler.js"></script>
+        <script type="text/javascript" src="quick_dom.js"></script>
+        <script type="text/javascript" src="quick.js"></script>
+
+        <script type="text/javascript">
+
+        function compileScriptTag (script) {
+            Quick.Tokenizer.verbose = true;
+            var tokens = Quick.Tokenizer.parse(script.text);
+            // Quick.Compiler.verbose = true;
+            // Quick.Compiler.debug = true;
+            Quick.Compiler.render(tokens, function (error, result) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    try {
+                        console.log("----------------------");
+                        console.log(result);
+                        console.log("----------------------");
+                        eval(result);
+                    } catch (e) {
+                        console.log("Error evaluating generated JS code: " + e);
+                    }
+                }
+            });
+        }
+
+        function init () {
+
+            for (var i = 0; i < window.document.scripts.length; ++i) {
+                var script = window.document.scripts[i];
+                if (script.type === "text/jml") {
+                    compileScriptTag(script);
+                }
+            }
+        }
+
+        </script>
+
+        <script type="text/jml">
+
+        MainWindow @ Item {
+            background-color: "lightgray";
+            top: 0;
+            left: 0;
+            width: window.innerWidth;
+            height: window.innerHeight;
+        }
+
+        SubWindow @ MainWindow {
+            background-color: "gray";
+            width: this.parent.width/3.;
+            height: this.parent.height/3.;
+            top: 50;
+            left: 50;
+
+            SubItem @ Text {
+                text-color: "red";
+            }
+
+            SubItem {
+                text: "A subclassed text item";
+            }
+        }
+
+        MainWindow {
+            id: root;
+
+            Text {
+                text: "My toplevel Window";
+            }
+
+            SubWindow {
+                text: "Another window";
+            }
+        }
+
+        </script>
+
+    </head>
+
+    <body onload="init();">
+    </body>
+</html>
+

@@ -22,6 +22,9 @@ Quick.Compiler = (function () {
     var index;
     var currentHelperElement;
     var toplevelHelperElement;
+    // Used to track if we are in a type definition or a element scope
+    //  needed for the scope close javascript rendering
+    var scopeStack = [];
 
     var errorCodes = {
         GENERIC:            0,
@@ -70,22 +73,45 @@ Quick.Compiler = (function () {
 
         // add pseudo parent
         addIndentation();
-        output += "var elem = { addChild: function(child) {\n";
+        output += "var elem = { \n";
+        addIndentation(1);
+
+        output += "children: [],\n";
+        addIndentation(1);
+
+        output += "addChild: function(child) {\n";
+        addIndentation(2);
+        output += "elem.children.push(child);\n";
         addIndentation(2);
         output += "Quick.Engine.addElement(child);\n";
         addIndentation(2);
         output += "return child;\n";
         addIndentation(1);
+        output += "},\n";
+
+        addIndentation(1);
+        output += "initializeBindings: function() {\n";
+        addIndentation(2);
+        output += "for (var e in elem.children) { elem.children[e].initializeBindings(); }\n";
+        addIndentation(1);
+        output += "},\n";
+
+        addIndentation(1);
+        output += "render: function() {\n";
+        addIndentation(2);
+        output += "for (var e in elem.children) { elem.children[e].render(); }\n";
+        addIndentation(1);
         output += "}\n";
+
         addIndentation();
         output += "}\n";
     }
 
     function renderEnd() {
         addIndentation();
-        output += toplevelHelperElement.id + ".initializeBindings();\n";
+        output += "elem.initializeBindings();\n";
         addIndentation();
-        output += toplevelHelperElement.id + ".render();\n";
+        output += "elem.render();\n";
         output += "}());\n";
     }
 
@@ -110,6 +136,26 @@ Quick.Compiler = (function () {
         --index;
         addIndentation();
         output += "})());\n";
+    }
+
+    function renderBeginType(type, inheritedType) {
+        addIndentation();
+
+        output += "var " + type + " = function (id, parent) {\n";
+
+        ++index;
+        addIndentation();
+
+        output += "var elem = new " + inheritedType + "(id, parent);\n";
+    }
+
+    function renderEndType() {
+        addIndentation();
+        output += "return elem;\n";
+
+        --index;
+        addIndentation();
+        output += "};\n";
     }
 
     function renderEventHandler(property, value) {
@@ -188,6 +234,7 @@ Quick.Compiler = (function () {
         index = 1;            // index used for tracking the indentation
         currentHelperElement = undefined;
         toplevelHelperElement = undefined;
+        scopeStack = [];
 
         renderBegin();
 
@@ -212,8 +259,17 @@ Quick.Compiler = (function () {
                 log("start element description");
 
                 // only if elementType was found previously
-                if (elementType) {
+                if (elementTypeDefinition && elementType) {
+                    scopeStack.push("TYPE");
+
+                    renderBeginType(elementTypeDefinition, elementType);
+
+                    elementType = undefined;
+                    elementTypeDefinition = undefined;
+                } else if (elementType) {
                     var tmpId;
+
+                    scopeStack.push("ELEMENT");
 
                     // FIXME stupid and unsave id search
                     for (j = i; j < token_length; ++j) {
@@ -241,14 +297,24 @@ Quick.Compiler = (function () {
                     elementTypeDefinition = undefined;
 
                     renderBeginElement(token.DATA, tmpId);
+                } else {
+                    // TODO error case
                 }
             }
+
             if (token.TOKEN === "SCOPE_END") {
                 log("end element description");
-                renderEndElement();
 
-                if (currentHelperElement) {
-                    currentHelperElement = currentHelperElement.parent;
+                var scopeType = scopeStack.pop();
+
+                if (scopeType === "TYPE") {
+                    renderEndType();
+                } else {
+                    renderEndElement();
+
+                    if (currentHelperElement) {
+                        currentHelperElement = currentHelperElement.parent;
+                    }
                 }
             }
 
