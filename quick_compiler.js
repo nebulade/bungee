@@ -92,14 +92,14 @@ Quick.Compiler = (function () {
         addIndentation(1);
         output += "initializeBindings: function() {\n";
         addIndentation(2);
-        output += "for (var e in elem.children) { elem.children[e].initializeBindings(); }\n";
+        output += "for (var i = 0; i < elem.children.length; ++i) { elem.children[i].initializeBindings(); }\n";
         addIndentation(1);
         output += "},\n";
 
         addIndentation(1);
         output += "render: function() {\n";
         addIndentation(2);
-        output += "for (var e in elem.children) { elem.children[e].render(); }\n";
+        output += "for (var i = 0; i < elem.children.length; ++i) { elem.children[i].render(); }\n";
         addIndentation(1);
         output += "}\n";
 

@@ -13,7 +13,7 @@
             Quick.Tokenizer.verbose = true;
             var tokens = Quick.Tokenizer.parse(script.text);
             // Quick.Compiler.verbose = true;
-            // Quick.Compiler.debug = true;
+            Quick.Compiler.debug = (window.location.href.indexOf("debug") >= 0);
             Quick.Compiler.render(tokens, function (error, result) {
                 if (error) {
                     console.log(error);
@@ -45,7 +45,7 @@
         <script type="text/jml">
 
         MainWindow @ Item {
-            background-color: "lightgray";
+            background-image: "url('background.png')";
             top: 0;
             left: 0;
             width: window.innerWidth;
@@ -54,6 +54,7 @@
 
         SubWindow @ MainWindow {
             background-color: "gray";
+            background-image: "";
             width: this.parent.width/3.;
             height: this.parent.height/3.;
             top: 50;
