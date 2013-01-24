@@ -5,38 +5,14 @@
         <script type="text/javascript" src="quick_tokenizer.js"></script>
         <script type="text/javascript" src="quick_compiler.js"></script>
         <script type="text/javascript" src="quick_dom.js"></script>
+        <script type="text/javascript" src="quick_helper.js"></script>
         <script type="text/javascript" src="quick.js"></script>
 
         <script type="text/javascript">
 
-        function compileScriptTag (script) {
-            var tokens = Quick.Tokenizer.parse(script.text);
-            Quick.Compiler.debug = false;
-            Quick.Compiler.verbose = false;
-            Quick.Compiler.render(tokens, function (error, result) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    try {
-                        console.log("----------------------");
-                        console.log(result);
-                        console.log("----------------------");
-                        eval(result);
-                    } catch (e) {
-                        console.log("Error evaluating: " + e);
-                    }
-                }
-            });
-        }
-
         function init () {
-
-            for (var i = 0; i < window.document.scripts.length; ++i) {
-                var script = window.document.scripts[i];
-                if (script.type === "text/jml") {
-                    compileScriptTag(script);
-                }
-            }
+            Quick.useQueryFlags();
+            Quick.compileScriptTags();
         }
 
         </script>

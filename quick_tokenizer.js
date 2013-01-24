@@ -15,10 +15,9 @@ if (!Quick.Tokenizer) {
     Quick.Tokenizer = (function () {
         var c, i, line, tokens, bindings, exp, colonOnLine, comment;
         var ret = {};
-        ret.verbose = false;
 
         function log (msg) {
-            if (ret.verbose) {
+            if (Quick.verbose) {
                 console.log(msg);
             }
         }
@@ -171,7 +170,7 @@ if (!Quick.Tokenizer) {
                 }
             }
 
-            if (ret.verbose) {
+            if (Quick.verbose) {
                 ret.dumpTokens();
             }
 

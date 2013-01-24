@@ -15,8 +15,6 @@ if (!Quick) {
 Quick.Compiler = (function () {
     // public compiler properties
     var compiler = {};
-    compiler.verbose = false;
-    compiler.debug = false;
 
     var output;
     var index;
@@ -50,7 +48,7 @@ Quick.Compiler = (function () {
     }
 
     function log(msg) {
-        if (compiler.verbose) {
+        if (Quick.verbose) {
             console.log(msg);
         }
     }
@@ -66,7 +64,7 @@ Quick.Compiler = (function () {
 
     function renderBegin() {
         output += "(function() {\n";
-        if (compiler.debug) {
+        if (Quick.debug) {
             addIndentation(1);
             output += "debugger;\n";
         }

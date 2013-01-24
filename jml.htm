@@ -5,6 +5,7 @@
         <script type="text/javascript" src="quick_tokenizer.js"></script>
         <script type="text/javascript" src="quick_compiler.js"></script>
         <script type="text/javascript" src="quick_dom.js"></script>
+        <script type="text/javascript" src="quick_helper.js"></script>
         <script type="text/javascript" src="quick.js"></script>
 
         <script type="text/javascript">
@@ -13,9 +14,8 @@
 
             var textarea = window.document.getElementById("jml");
 
+            Quick.useQueryFlags();
             var tokens = Quick.Tokenizer.parse(textarea.value);
-            Quick.Compiler.debug = false;
-            Quick.Compiler.verbose = false;
             Quick.Compiler.render(tokens, function (error, result) {
                 if (error) {
                     console.log(error);
