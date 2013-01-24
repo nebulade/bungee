@@ -118,7 +118,6 @@ Quick.Compiler = (function () {
     function renderBeginElement(name, id) {
         addIndentation();
 
-        output += "var " + currentHelperElement.id + " = ";
         output += "elem.addChild((function() {\n";
 
         ++index;
@@ -160,7 +159,6 @@ Quick.Compiler = (function () {
 
     function renderEventHandler(property, value) {
         addIndentation();
-        // output += currentHelperElement.id;
         output += "elem.addEventHandler(\"" + property + "\", ";
         output += "function () {\n";
         addIndentation();
@@ -181,38 +179,19 @@ Quick.Compiler = (function () {
         }
 
         addIndentation();
-        // output += currentHelperElement.id;
         output += "elem.addProperty(\"" + property + "\", ";
         output += "function () {";
-        // addIndentation(1);
         if (String(value).indexOf("return") !== -1) {
             output += value + " ";
         } else {
             output += "return " + value + ";";
         }
-        // addIndentation();
         output += "});\n";
     }
 
     function HelperElement(type, parent) {
         this.parent = parent;
         this.type = type;
-
-        function generateId() {
-            var ret = [];
-            var length = 5;
-            var radix = 62;
-            var characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
-            var i;
-
-            for (i = 0; i < length; i++) {
-                ret[i] = characters[0 | Math.random() * radix];
-            }
-
-            return ret.join('');
-        }
-
-        this.id = (parent ? parent.id : "") + "ELEM" + generateId();
     }
 
     /*

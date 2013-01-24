@@ -8,7 +8,7 @@
  * Rectangle Element
  **************************************************
  */
-function Item (id, parent) {
+function Item(id, parent) {
     var elem = new Element(id, parent);
 
     elem.addProperty("-webkit-user-select", "none");
@@ -24,7 +24,7 @@ function Item (id, parent) {
     elem.addProperty("containsMouse", false);
     elem.addProperty("scale", 1)
     elem.addProperty("-webkit-transform", function() {
-        return "scale("+this.scale+", "+this.scale+")";
+        return "scale(" + this.scale + ", " + this.scale + ")";
     });
 
     return elem;
