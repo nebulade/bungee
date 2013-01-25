@@ -16,6 +16,7 @@ Quick.Compiler = (function () {
     // public compiler properties
     var compiler = {};
 
+    var ELEM_PREFIX = "e";
     var output;
     var index;
     var currentHelperElement;
@@ -71,7 +72,7 @@ Quick.Compiler = (function () {
 
         // add pseudo parent
         addIndentation();
-        output += "var elem = { \n";
+        output += "var " + ELEM_PREFIX + " = { \n";
         addIndentation(1);
 
         output += "children: [],\n";
@@ -79,7 +80,7 @@ Quick.Compiler = (function () {
 
         output += "addChild: function(child) {\n";
         addIndentation(2);
-        output += "elem.children.push(child);\n";
+        output += ELEM_PREFIX + ".children.push(child);\n";
         addIndentation(2);
         output += "Quick.Engine.addElement(child);\n";
         addIndentation(2);
@@ -90,14 +91,14 @@ Quick.Compiler = (function () {
         addIndentation(1);
         output += "initializeBindings: function() {\n";
         addIndentation(2);
-        output += "for (var i = 0; i < elem.children.length; ++i) { elem.children[i].initializeBindings(); }\n";
+        output += "for (var i = 0; i < " + ELEM_PREFIX + ".children.length; ++i) { " + ELEM_PREFIX + ".children[i].initializeBindings(); }\n";
         addIndentation(1);
         output += "},\n";
 
         addIndentation(1);
         output += "render: function() {\n";
         addIndentation(2);
-        output += "for (var i = 0; i < elem.children.length; ++i) { elem.children[i].render(); }\n";
+        output += "for (var i = 0; i < " + ELEM_PREFIX + ".children.length; ++i) { " + ELEM_PREFIX + ".children[i].render(); }\n";
         addIndentation(1);
         output += "}\n";
 
@@ -107,28 +108,28 @@ Quick.Compiler = (function () {
 
     function renderEnd() {
         addIndentation();
-        output += "elem.initializeBindings();\n";
+        output += ELEM_PREFIX + ".initializeBindings();\n";
         addIndentation();
-        output += "elem.render();\n";
+        output += ELEM_PREFIX + ".render();\n";
         output += "}());\n";
     }
 
     function renderBeginElement(name, id) {
         addIndentation();
 
-        output += "elem.addChild((function() {\n";
+        output += ELEM_PREFIX + ".addChild((function() {\n";
 
         ++index;
         addIndentation();
 
-        output += "var elem = new " + currentHelperElement.type + "(";
+        output += "var " + ELEM_PREFIX + " = new " + currentHelperElement.type + "(";
         output += id ? "\"" + id + "\"" : "";
         output += ");\n";
     }
 
     function renderEndElement() {
         addIndentation();
-        output += "return elem;\n";
+        output += "return " + ELEM_PREFIX + ";\n";
 
         --index;
         addIndentation();
@@ -143,12 +144,12 @@ Quick.Compiler = (function () {
         ++index;
         addIndentation();
 
-        output += "var elem = new " + inheritedType + "(id, parent);\n";
+        output += "var " + ELEM_PREFIX + " = new " + inheritedType + "(id, parent);\n";
     }
 
     function renderEndType() {
         addIndentation();
-        output += "return elem;\n";
+        output += "return " + ELEM_PREFIX + ";\n";
 
         --index;
         addIndentation();
@@ -157,7 +158,7 @@ Quick.Compiler = (function () {
 
     function renderEventHandler(property, value) {
         addIndentation();
-        output += "elem.addEventHandler(\"" + property + "\", ";
+        output += ELEM_PREFIX + ".addEventHandler(\"" + property + "\", ";
         output += "function () {\n";
         addIndentation();
         output += value + "\n";
@@ -177,7 +178,7 @@ Quick.Compiler = (function () {
         }
 
         addIndentation();
-        output += "elem.addProperty(\"" + property + "\", ";
+        output += ELEM_PREFIX + ".addProperty(\"" + property + "\", ";
         output += "function () {";
         if (String(value).indexOf("return") !== -1) {
             output += value + " ";
