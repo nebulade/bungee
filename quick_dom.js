@@ -5,7 +5,7 @@
 
 /*
  **************************************************
- * Rectangle Element
+ * Predefined basic elements
  **************************************************
  */
 function Item(id, parent) {
@@ -22,15 +22,16 @@ function Item(id, parent) {
     elem.addProperty("mouseRelStartY", 0);
     elem.addProperty("mousePressed", false);
     elem.addProperty("containsMouse", false);
-    elem.addProperty("scale", 1)
-    elem.addProperty("-webkit-transform", function() {
-        return "scale(" + this.scale + ", " + this.scale + ")";
+    elem.addProperty("scale", 1);
+    elem.addProperty("-webkit-transform", function () {
+        var s = this.scale.toFixed(1);
+        return "scale(" + s + ", " + s + ")";
     });
 
     return elem;
 }
 
-function Text (id, parent) {
+function Text(id, parent) {
     var elem = new Item(id, parent);
 
     elem.addProperty("font-size", "12pt");
@@ -43,13 +44,13 @@ function Text (id, parent) {
     // all this below for calculating the text width
     var tmp = window.document.createElement("div");
     document.body.appendChild(tmp);
-    tmp.style["position"] = "absolute";
-    tmp.style["visibility"] = "hidden";
-    tmp.style["width"] = "auto";
-    tmp.style["height"] = "auto";
+    tmp.style.position = "absolute";
+    tmp.style.visibility = "hidden";
+    tmp.style.width = "auto";
+    tmp.style.height = "auto";
 
-    elem.addProperty("_text", function() {
-        tmp.style.fontSize = elem["font-size"];
+    elem.addProperty("_text", function () {
+        tmp.style.fontSize = elem.fontSize;
         tmp.innerText = elem.text;
         elem.textWidth = (tmp.clientWidth + 1);
         elem.textHeight = (tmp.clientHeight + 1);
@@ -60,7 +61,7 @@ function Text (id, parent) {
     return elem;
 }
 
-function Rectangle (id, parent) {
+function Rectangle(id, parent) {
     var elem = new Item(id, parent);
 
     elem.addProperty("background-color", "white");
@@ -72,22 +73,23 @@ function Rectangle (id, parent) {
     return elem;
 }
 
-function Image (id, parent) {
+function Image(id, parent) {
     var elem = new Item(id, parent);
 
     elem.addProperty("text-align", "center");
     elem.addProperty("src", "image.png");
-    elem.addProperty("background-image", function() {
-        if (this.src.indexOf("url('") === 0)
+    elem.addProperty("background-image", function () {
+        if (this.src.indexOf("url('") === 0) {
             return this.src;
-        else
-            return "url('" + this.src + "')"
+        }
+
+        return "url('" + this.src + "')";
     });
 
     return elem;
 }
 
-function Button (id, parent) {
+function Button(id, parent) {
     var elem = new Rectangle(id, parent);
 
     elem.addProperty("text-align", "center");
@@ -102,9 +104,9 @@ function Button (id, parent) {
  * DOM renderer
  **************************************************
  */
-function QuickRendererDOM () {
+function QuickRendererDOM() {
 
-};
+}
 
 QuickRendererDOM.prototype.createElement = function (typeHint, object) {
     var elem;
@@ -113,7 +115,7 @@ QuickRendererDOM.prototype.createElement = function (typeHint, object) {
         elem = document.createElement('object');
     } else if (typeHint === 'item') {
         elem = document.createElement('div');
-        elem.style['position'] = 'absolute';
+        elem.style.position = 'absolute';
     } else if (typeHint === 'input') {
         elem = document.createElement('input');
     }
@@ -165,8 +167,9 @@ QuickRendererDOM.prototype.addElement = function (element, parent) {
 };
 
 QuickRendererDOM.prototype.renderElement = function (element) {
+    var p;
     if (element.element) {
-        for (var p in element.properties) {
+        for (p in element.properties) {
             var name = element.properties[p].name;
 
             if (name === 'text') {
@@ -177,4 +180,3 @@ QuickRendererDOM.prototype.renderElement = function (element) {
         }
     }
 };
-

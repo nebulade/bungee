@@ -12,9 +12,9 @@
  *
  */
 
- if (!Quick) {
+if (!Quick) {
     var Quick = {};
- }
+}
 
  // animation frame shim
 window.requestAnimFrame = (function () {
@@ -26,7 +26,7 @@ window.requestAnimFrame = (function () {
         function (callback) {
             window.setTimeout(callback, 1000 / 60);
         };
-    })();
+}());
 
 // create main singleton object
 if (!Quick.Engine) {
@@ -34,12 +34,12 @@ if (!Quick.Engine) {
         var ret = {};
         var getterCalled = {};
         var dirtyElements = [];
-        var updateTimer = undefined;
+        var updateTimer;
 
         ret.magicBindingState = false;
         ret.verbose = false;
 
-        function log (msg, error) {
+        function log(msg, error) {
             if (ret.verbose || error) {
                 console.log("[Quick.Engine] " + msg);
             }
@@ -52,7 +52,7 @@ if (!Quick.Engine) {
             ret.addElement = renderer.addElement;
             ret.renderElement = renderer.renderElement;
         } catch (e) {
-            log("Cannot create DOM renderer", true)    ;
+            log("Cannot create DOM renderer", true);
             ret.createElement = function () {};
             ret.addElement = function () {};
             ret.renderElement = function () {};
@@ -60,14 +60,14 @@ if (!Quick.Engine) {
 
         // begin binding detection
         ret.enterMagicBindingState = function () {
-            log("enterMagicBindingState")
+            log("enterMagicBindingState");
             getterCalled = {};
             ret.magicBindingState = true;
         };
 
         // end binding detection
         ret.exitMagicBindingState = function () {
-            log("exitMagicBindingState\n\n")
+            log("exitMagicBindingState\n\n");
             // ret.magicBindingState = false;
             return getterCalled;
         };
@@ -78,12 +78,14 @@ if (!Quick.Engine) {
 
         // TODO should be part of the dom renderer?
         function advance() {
-            requestAnimFrame(advance);
-            for (var i = 0; i < dirtyElements.length; ++i) {
+            window.requestAnimFrame(advance);
+            var i;
+            for (i = 0; i < dirtyElements.length; ++i) {
                 dirtyElements[i].render();
             }
             dirtyElements = [];
-        };
+        }
+
         advance();
 
         ret.dirty = function (element) {
@@ -104,7 +106,7 @@ if (!Quick.Engine) {
  * by using render hooks.
  *
  */
-function Element (id, parent) {
+function Element(id, parent) {
     this.id = id;
     this.element = Quick.Engine.createElement('item', this);
     this.parent = parent;
@@ -116,7 +118,7 @@ function Element (id, parent) {
     if (this.parent) {
         this.parent.addChild(this);
     }
-};
+}
 
 Element.prototype.addChild = function (child) {
     // adds child id to the namespace
@@ -126,7 +128,8 @@ Element.prototype.addChild = function (child) {
     child[this.id] = this;
 
     // add child to siblings scope and vice versa
-    for (var i in this.children) {
+    var i;
+    for (i = 0; i < this.children.length; ++i) {
         this.children[i][child.id] = child;
         child[this.children[i].id] = this.children[i];
     }
@@ -138,14 +141,14 @@ Element.prototype.addChild = function (child) {
     Quick.Engine.addElement(child, this);
 
     return child;
-}
+};
 
 Element.prototype.render = function () {
     Quick.Engine.renderElement(this);
 };
 
 Element.prototype.addChanged = function (signal, callback) {
-    if (!(signal in this.connections)) {
+    if (!this.connections[signal]) {
         this.connections[signal] = [];
     }
 
@@ -167,12 +170,11 @@ Element.prototype.addBinding = function (name, value) {
     var getters = Quick.Engine.exitMagicBindingState();
 
     for (var getter in getters) {
-        hasBinding = true;
-        // console.log("binding found", getters[getter]);
         var tmp = getters[getter];
         tmp.element.addChanged(tmp.property, function() {
             that[name] = value.apply(that);
         });
+        hasBinding = true;
     }
 
     return hasBinding;
@@ -190,11 +192,9 @@ Element.prototype.addEventHandler = function (event, handler) {
         signal = signal.slice(2);
     }
 
-    var callback = function () {
+    this.addChanged(signal, function () {
         handler.apply(that);
-    }
-
-    this.addChanged(signal, callback);
+    });
 }
 
 Element.prototype.addProperty = function (name, value) {
@@ -209,16 +209,16 @@ Element.prototype.addProperty = function (name, value) {
         this.name = value;
     } else {
         Object.defineProperty(this, name, {
-            get: function() {
+            get: function () {
                 // console.log("getter: ", that.id, name);
                 Quick.Engine.addCalledGetter(that, name);
 
                 if (typeof valueStore === 'function')
                     return valueStore.apply(that);
-                else
-                    return valueStore;
+
+                return valueStore;
             },
-            set: function(val) {
+            set: function (val) {
                 // console.log("setter: ", that.id, name, val);
                 if (valueStore === val)
                     return;
@@ -237,7 +237,8 @@ Element.prototype.addProperty = function (name, value) {
 // initial set of all properties and binding evaluation
 // should only be called once
 Element.prototype.initializeBindings = function () {
-    for (var i in this.properties) {
+    var i;
+    for (i = 0; i < this.properties.length; ++i) {
         var name = this. properties[i].name;
         var value = this.properties[i].value;
 
@@ -255,8 +256,8 @@ Element.prototype.initializeBindings = function () {
         }
     }
 
-    for (var child in this.children) {
-        this.children[child].initializeBindings();
+    for (i = 0; i < this.children.length; ++i) {
+        this.children[i].initializeBindings();
     }
 };
 

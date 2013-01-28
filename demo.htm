@@ -40,6 +40,11 @@
         <script type="text/jml">
         Item {
             id: elem
+            top: 0;
+            left: 0;
+            width: window.innerWidth;
+            height: window.innerHeight;
+            hoverEnabled: true;
 
             Image {
                 id: image1;
@@ -55,7 +60,7 @@
                 width: 128;
                 height: 128;
                 src: "url('weather-clouds.png')";
-                scale: this.child.left / 700;
+                scale: this.parent.mouseAbsX / 700;
             }
 
             Image {
@@ -64,7 +69,7 @@
                 width: 128;
                 height: 128;
                 src: "weather-few-clouds-night.png";
-                scale: 2.5 - (this.child.left / 700);
+                scale: 2.5 - (this.parent.mouseAbsY / 400);
             }
 
             Rectangle {
