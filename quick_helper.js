@@ -26,7 +26,8 @@ Quick.compileScriptTagElement = function(script) {
     var tokens = Quick.Tokenizer.parse(script.text);
     Quick.Compiler.render(tokens, function (error, result) {
         if (error) {
-            console.log("Error rendering JS code: " + error);
+            console.log("Error rendering JavaScript on line " + error.line + ": " + error.message);
+            console.log(" -- " + error.context);
         } else {
             try {
                 console.log("----------------------");

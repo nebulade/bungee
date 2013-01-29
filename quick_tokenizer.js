@@ -13,7 +13,7 @@ if (!Quick) {
 
 if (!Quick.Tokenizer) {
     Quick.Tokenizer = (function () {
-        var c, i, line, tokens, bindings, exp, colonOnLine, comment;
+        var c, i, line, tokens, bindings, exp, colonOnLine, comment, lineContext;
         var ret = {};
 
         function log (msg) {
@@ -24,7 +24,7 @@ if (!Quick.Tokenizer) {
 
         // add a found token to the token table
         function addToken (type, data) {
-            tokens.push( {"TOKEN" : type, "DATA" : data, "LINE" : line} );
+            tokens.push( {"TOKEN" : type, "DATA" : data, "LINE" : line, "CONTEXT" : lineContext} );
         }
 
         // extract an element name
@@ -102,6 +102,7 @@ if (!Quick.Tokenizer) {
             exp = input;
             i = -1;
             line = 1;
+            lineContext = "";
             tokens = [];
             c = undefined;//exp[i];
             bindings = [];
@@ -122,6 +123,20 @@ if (!Quick.Tokenizer) {
                     comment = false;
                     colonOnLine = false;
                     ++line;
+                    lineContext = "";
+
+                    // add next line so we have a error context to print
+                    var j = i;
+                    var tmpChar = exp[++j];
+
+                    while(tmpChar) {
+                        if (tmpChar === '\n') {
+                            break;
+                        }
+                        lineContext += tmpChar;
+                        tmpChar = exp[++j];
+                    }
+
                     continue;
                 }
 

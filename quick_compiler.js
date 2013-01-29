@@ -21,24 +21,28 @@ Quick.Compiler = (function () {
     var output;                 // output buffer used by all render functions
     var index;                  // index used for tracking the indentation
 
-    // make error codes public
-    compiler.errorCodes = errorCodes;
     var errorCodes = {
         GENERIC:            0,
         UNKNOWN_ELEMENT:    1,
-        NO_PROPERTY:        2
+        NO_PROPERTY:        2,
+        NO_ELEMENTTYPE:     3,
+        NO_TYPENAME:        4
     };
 
+    // make error codes public
+    compiler.errorCodes = errorCodes;
 
     var errorMessages = [];
-    errorMessages[errorCodes.UNKNOWN_ELEMENT] = "cannot create element";
-    errorMessages[errorCodes.NO_PROPERTY] =     "no property to assing expression";
-    errorMessages[errorCodes.NO_TYPENAME] =     "no typename given to register";
     errorMessages[errorCodes.GENERIC] =         "generic error";
+    errorMessages[errorCodes.UNKNOWN_ELEMENT] = "Cannot create element.";
+    errorMessages[errorCodes.NO_PROPERTY] =     "No property to assing expression.";
+    errorMessages[errorCodes.NO_ELEMENTTYPE] =  "No type to create an element.";
+    errorMessages[errorCodes.NO_TYPENAME] =     "No typename for the new type definition.";
 
     function error(code, token) {
         var ret = {};
         ret.code = code;
+        ret.context = token ? token.CONTEXT : undefined;
         ret.message = "Compile error: " + errorMessages[code];
         ret.line = token ? token.LINE : -1;
 
@@ -291,11 +295,11 @@ Quick.Compiler = (function () {
         function niceLog(msg) {
             var j;
             var out = "";
-            for(j = 0; j < indent; ++j) {
+            for (j = 0; j < indent; ++j) {
                 out += "  ";
             }
             console.log(out + msg);
-        };
+        }
 
         niceLog("+ Element:");
         niceLog("|- type: " + tree.type);
@@ -346,7 +350,7 @@ Quick.Compiler = (function () {
             this.types = [];
             this.elements = [];
             this.properties = [];
-        }
+        };
 
         var objectTreeRoot = new TreeObject();
         objectTreeRoot.type = "RootObject";
@@ -373,39 +377,25 @@ Quick.Compiler = (function () {
                 log("start element description");
 
                 // only if elementType was found previously
-                if (elementTypeDefinition && elementType) {
-                    // we found a type definition, so add one
-                    var tmp = new TreeObject(objectTree);
-                    tmp.type = elementType;
-                    tmp.typeDefinition = elementTypeDefinition;
-                    objectTree.types.push(tmp);
-                    objectTree = tmp;
-
-                    elementType = undefined;
-                    elementTypeDefinition = undefined;
-                } else if (elementType) {
-                    var tmpId;
-
-                    // FIXME stupid and unsave id search
-                    for (j = i; j < token_length; ++j) {
-                        var tmpToken = tokens[j];
-                        if (tmpToken.TOKEN === "EXPRESSION" && tmpToken.DATA === "id") {
-                            tmpId = tokens[j + 2].DATA;
-                            break;
-                        }
-                    }
-
+                if (elementType) {
                     // we found a element definition, so add one to create an element instance
                     var tmp = new TreeObject(objectTree);
-                    tmp.id = tmpId;
                     tmp.type = elementType;
-                    objectTree.elements.push(tmp);
+
+                    // check if we have a type definition or an element
+                    if (elementTypeDefinition) {
+                        tmp.typeDefinition = elementTypeDefinition;
+                        objectTree.types.push(tmp);
+                    } else {
+                        objectTree.elements.push(tmp);
+                    }
+
                     objectTree = tmp;
 
                     elementType = undefined;
                     elementTypeDefinition = undefined;
                 } else {
-                    // TODO error case
+                    callback(error(errorCodes.NO_ELEMENTTYPE, token), null);
                 }
             }
 
@@ -428,7 +418,13 @@ Quick.Compiler = (function () {
                     }
                 } else {
                     log("right-hand-side expression found for property", property, token.DATA);
-                    objectTree.properties.push({name: property, value: token.DATA});
+
+                    // special treatment for element IDs they are no real properties
+                    if (property === "id") {
+                        objectTree.id = token.DATA;
+                    } else {
+                        objectTree.properties.push({name: property, value: token.DATA});
+                    }
                     property = undefined;
                 }
             }
