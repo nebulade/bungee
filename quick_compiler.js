@@ -16,22 +16,19 @@ Quick.Compiler = (function () {
     // public compiler properties
     var compiler = {};
 
-    var ELEM_PREFIX = "e";
-    var output;
-    var index;
-    var currentHelperElement;
-    var toplevelHelperElement;
-    // Used to track if we are in a type definition or a element scope
-    //  needed for the scope close javascript rendering
-    var scopeStack = [];
+    // TODO sort out this kindof global variable mess
+    var ELEM_PREFIX = "e";      // just a define
+    var output;                 // output buffer used by all render functions
+    var index;                  // index used for tracking the indentation
 
+    // make error codes public
+    compiler.errorCodes = errorCodes;
     var errorCodes = {
         GENERIC:            0,
         UNKNOWN_ELEMENT:    1,
         NO_PROPERTY:        2
     };
 
-    compiler.errorCodes = errorCodes;
 
     var errorMessages = [];
     errorMessages[errorCodes.UNKNOWN_ELEMENT] = "cannot create element";
@@ -54,6 +51,9 @@ Quick.Compiler = (function () {
         }
     }
 
+    /*
+     * adds current indentation to compiler output
+     */
     function addIndentation(additional) {
         var indentLevel = index + (additional ? additional : 0);
         var i;
@@ -63,6 +63,10 @@ Quick.Compiler = (function () {
         }
     }
 
+    /*
+     * Renders the head of the javascript output
+     * Only called once
+     */
     function renderBegin() {
         output += "(function() {\n";
         if (Quick.debug) {
@@ -106,6 +110,10 @@ Quick.Compiler = (function () {
         output += "}\n";
     }
 
+    /*
+     * Render the end of the javascript output
+     * Only called once
+     */
     function renderEnd() {
         addIndentation();
         output += ELEM_PREFIX + ".initializeBindings();\n";
@@ -114,7 +122,11 @@ Quick.Compiler = (function () {
         output += "}());\n";
     }
 
-    function renderBeginElement(name, id) {
+    /*
+     * Renders the start of a new Element instance
+     * Called for each element instantiation in jml
+     */
+    function renderBeginElement(type, id) {
         addIndentation();
 
         output += ELEM_PREFIX + ".addChild((function() {\n";
@@ -122,11 +134,15 @@ Quick.Compiler = (function () {
         ++index;
         addIndentation();
 
-        output += "var " + ELEM_PREFIX + " = new " + currentHelperElement.type + "(";
+        output += "var " + ELEM_PREFIX + " = new " + type + "(";
         output += id ? "\"" + id + "\"" : "";
         output += ");\n";
     }
 
+    /*
+     * Renders the end of a new Element instance
+     * Called for each element instantiation in jml
+     */
     function renderEndElement() {
         addIndentation();
         output += "return " + ELEM_PREFIX + ";\n";
@@ -136,6 +152,10 @@ Quick.Compiler = (function () {
         output += "})());\n";
     }
 
+    /*
+     * Renders the start of a new Type definition
+     * Called for each type in jml
+     */
     function renderBeginType(type, inheritedType) {
         addIndentation();
 
@@ -147,6 +167,10 @@ Quick.Compiler = (function () {
         output += "var " + ELEM_PREFIX + " = new " + inheritedType + "(id, parent);\n";
     }
 
+    /*
+     * Renders the end of a new Type definition
+     * Called for each type in jml
+     */
     function renderEndType() {
         addIndentation();
         output += "return " + ELEM_PREFIX + ";\n";
@@ -156,6 +180,11 @@ Quick.Compiler = (function () {
         output += "};\n";
     }
 
+    /*
+     * Renders an event handler for the current element/type in scope
+     * Event handlers will be generated whenever a property name
+     * begins with 'on' like 'onmousedown'
+     */
     function renderEventHandler(property, value) {
         addIndentation();
         output += ELEM_PREFIX + ".addEventHandler(\"" + property + "\", ";
@@ -166,6 +195,9 @@ Quick.Compiler = (function () {
         output += "});\n";
     }
 
+    /*
+     * Renders a property for the current element/type in scope
+     */
     function renderProperty(property, value) {
         // special case for ID
         if (property === "id") {
@@ -188,13 +220,110 @@ Quick.Compiler = (function () {
         output += "});\n";
     }
 
-    function HelperElement(type, parent) {
-        this.parent = parent;
-        this.type = type;
+    /*
+     * Takes a TreeObject, containing either a Type or an Element
+     * and runs over the object's properties, types and children
+     * this is called recoursively
+     */
+    function renderTreeObject(tree) {
+        var i;
+
+        if (tree.typeDefinition) {
+            renderBeginType(tree.typeDefinition, tree.type);
+        } else {
+            renderBeginElement(tree.type, tree.id);
+        }
+
+        for (i = 0; i < tree.properties.length; ++i) {
+            renderProperty(tree.properties[i].name, tree.properties[i].value);
+        }
+
+        for (i = 0; i < tree.types.length; ++i) {
+            renderTreeObject(tree.types[i]);
+        }
+
+        for (i = 0; i < tree.elements.length; ++i) {
+            renderTreeObject(tree.elements[i]);
+        }
+
+        if (tree.typeDefinition) {
+            renderEndType();
+        } else {
+            renderEndElement();
+        }
+    }
+
+    /*
+     * Starting point of the renderer
+     * Takes a TreeObject tree to render
+     * The first tree object is root and needs special treatment
+     */
+    function renderTree(tree) {
+        var i;
+        index = 1;
+        output = "";
+
+        renderBegin();
+
+        for (i = 0; i < tree.types.length; ++i) {
+            renderTreeObject(tree.types[i]);
+        }
+
+        for (i = 0; i < tree.elements.length; ++i) {
+            renderTreeObject(tree.elements[i]);
+        }
+
+        renderEnd();
+
+        return output;
+    }
+
+    /*
+     * Dump out the current object tree to the console
+     */
+    function dumpObjectTree(tree, indent) {
+        var i;
+
+        if (indent === undefined) {
+            indent = 0;
+        }
+
+        function niceLog(msg) {
+            var j;
+            var out = "";
+            for(j = 0; j < indent; ++j) {
+                out += "  ";
+            }
+            console.log(out + msg);
+        };
+
+        niceLog("+ Element:");
+        niceLog("|- type: " + tree.type);
+        niceLog("|- type definition: " + tree.typeDefinition);
+
+        niceLog("|+ Properties:");
+        for (i = 0; i < tree.properties.length; ++i) {
+            niceLog("|--> " + tree.properties[i].name);
+        }
+
+        if (tree.types.length) {
+            niceLog("|+ Types:");
+            for (i = 0; i < tree.types.length; ++i) {
+                dumpObjectTree(tree.types[i], indent + 2);
+            }
+        }
+
+        if (tree.elements.length) {
+            niceLog("|+ Elements: ");
+            for (i = 0; i < tree.elements.length; ++i) {
+                dumpObjectTree(tree.elements[i], indent + 2);
+            }
+        }
     }
 
     /*
      * Take all tokens and compile it to real elements with properties and bindings
+     * This is basically the only real API of this object
      */
     compiler.render = function (tok, callback) {
         var property;
@@ -208,13 +337,20 @@ Quick.Compiler = (function () {
             return;
         }
 
-        output = "";          // render output, is Javascript which needs to be evaled or sourced
-        index = 1;            // index used for tracking the indentation
-        currentHelperElement = undefined;
-        toplevelHelperElement = undefined;
-        scopeStack = [];
+        // TreeObject is a helper to pass information to the renderer
+        var TreeObject = function (parent) {
+            this.id;
+            this.type;
+            this.typeDefinition;
+            this.parent = parent;
+            this.types = [];
+            this.elements = [];
+            this.properties = [];
+        }
 
-        renderBegin();
+        var objectTreeRoot = new TreeObject();
+        objectTreeRoot.type = "RootObject";
+        var objectTree = objectTreeRoot;
 
         for (i = 0; i < token_length; i += 1) {
             var token = tokens[i];
@@ -238,16 +374,17 @@ Quick.Compiler = (function () {
 
                 // only if elementType was found previously
                 if (elementTypeDefinition && elementType) {
-                    scopeStack.push("TYPE");
-
-                    renderBeginType(elementTypeDefinition, elementType);
+                    // we found a type definition, so add one
+                    var tmp = new TreeObject(objectTree);
+                    tmp.type = elementType;
+                    tmp.typeDefinition = elementTypeDefinition;
+                    objectTree.types.push(tmp);
+                    objectTree = tmp;
 
                     elementType = undefined;
                     elementTypeDefinition = undefined;
                 } else if (elementType) {
                     var tmpId;
-
-                    scopeStack.push("ELEMENT");
 
                     // FIXME stupid and unsave id search
                     for (j = i; j < token_length; ++j) {
@@ -258,23 +395,15 @@ Quick.Compiler = (function () {
                         }
                     }
 
-                    if (currentHelperElement) {
-                        var tmpElem = currentHelperElement;
-                        currentHelperElement = new HelperElement(elementType, tmpElem);
-                    } else {
-                        // found toplevel element
-                        currentHelperElement = new HelperElement(elementType);
-                    }
-
-                    // preserve the toplevel element for init steps
-                    if (!toplevelHelperElement) {
-                        toplevelHelperElement = currentHelperElement;
-                    }
+                    // we found a element definition, so add one to create an element instance
+                    var tmp = new TreeObject(objectTree);
+                    tmp.id = tmpId;
+                    tmp.type = elementType;
+                    objectTree.elements.push(tmp);
+                    objectTree = tmp;
 
                     elementType = undefined;
                     elementTypeDefinition = undefined;
-
-                    renderBeginElement(token.DATA, tmpId);
                 } else {
                     // TODO error case
                 }
@@ -282,18 +411,8 @@ Quick.Compiler = (function () {
 
             if (token.TOKEN === "SCOPE_END") {
                 log("end element description");
-
-                var scopeType = scopeStack.pop();
-
-                if (scopeType === "TYPE") {
-                    renderEndType();
-                } else {
-                    renderEndElement();
-
-                    if (currentHelperElement) {
-                        currentHelperElement = currentHelperElement.parent;
-                    }
-                }
+                // scope end, so reset the objectTree pointer
+                objectTree = objectTree.parent;
             }
 
             if (token.TOKEN === "EXPRESSION") {
@@ -309,15 +428,13 @@ Quick.Compiler = (function () {
                     }
                 } else {
                     log("right-hand-side expression found for property", property, token.DATA);
-                    renderProperty(property, token.DATA);
+                    objectTree.properties.push({name: property, value: token.DATA});
                     property = undefined;
                 }
             }
         }
 
-        renderEnd();
-
-        callback(null, output);
+        callback(null, renderTree(objectTreeRoot));
     };
 
     return compiler;
