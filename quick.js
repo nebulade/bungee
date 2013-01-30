@@ -68,7 +68,7 @@ if (!Quick.Engine) {
         // end binding detection
         ret.exitMagicBindingState = function () {
             log("exitMagicBindingState\n\n");
-            // ret.magicBindingState = false;
+            ret.magicBindingState = false;
             return getterCalled;
         };
 
@@ -111,9 +111,10 @@ function Element(id, parent) {
     this.element = Quick.Engine.createElement('item', this);
     this.parent = parent;
 
-    this.properties = [];
+    this.properties = {};
     this.connections = {};
     this.children = [];
+    this.bound = {};
 
     if (this.parent) {
         this.parent.addChild(this);
@@ -156,6 +157,18 @@ Element.prototype.addChanged = function (signal, callback) {
     // console.log("connections for " + signal + " " + this.connections[signal].length);
 };
 
+Element.prototype.removeChanged = function (obj, signal) {
+    var signalConnections = this.connections[signal];
+    // check if there are any connections for this signal
+    if (!signalConnections) {
+        return;
+    }
+
+    for (var i = 0; i < signalConnections.length; ++i) {
+        // TODO do implementation
+    }
+};
+
 Element.prototype.addBinding = function (name, value) {
     // console.log("addBinding", name);
 
@@ -169,8 +182,20 @@ Element.prototype.addBinding = function (name, value) {
     // console.log("addBinding result", name, val);
     var getters = Quick.Engine.exitMagicBindingState();
 
+    // break all previous bindings
+    for (var i = 0; i < this.bound[name]; this.bound[name].length) {
+        console.log("!!! experimental untested: break binding for " + name);
+        var boundObject = this.bound[name][i];
+        boundObject.removeChanged(this, name);
+    }
+    this.bound[name] = [];
+
+    // TODO test break bindings as well!!
     for (var getter in getters) {
         var tmp = getters[getter];
+        // store bindings to this for breaking
+        this.bound[name][this.bound[name].length] = { element: tmp.element, property: tmp.property };
+
         tmp.element.addChanged(tmp.property, function() {
             that[name] = value.apply(that);
         });
@@ -202,8 +227,7 @@ Element.prototype.addProperty = function (name, value) {
     var valueStore;
 
     // register property
-    // FIXME check if it is already added!
-    this.properties[this.properties.length] = { name: name, value: value };
+    this.properties[name] = value;
 
     if (this.hasOwnProperty(name)) {
         this.name = value;
@@ -227,7 +251,6 @@ Element.prototype.addProperty = function (name, value) {
 
                 // connections are called like the properties
                 that.emit(name);
-
                 Quick.Engine.dirty(that);
             }
         });
@@ -237,12 +260,11 @@ Element.prototype.addProperty = function (name, value) {
 // initial set of all properties and binding evaluation
 // should only be called once
 Element.prototype.initializeBindings = function () {
-    var i;
-    for (i = 0; i < this.properties.length; ++i) {
-        var name = this. properties[i].name;
-        var value = this.properties[i].value;
+    var name, i;
+    for (name in this.properties) {
+        var value = this.properties[name];
 
-        // console.log("Element.initializeBindings()", name, value);
+        // console.log("Element.initializeBindings()", this.id, name, value);
 
         // initial set and binding discovery
         if (typeof value === 'function') {
@@ -262,11 +284,11 @@ Element.prototype.initializeBindings = function () {
 };
 
 Element.prototype.emit = function (signal) {
-    // console.log("emit signal " + signal);
+    // console.log("## emit signal " + signal);
     if (signal in this.connections) {
-        // console.log("signal has connections", signal);
+        // console.log("### signal has connections", signal);
         for (var slot in this.connections[signal]) {
-            // console.log("### execute slot");
+            // console.log("#### execute slot", slot);
             this.connections[signal][slot]();
         }
     }

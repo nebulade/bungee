@@ -35,11 +35,11 @@ function Text(id, parent) {
     var elem = new Item(id, parent);
 
     elem.addProperty("font-size", "12pt");
-    elem.addProperty("text", "foobar");
+    elem.addProperty("text", "");
     elem.addProperty("textWidth", 0);
     elem.addProperty("textHeight", 0);
-    elem.addProperty("width", "auto");
-    elem.addProperty("height", "auto");
+    elem.addProperty("width", function() { return this.textWidth; });
+    elem.addProperty("height", function() { return this.textHeight; });
 
     // all this below for calculating the text width
     var tmp = window.document.createElement("div");
@@ -54,8 +54,6 @@ function Text(id, parent) {
         tmp.innerText = elem.text;
         elem.textWidth = (tmp.clientWidth + 1);
         elem.textHeight = (tmp.clientHeight + 1);
-        elem.width = (tmp.clientWidth + 1);
-        elem.height = (tmp.clientHeight + 1);
     });
 
     return elem;
@@ -167,11 +165,9 @@ QuickRendererDOM.prototype.addElement = function (element, parent) {
 };
 
 QuickRendererDOM.prototype.renderElement = function (element) {
-    var p;
+    var name;
     if (element.element) {
-        for (p in element.properties) {
-            var name = element.properties[p].name;
-
+        for (name in element.properties) {
             if (name === 'text') {
                 element.element.innerHTML = element[name];
             } else {
