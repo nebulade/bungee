@@ -225,6 +225,18 @@ Quick.Compiler = (function () {
     }
 
     /*
+     * Renders a delegate for the current element/type in scope
+     */
+    function renderDelegate(property, value) {
+        addIndentation();
+        output += ELEM_PREFIX + ".create" + property + " = function () {\n";
+        addIndentation(1);
+        output += "return new " + value + "();\n";
+        addIndentation();
+        output += "}\n";
+    }
+
+    /*
      * Takes a TreeObject, containing either a Type or an Element
      * and runs over the object's properties, types and children
      * this is called recoursively
@@ -240,6 +252,10 @@ Quick.Compiler = (function () {
 
         for (i = 0; i < tree.properties.length; ++i) {
             renderProperty(tree.properties[i].name, tree.properties[i].value);
+        }
+
+        for (i = 0; i < tree.delegates.length; ++i) {
+            renderDelegate(tree.delegates[i].name, tree.delegates[i].value);
         }
 
         for (i = 0; i < tree.types.length; ++i) {
@@ -310,6 +326,11 @@ Quick.Compiler = (function () {
             niceLog("|--> " + tree.properties[i].name);
         }
 
+        niceLog("|+ Delegates:");
+        for (i = 0; i < tree.delegates.length; ++i) {
+            niceLog("|--> " + tree.delegates[i].name + " : " + tree.delegates[i].value);
+        }
+
         if (tree.types.length) {
             niceLog("|+ Types:");
             for (i = 0; i < tree.types.length; ++i) {
@@ -350,6 +371,7 @@ Quick.Compiler = (function () {
             this.types = [];
             this.elements = [];
             this.properties = [];
+            this.delegates = [];
         };
 
         var objectTreeRoot = new TreeObject();
@@ -370,7 +392,12 @@ Quick.Compiler = (function () {
             }
 
             if (token.TOKEN === "ELEMENT") {
-                elementType = token.DATA;
+                if (property) {
+                    objectTree.delegates.push({name: property, value: token.DATA})
+                    property = undefined;
+                } else {
+                    elementType = token.DATA;
+                }
             }
 
             if (token.TOKEN === "SCOPE_START") {
@@ -430,6 +457,7 @@ Quick.Compiler = (function () {
             }
         }
 
+        // dumpObjectTree(objectTreeRoot);
         callback(null, renderTree(objectTreeRoot));
     };
 

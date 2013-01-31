@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title> QuickJS </title>
+
+        <script type="text/javascript" src="../quick_tokenizer.js"></script>
+        <script type="text/javascript" src="../quick_compiler.js"></script>
+        <script type="text/javascript" src="../quick_dom.js"></script>
+        <script type="text/javascript" src="../quick_helper.js"></script>
+        <script type="text/javascript" src="../quick.js"></script>
+
+        <script type="text/javascript">
+
+        function init () {
+            Quick.useQueryFlags();
+            Quick.compileScriptTags();
+        }
+
+        </script>
+
+        <script type="text/jml">
+
+        MyDelegate @ Item {
+            top: 100;
+            left: 300 + (this.modelData * (this.width + 10));
+            width: 50
+            height: this.width
+            background-color: "red"
+
+            Text {
+                text: this.parent.parent.label + " " + this.parent.modelData
+            }
+        }
+
+        Item {
+            delegate: MyDelegate;
+            model: 10;
+            label: "Foo";
+            width: 100;
+            height: 100;
+            background-color: "blue";
+            onclick: ^{
+                for (var i = 0; i < this.model; ++i) {
+                    var child = this.createdelegate();
+                    child.modelData = i;
+                    this.addChild(child);
+                    child.initializeBindings();
+                }
+            }^
+        }
+
+        </script>
+
+    </head>
+
+    <body onload="init();">
+    </body>
+</html>
+
