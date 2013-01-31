@@ -28,7 +28,7 @@ function Item(id, parent) {
     elem.addProperty("containsMouse", false);
     elem.addProperty("scale", 1);
     elem.addProperty("-webkit-transform", function () {
-        var s = this.scale.toFixed(1);
+        var s = this.scale.toFixed(4);
         return "scale(" + s + ", " + s + ")";
     });
 
