@@ -18,6 +18,10 @@ function Item(id, parent) {
     elem.addProperty("mouseAbsY", 0);
     elem.addProperty("mouseRelX", 0);
     elem.addProperty("mouseRelY", 0);
+    elem.addProperty("width", 0);
+    elem.addProperty("height", 0);
+    elem.addProperty("top", 0);
+    elem.addProperty("left", 0);
     elem.addProperty("mouseRelStartX", 0);
     elem.addProperty("mouseRelStartY", 0);
     elem.addProperty("mousePressed", false);
