@@ -202,7 +202,7 @@ Element.prototype.addBinding = function (name, value) {
         hasBinding = true;
     }
 
-    return hasBinding;
+    return { hasBindings: hasBinding, value: val };
 };
 
 Element.prototype.addEventHandler = function (event, handler) {
@@ -268,10 +268,11 @@ Element.prototype.initializeBindings = function () {
 
         // initial set and binding discovery
         if (typeof value === 'function') {
-            if (this.addBinding(name, value)) {
+            var ret = this.addBinding(name, value);
+            if (ret.hasBindings) {
                 this[name] = value;
             } else {
-                this[name] = value.apply(this);
+                this[name] = ret.value;
             }
         } else {
             this[name] = value;
