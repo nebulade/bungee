@@ -282,6 +282,9 @@ Element.prototype.initializeBindings = function () {
     for (i = 0; i < this.children.length; ++i) {
         this.children[i].initializeBindings();
     }
+
+    // this calls the onload slot, if defined
+    this.emit("load");
 };
 
 Element.prototype.emit = function (signal) {

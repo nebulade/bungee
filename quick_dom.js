@@ -39,6 +39,7 @@ function Text(id, parent) {
     var elem = new Item(id, parent);
 
     elem.addProperty("font-size", "12pt");
+    elem.addProperty("font-family", "Source Code Pro");
     elem.addProperty("text", "");
     elem.addProperty("textWidth", 0);
     elem.addProperty("textHeight", 0);
@@ -54,7 +55,8 @@ function Text(id, parent) {
     tmp.style.height = "auto";
 
     elem.addProperty("_text", function () {
-        tmp.style.fontSize = elem.fontSize;
+        tmp.style["font-size"] = elem["font-size"];
+        tmp.style["font-family"] = elem["font-family"];
         tmp.innerText = elem.text;
         elem.textWidth = (tmp.clientWidth + 1);
         elem.textHeight = (tmp.clientHeight + 1);
