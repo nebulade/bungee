@@ -265,7 +265,8 @@ Element.prototype.addProperty = function (name, value) {
         Object.defineProperty(this, name, {
             get: function () {
                 // console.log("getter: ", that.id, name);
-                Quick.Engine.addCalledGetter(that, name);
+                if (Quick.Engine.magicBindingState)
+                    Quick.Engine.addCalledGetter(that, name);
 
                 if (typeof valueStore === 'function')
                     return valueStore.apply(that);
