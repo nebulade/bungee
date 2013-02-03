@@ -40,11 +40,11 @@ var tmpTextElement;
 function Text(id, parent) {
     var elem = new Item(id, parent);
 
+    elem.addProperty("textWidth", 0);
+    elem.addProperty("textHeight", 0);
     elem.addProperty("font-size", "12pt");
     elem.addProperty("font-family", "Source Code Pro");
     elem.addProperty("text", "");
-    elem.addProperty("textWidth", 0);
-    elem.addProperty("textHeight", 0);
     elem.addProperty("width", function() { return this.textWidth; });
     elem.addProperty("height", function() { return this.textHeight; });
 
@@ -58,12 +58,22 @@ function Text(id, parent) {
         document.body.appendChild(tmpTextElement);
     }
 
-    elem.addProperty("_text", function () {
-        tmpTextElement.style["font-size"] = elem["font-size"];
-        tmpTextElement.style["font-family"] = elem["font-family"];
-        tmpTextElement.innerText = elem.text;
-        elem.textWidth = (tmpTextElement.clientWidth + 1);
-        elem.textHeight = (tmpTextElement.clientHeight + 1);
+    elem.addChanged("text", function () {
+        var tmpProperty = elem.text;
+        var width = 0;
+        var height = 0;
+
+        if (tmpTextElement.textContent === tmpProperty) {
+            width = (tmpTextElement.clientWidth + 1);
+            height = (tmpTextElement.clientHeight + 1);
+        } else if (tmpProperty !== "") {
+            tmpTextElement.textContent = tmpProperty;
+            width = (tmpTextElement.clientWidth + 1);
+            height = (tmpTextElement.clientHeight + 1);
+        }
+
+        elem.textWidth = width;
+        elem.textHeight = height;
     });
 
     return elem;
@@ -196,7 +206,7 @@ QuickRendererDOM.prototype.renderElement = function (element) {
             if (element.properties[name].dirty) {
                 element.properties[name].dirty = false;
                 if (name === 'text') {
-                    element.element.innerHTML = element[name];
+                    element.element.textContent = element[name];
                 } else {
                     element.element.style[name] = element[name];
                 }

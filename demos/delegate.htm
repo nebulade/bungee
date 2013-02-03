@@ -20,7 +20,6 @@
         <script type="text/jml">
 
         MyDelegate @ Item {
-            name: "delegate" + this.modelData
             top: 0 + (this.modelData * (this.height + 2));
             left: 0
             width: 200
@@ -31,8 +30,7 @@
             border-style: "solid"
 
             Text {
-                text: this.parent.parent.label + " " + this.parent.modelData
-                text: "foobar"
+                text: "Delegate" + this.parent.modelData
                 color: "white"
                 left: (this.parent.width / 2.0) - (this.textWidth / 2.0)
                 top: (this.parent.height / 2.0) - (this.textHeight / 2.0)
@@ -41,8 +39,7 @@
 
         Item {
             delegate: MyDelegate;
-            model: 300;
-            label: "My Delegate";
+            model: 100;
             width: 100;
             height: 100;
             background-color: "blue";
