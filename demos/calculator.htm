@@ -34,7 +34,7 @@
 
             Text {
                 id: text;
-                fontSize: "24pt";
+                font-size: 24;
                 left: (this.parent.width / 2.0) - (this.textWidth / 2.0)
                 top: (this.parent.height / 2.0) - (this.textHeight / 2.0)
                 text-color: "white";
@@ -51,17 +51,23 @@
             background-color: "lightgray";
             label: "0"
 
-            Text {
+            Item {
                 id: display;
-                fontSize: "24pt";
                 left: this.parent.width / 2.0 - this.width / 2.0;
                 top: 20;
-                text-color: "white";
-                text: this.parent.label;
-                text-align: "right"
-                width: this.inputBlock.width;
-                background-color: "darkgray"
                 overflow: "hidden"
+                background-color: "darkgray"
+                width: this.inputBlock.width;
+                height: this.myText.height
+
+                Text {
+                    id: myText
+                    font-size: 24;
+                    text-color: "white";
+                    text: this.parent.parent.label;
+                    left: this.parent.width - this.width
+                    top: 0
+                }
             }
 
             Item {

@@ -170,6 +170,20 @@ QuickRendererDOM.prototype.addElement = function (element, parent) {
     }
 };
 
+QuickRendererDOM.prototype.addElements = function (elements, parent) {
+    var fragment = document.createDocumentFragment();
+
+    for (var i = 0; i < elements.length; ++i) {
+        fragment.appendChild(elements[i].element);
+    }
+
+    if (parent && parent.element) {
+        parent.element.appendChild(fragment);
+    } else {
+        document.body.appendChild(fragment);
+    }
+};
+
 QuickRendererDOM.prototype.renderElement = function (element) {
     var name;
     if (element.element) {

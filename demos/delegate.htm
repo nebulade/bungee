@@ -30,28 +30,30 @@
             border-style: "solid"
 
             Text {
-                text: this.parent.parent.label + " " + this.parent.modelData
+                // text: this.parent.parent.label + " " + this.parent.modelData
+                text: "foobar"
                 color: "white"
                 left: (this.parent.width / 2.0) - (this.textWidth / 2.0)
                 top: (this.parent.height / 2.0) - (this.textHeight / 2.0)
-
             }
         }
 
         Item {
             delegate: MyDelegate;
-            model: 100;
+            model: 500;
             label: "My Delegate";
             width: 100;
             height: 100;
             background-color: "blue";
             onload: ^{
+                var children = [this.model];
                 for (var i = 0; i < this.model; ++i) {
                     var child = this.createdelegate();
                     child.modelData = i;
-                    this.addChild(child);
                     child.initializeBindings();
+                    children[i] = child;
                 }
+                this.addChildren(children);
             }^
         }
 

@@ -50,10 +50,12 @@ if (!Quick.Engine) {
             var renderer = new QuickRendererDOM();
             ret.createElement = renderer.createElement;
             ret.addElement = renderer.addElement;
+            ret.addElements = renderer.addElements;
             ret.renderElement = renderer.renderElement;
         } catch (e) {
             log("Cannot create DOM renderer", true);
             ret.createElement = function () {};
+            ret.addElements = function () {};
             ret.addElement = function () {};
             ret.renderElement = function () {};
         }
@@ -119,6 +121,32 @@ function Element(id, parent) {
     if (this.parent) {
         this.parent.addChild(this);
     }
+}
+
+Element.prototype.addChildren = function (children) {
+    for (var j = 0; j < children.length; ++j) {
+        var child = children[j];
+
+        // adds child id to the namespace
+        this[child.id] = child;
+
+        // adds the parents id to the child
+        child[this.id] = this;
+
+        // add child to siblings scope and vice versa
+        var i;
+        for (i = 0; i < this.children.length; ++i) {
+            this.children[i][child.id] = child;
+            child[this.children[i].id] = this.children[i];
+        }
+
+        // add newly added child to internal children array
+        this.children[this.children.length] = child;
+
+        child.parent = this;
+    }
+
+    Quick.Engine.addElements(children, this);
 }
 
 Element.prototype.addChild = function (child) {
