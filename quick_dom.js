@@ -35,6 +35,8 @@ function Item(id, parent) {
     return elem;
 }
 
+// FIXME global leak
+var tmpTextElement;
 function Text(id, parent) {
     var elem = new Item(id, parent);
 
@@ -47,19 +49,21 @@ function Text(id, parent) {
     elem.addProperty("height", function() { return this.textHeight; });
 
     // all this below for calculating the text width
-    var tmp = window.document.createElement("div");
-    document.body.appendChild(tmp);
-    tmp.style.position = "absolute";
-    tmp.style.visibility = "hidden";
-    tmp.style.width = "auto";
-    tmp.style.height = "auto";
+    if (!tmpTextElement) {
+        tmpTextElement = window.document.createElement("div");
+        tmpTextElement.style.position = "absolute";
+        tmpTextElement.style.visibility = "hidden";
+        tmpTextElement.style.width = "auto";
+        tmpTextElement.style.height = "auto";
+        document.body.appendChild(tmpTextElement);
+    }
 
     elem.addProperty("_text", function () {
-        tmp.style["font-size"] = elem["font-size"];
-        tmp.style["font-family"] = elem["font-family"];
-        tmp.innerText = elem.text;
-        elem.textWidth = (tmp.clientWidth + 1);
-        elem.textHeight = (tmp.clientHeight + 1);
+        tmpTextElement.style["font-size"] = elem["font-size"];
+        tmpTextElement.style["font-family"] = elem["font-family"];
+        tmpTextElement.innerText = elem.text;
+        elem.textWidth = (tmpTextElement.clientWidth + 1);
+        elem.textHeight = (tmpTextElement.clientHeight + 1);
     });
 
     return elem;
