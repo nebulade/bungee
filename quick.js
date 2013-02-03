@@ -90,7 +90,8 @@ if (!Quick.Engine) {
 
         advance();
 
-        ret.dirty = function (element) {
+        ret.dirty = function (element, property) {
+            element.properties[property].dirty = true;
             if (dirtyElements.indexOf(element) === -1)
                 dirtyElements[dirtyElements.length] = element;
         };
@@ -256,7 +257,7 @@ Element.prototype.addProperty = function (name, value) {
     var valueStore;
 
     // register property
-    this.properties[name] = value;
+    this.properties[name] = {value: value, dirty: false};
 
     if (this.hasOwnProperty(name)) {
         this.name = value;
@@ -280,7 +281,7 @@ Element.prototype.addProperty = function (name, value) {
 
                 // connections are called like the properties
                 that.emit(name);
-                Quick.Engine.dirty(that);
+                Quick.Engine.dirty(that, name);
             }
         });
     }
@@ -291,7 +292,7 @@ Element.prototype.addProperty = function (name, value) {
 Element.prototype.initializeBindings = function () {
     var name, i;
     for (name in this.properties) {
-        var value = this.properties[name];
+        var value = this.properties[name].value;
 
         // console.log("Element.initializeBindings()", this.id, name, value);
 

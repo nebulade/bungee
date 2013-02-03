@@ -189,10 +189,13 @@ QuickRendererDOM.prototype.renderElement = function (element) {
     var name;
     if (element.element) {
         for (name in element.properties) {
-            if (name === 'text') {
-                element.element.innerHTML = element[name];
-            } else {
-                element.element.style[name] = element[name];
+            if (element.properties[name].dirty) {
+                element.properties[name].dirty = false;
+                if (name === 'text') {
+                    element.element.innerHTML = element[name];
+                } else {
+                    element.element.style[name] = element[name];
+                }
             }
         }
     }
