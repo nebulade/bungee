@@ -185,6 +185,7 @@ QuickRendererDOM.prototype.addElements = function (elements, parent) {
 };
 
 QuickRendererDOM.prototype.renderElement = function (element) {
+    // console.log("renderElement: " + element.id + " properties: " + Object.keys(element.properties).length);
     var name;
     if (element.element) {
         for (name in element.properties) {

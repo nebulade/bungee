@@ -91,7 +91,8 @@ if (!Quick.Engine) {
         advance();
 
         ret.dirty = function (element) {
-            dirtyElements[dirtyElements.length] = element;
+            if (dirtyElements.indexOf(element) === -1)
+                dirtyElements[dirtyElements.length] = element;
         };
 
         return ret;
