@@ -33,11 +33,12 @@ if (!Quick.Engine) {
     Quick.Engine = (function () {
         var ret = {};
         var getterCalled = {};
-        var dirtyElements = [];
+        var dirtyElements = {};
         var updateTimer;
 
         ret.magicBindingState = false;
         ret.verbose = false;
+        ret._elementIndex = 0;
 
         function log(msg, error) {
             if (ret.verbose || error) {
@@ -82,18 +83,18 @@ if (!Quick.Engine) {
         function advance() {
             window.requestAnimFrame(advance);
             var i;
-            for (i = 0; i < dirtyElements.length; ++i) {
+            for (i in dirtyElements) {
                 dirtyElements[i].render();
             }
-            dirtyElements = [];
+            dirtyElements = {};
         }
 
         advance();
 
         ret.dirty = function (element, property) {
             element.properties[property].dirty = true;
-            if (dirtyElements.indexOf(element) === -1)
-                dirtyElements[dirtyElements.length] = element;
+            if (!dirtyElements[element._internalIndex])
+                dirtyElements[element._internalIndex] = element;
         };
 
         return ret;
@@ -114,6 +115,7 @@ function Element(id, parent) {
     this.id = id;
     this.element = Quick.Engine.createElement('item', this);
     this.parent = parent;
+    this._internalIndex = Quick.Engine._elementIndex++;
 
     this.properties = {};
     this.connections = {};
