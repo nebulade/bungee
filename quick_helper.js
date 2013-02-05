@@ -33,7 +33,11 @@ Quick.compileScriptTagElement = function(script) {
                 console.log("----------------------");
                 console.log(result);
                 console.log("----------------------");
+                console.log("eval...");
+                var o = new Date();
                 eval(result);
+                var n = new Date();
+                console.log("done, eval took time: ", (n - o), "ms");
             } catch (e) {
                 console.log("Error evaluating generated JS code: " + e);
             }
