@@ -22,27 +22,33 @@
         MyDelegate @ Item {
             top: 0 + (this.modelData * (this.height + 2));
             left: 0
-            width: 200
-            height: 30
-            background-color: "purple"
-            border-width: 1
-            border-color: "white"
-            border-style: "solid"
+            width: 400
+            height: 70
+            background-color: "#00aeef"
+
+            Image {
+                id: delegateImage
+                src: "person.png"
+                width: 64
+                height: 64
+                left: 20
+                top: this.parent.verticalCenter - this.verticalCenter
+            }
 
             Text {
+                id: delegateText
                 text: "Delegate" + this.parent.modelData
                 color: "white"
-                left: (this.parent.width / 2.0) - (this.textWidth / 2.0)
-                top: (this.parent.height / 2.0) - (this.textHeight / 2.0)
+                font-size: 24
+                left: this.delegateImage.right + 10
+                top: this.parent.verticalCenter - this.verticalCenter
             }
         }
 
         Item {
             delegate: MyDelegate;
-            model: 100;
-            width: 100;
-            height: 100;
-            background-color: "blue";
+            model: 200;
+
             onload: ^{
                 var children = [this.model];
                 for (var i = 0; i < this.model; ++i) {
