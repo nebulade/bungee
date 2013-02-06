@@ -67,6 +67,9 @@ function Text(id, parent) {
         var width = 0;
         var height = 0;
 
+        tmpTextElement.style["font-size"] = elem["font-size"];
+        tmpTextElement.style["font-family"] = elem["font-family"];
+
         if (tmpTextElement.textContent === tmpProperty) {
             width = (tmpTextElement.clientWidth + 1);
             height = (tmpTextElement.clientHeight + 1);
