@@ -32,7 +32,7 @@ function Item(id, parent) {
     elem.addProperty("containsMouse", false);
     elem.addProperty("scale", 1);
     elem.addProperty("-webkit-transform", function () {
-        var s = this.scale.toFixed(4);
+        var s = this.scale.toFixed(10);
         return "scale(" + s + ", " + s + ")";
     });
 
@@ -206,15 +206,13 @@ QuickRendererDOM.prototype.renderElement = function (element) {
     // console.log("renderElement: " + element.id + " properties: " + Object.keys(element.properties).length);
     var name;
     if (element.element) {
-        for (name in element.properties) {
-            if (element.properties[name].dirty) {
-                element.properties[name].dirty = false;
-                if (name === 'text') {
-                    element.element.textContent = element[name];
-                } else {
-                    element.element.style[name] = element[name];
-                }
+        for (name in element._dirtyProperties) {
+            if (name === 'text') {
+                element.element.textContent = element[name];
+            } else {
+                element.element.style[name] = element[name];
             }
         }
+        element._dirtyProperties = {};
     }
 };

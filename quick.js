@@ -33,8 +33,7 @@ if (!Quick.Engine) {
     Quick.Engine = (function () {
         var ret = {};
         var getterCalled = {};
-        var dirtyElements = {};
-        var updateTimer;
+        var _dirtyElements = {};
 
         ret.magicBindingState = false;
         ret.verbose = false;
@@ -83,18 +82,19 @@ if (!Quick.Engine) {
         function advance() {
             window.requestAnimFrame(advance);
             var i;
-            for (i in dirtyElements) {
-                dirtyElements[i].render();
+            for (i in _dirtyElements) {
+                _dirtyElements[i].render();
             }
-            dirtyElements = {};
+            _dirtyElements = {};
         }
 
         advance();
 
         ret.dirty = function (element, property) {
-            element.properties[property].dirty = true;
-            if (!dirtyElements[element._internalIndex])
-                dirtyElements[element._internalIndex] = element;
+            element._dirtyProperties[property] = true;
+            if (!_dirtyElements[element._internalIndex]) {
+                _dirtyElements[element._internalIndex] = element;
+            }
         };
 
         return ret;
@@ -116,6 +116,7 @@ function Element(id, parent) {
     this.element = Quick.Engine.createElement('item', this);
     this.parent = parent;
     this._internalIndex = Quick.Engine._elementIndex++;
+    this._dirtyProperties = {};
 
     this.properties = {};
     this.connections = {};
@@ -259,7 +260,7 @@ Element.prototype.addProperty = function (name, value) {
     var valueStore;
 
     // register property
-    this.properties[name] = {value: value, dirty: false};
+    this.properties[name] = value;
 
     if (this.hasOwnProperty(name)) {
         this.name = value;
@@ -295,7 +296,7 @@ Element.prototype.addProperty = function (name, value) {
 Element.prototype.initializeBindings = function () {
     var name, i;
     for (name in this.properties) {
-        var value = this.properties[name].value;
+        var value = this.properties[name];
 
         // console.log("Element.initializeBindings()", this.id, name, value);
 

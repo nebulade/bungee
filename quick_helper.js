@@ -20,7 +20,7 @@ Quick.useQueryFlags = function() {
     // TODO improve detection
     Quick.verbose = (window.location.href.indexOf("verbose") >= 0);
     Quick.debug = (window.location.href.indexOf("debug") >= 0);
-}
+};
 
 Quick.compileScriptTagElement = function(script) {
     var tokens = Quick.Tokenizer.parse(script.text);
@@ -43,7 +43,7 @@ Quick.compileScriptTagElement = function(script) {
             }
         }
     });
-}
+};
 
 Quick.compileScriptTags = function(scriptType) {
     var type = scriptType ? scriptType : "text/jml";
