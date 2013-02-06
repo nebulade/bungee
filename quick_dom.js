@@ -31,6 +31,7 @@ function Item(id, parent) {
     elem.addProperty("mousePressed", false);
     elem.addProperty("containsMouse", false);
     elem.addProperty("scale", 1);
+    elem.addProperty("opacity", 1);
     elem.addProperty("-webkit-transform", function () {
         var s = this.scale.toFixed(10);
         return "scale(" + s + ", " + s + ")";

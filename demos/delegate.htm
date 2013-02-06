@@ -15,16 +15,77 @@
             Quick.compileScriptTags();
         }
 
+
+        // animation frame shim
+        window.requestAnimFrame = (function () {
+            return window.requestAnimationFrame ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.oRequestAnimationFrame ||
+                window.msRequestAnimationFrame ||
+                function (callback) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
+            })();
+
+        var animations = [];
+
+        function advance() {
+            requestAnimFrame(advance);
+
+            var a;
+            for (a in animations) {
+                animations[a].advance();
+            }
+        }
+
+        // start the animation loop
+        advance();
+
+        function pulseInit(element) {
+            var a = {};
+            a.running = false;
+            a.element = element;
+            a.pulseIn = false;
+            a.advance = function () {
+                var e = this.element;
+                var o = e.opacity;
+
+                if (!this.running && o >= 1) {
+                    return;
+                }
+
+                if (e.pulseIn) {
+                    e.opacity = o + 0.03;
+                } else {
+                    e.opacity = o - 0.03;
+                }
+
+                if (o <= 0.2 && !e.pulseIn) {
+                    e.pulseIn = true;
+                } else if (o >= 1 && e.pulseIn) {
+                    e.pulseIn = false;
+                }
+            }
+            animations.push(a);
+            return a;
+        }
+
         </script>
 
         <script type="text/jml">
 
         MyDelegate @ Item {
             top: 0 + (this.modelData * (this.height + 2));
-            left: 0
-            width: 400
+            left: 10
+            width: 700;
             height: 70
             background-color: "#00aeef"
+            onmouseover: this.a.running = true;
+            onmouseout: this.a.running = false;
+            onload: this.a = pulseInit(this);
+            hoverEnabled: true
+            scale: this.opacity
 
             Image {
                 id: delegateImage
@@ -37,7 +98,7 @@
 
             Text {
                 id: delegateText
-                text: "Delegate" + this.parent.modelData
+                text: "Delegate " + this.parent.modelData + " and a bit more..."
                 color: "white"
                 font-size: 24
                 left: this.delegateImage.right + 10
