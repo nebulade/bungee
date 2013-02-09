@@ -8,8 +8,8 @@
  * Predefined basic elements
  **************************************************
  */
-function Item(id, parent) {
-    var elem = new Element(id, parent);
+function Item(id, parent, typeHint) {
+    var elem = new Element(id, parent, typeHint ? typeHint : "item");
 
     elem.addProperty("-webkit-user-select", "none");
     elem.addProperty("-moz-user-select", "none");
@@ -60,6 +60,7 @@ function Text(id, parent) {
         tmpTextElement.style.visibility = "hidden";
         tmpTextElement.style.width = "auto";
         tmpTextElement.style.height = "auto";
+        tmpTextElement.style.left = -10000;
         document.body.appendChild(tmpTextElement);
     }
 
@@ -116,11 +117,28 @@ function Image(id, parent) {
 }
 
 function Button(id, parent) {
-    var elem = new Rectangle(id, parent);
+    var elem = new Item(id, parent);
 
     elem.addProperty("text-align", "center");
     elem.addProperty("cursor", "pointer");
     elem.addProperty("background-color", "lightgray");
+
+    return elem;
+}
+
+function Input(id, parent) {
+    var elem = new Item(id, parent, "input");
+
+    elem.addProperty("-webkit-user-select", "auto");
+    elem.addProperty("-moz-user-select", "auto");
+    elem.addProperty("hoverEnabled", true);
+    elem.addProperty("font-size", "12pt");
+    elem.addProperty("font-family", "Source Code Pro");
+    elem.addProperty("text", function() {
+        console.log("###", this.element.value);
+        return this.element.value;
+    });
+
 
     return elem;
 }
@@ -189,6 +207,14 @@ QuickRendererDOM.prototype.addElement = function (element, parent) {
         parent.element.appendChild(element.element);
     } else {
         document.body.appendChild(element.element);
+    }
+};
+
+QuickRendererDOM.prototype.removeElement = function (element, parent) {
+    if (parent && parent.element) {
+        parent.element.removeChild(element.element);
+    } else {
+        document.body.removeChild(element.element);
     }
 };
 

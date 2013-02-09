@@ -52,12 +52,14 @@ if (!Quick.Engine) {
             ret.addElement = renderer.addElement;
             ret.addElements = renderer.addElements;
             ret.renderElement = renderer.renderElement;
+            ret.removeElement = renderer.removeElement;
         } catch (e) {
             log("Cannot create DOM renderer", true);
             ret.createElement = function () {};
             ret.addElements = function () {};
             ret.addElement = function () {};
             ret.renderElement = function () {};
+            ret.removeElement = function () {};
         }
 
         // begin binding detection
@@ -111,9 +113,9 @@ if (!Quick.Engine) {
  * by using render hooks.
  *
  */
-function Element(id, parent) {
+function Element(id, parent, typeHint) {
     this.id = id;
-    this.element = Quick.Engine.createElement('item', this);
+    this.element = Quick.Engine.createElement(typeHint ? typeHint : "object", this);
     this.parent = parent;
     this._internalIndex = Quick.Engine._elementIndex++;
     this._dirtyProperties = {};
@@ -127,6 +129,14 @@ function Element(id, parent) {
         this.parent.addChild(this);
     }
 }
+
+Element.prototype.removeChildren = function () {
+    for (var i in this.children) {
+        Quick.Engine.removeElement(this.children[i], this);
+    }
+
+    this.children = [];
+};
 
 Element.prototype.addChildren = function (children) {
     for (var j = 0; j < children.length; ++j) {
