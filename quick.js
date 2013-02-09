@@ -131,7 +131,9 @@ function Element(id, parent, typeHint) {
 }
 
 Element.prototype.removeChildren = function () {
-    for (var i in this.children) {
+    var i;
+    for (i = 0; i < this.children.length; ++i) {
+        // TODO do we leak things here? elements are still referenced so maybe a delete?
         Quick.Engine.removeElement(this.children[i], this);
     }
 

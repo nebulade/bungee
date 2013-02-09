@@ -60,14 +60,14 @@
             scope.elem2.addProperty('opacity', function() { return this.elem1.width/100; });
             scope.elem2.addProperty('width', 50);
             scope.elem2.addProperty('height', 100);
-            scope.elem2.addProperty('background-color', '#00ff00');
+            scope.elem2.addProperty('backgroundColor', '#00ff00');
             scope.elem2.addEventHandler('onmouseover', function () { console.log("onmouseover handler: " + this.elem1.left); });
 
             scope.elem1 = new Element('elem1', scope.elem);
             scope.elem1.addProperty('left', function () { return 100; });
             scope.elem1.addProperty('width', function () { return this.elem2.width/2.0; });
             scope.elem1.addProperty('height', 100);
-            scope.elem1.addProperty('background-color', '#00ffff');
+            scope.elem1.addProperty('backgroundColor', '#00ffff');
 
             scope.elem3 = new Element('elem3', scope.elem);
             scope.elem3.addProperty('width', 100);
@@ -78,7 +78,7 @@
             scope.elem4 = new Element('elem4', scope.elem1);
             scope.elem4.addProperty('width', function () { return this.parent.width; });
             scope.elem4.addProperty('height', 30);
-            scope.elem4.addProperty('background-color', '#0000ff');
+            scope.elem4.addProperty('backgroundColor', '#0000ff');
             scope.elem4.addProperty('text', function () { return this.parent.width > 150 ? 'foo' : 'bar'; });
 
             scope.button = new Button('button', scope.elem);

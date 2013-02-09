@@ -17,10 +17,10 @@
             hoverEnabled: true;
             color: "white";
             cursor: "pointer";
-            border-width: 0;
+            borderWidth: 0;
             scale: this.containsMouse ? 1.2 : 1;
 
-            background-color: ^{
+            backgroundColor: ^{
                 this.mousePressed;
                 return this.containsMouse ? (this.mousePressed ? "purple" : "gray") : "black";
             }^
@@ -34,10 +34,10 @@
 
             Text {
                 id: text;
-                font-size: 24;
+                fontSize: 24;
                 left: (this.parent.width / 2.0) - (this.textWidth / 2.0)
                 top: (this.parent.height / 2.0) - (this.textHeight / 2.0)
-                text-color: "white";
+                textColor: "white";
                 text: this.parent.label;
             }
         }
@@ -48,7 +48,7 @@
             top: window.innerHeight / 2.0 - this.height / 2.0;
             width: 200;
             height: 300;
-            background-color: "lightgray";
+            backgroundColor: "lightgray";
             label: "0"
 
             Item {
@@ -56,14 +56,14 @@
                 left: this.parent.width / 2.0 - this.width / 2.0;
                 top: 20;
                 overflow: "hidden"
-                background-color: "darkgray"
+                backgroundColor: "darkgray"
                 width: this.inputBlock.width;
                 height: this.myText.height
 
                 Text {
                     id: myText
-                    font-size: 24;
-                    text-color: "white";
+                    fontSize: 24;
+                    textColor: "white";
                     text: this.parent.parent.label;
                     left: this.parent.width - this.width
                     top: 0

@@ -38,7 +38,7 @@ Item {
     height: 100;
     left: 0;
     top: 0;
-    background-color: "#ffff00";
+    backgroundColor: "#ffff00";
 
     Image {
         id: image1;
@@ -70,7 +70,7 @@ Item {
         height: 200;
         left: 500;
         top: 100;
-        background-color: this.hoverEnabled ? "#ff00ff" : "#770077";
+        backgroundColor: this.hoverEnabled ? "#ff00ff" : "#770077";
         //scale: 1.5;
         onmousemove: ^{
             if (this.mousePressed) {
@@ -87,9 +87,9 @@ Item {
             top: 20;
             text: "Toggle drag"
             hoverEnabled: true;
-            border-radius: this.mousePressed ? 4 : 2;
-            border-color: this.containsMouse ? "black" : "gray";
-            background-color: this.mousePressed ? "gray" : "lightgray";
+            borderRadius: this.mousePressed ? 4 : 2;
+            borderColor: this.containsMouse ? "black" : "gray";
+            backgroundColor: this.mousePressed ? "gray" : "lightgray";
             onclick: ^{
                 this.parent.hoverEnabled = !this.parent.hoverEnabled;
                 console.log("toggle dragging");

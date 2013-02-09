@@ -12,7 +12,7 @@ function Item(id, parent, typeHint) {
     var elem = new Element(id, parent, typeHint ? typeHint : "item");
 
     elem.addProperty("-webkit-user-select", "none");
-    elem.addProperty("-moz-user-select", "none");
+    elem.addProperty("userSelect", "none");
     elem.addProperty("hoverEnabled", false);
     elem.addProperty("mouseAbsX", 0);
     elem.addProperty("mouseAbsY", 0);
@@ -36,6 +36,10 @@ function Item(id, parent, typeHint) {
         var s = this.scale.toFixed(10);
         return "scale(" + s + ", " + s + ")";
     });
+    elem.addProperty("transform", function () {
+        var s = this.scale.toFixed(10);
+        return "scale(" + s + ", " + s + ")";
+    });
 
     return elem;
 }
@@ -47,8 +51,8 @@ function Text(id, parent) {
 
     elem.addProperty("textWidth", 0);
     elem.addProperty("textHeight", 0);
-    elem.addProperty("font-size", "12pt");
-    elem.addProperty("font-family", "Source Code Pro");
+    elem.addProperty("fontSize", "12pt");
+    elem.addProperty("fontFamily", "Source Code Pro");
     elem.addProperty("text", "");
     elem.addProperty("width", function() { return this.textWidth; });
     elem.addProperty("height", function() { return this.textHeight; });
@@ -69,8 +73,8 @@ function Text(id, parent) {
         var width = 0;
         var height = 0;
 
-        tmpTextElement.style["font-size"] = elem["font-size"];
-        tmpTextElement.style["font-family"] = elem["font-family"];
+        tmpTextElement.style["fontSize"] = elem["fontSize"];
+        tmpTextElement.style["fontFamily"] = elem["fontFamily"];
 
         if (tmpTextElement.textContent === tmpProperty) {
             width = (tmpTextElement.clientWidth + 1);
@@ -91,11 +95,11 @@ function Text(id, parent) {
 function Rectangle(id, parent) {
     var elem = new Item(id, parent);
 
-    elem.addProperty("background-color", "white");
-    elem.addProperty("border-color", "black");
-    elem.addProperty("border-style", "solid");
-    elem.addProperty("border-width", 1);
-    elem.addProperty("border-radius", 0);
+    elem.addProperty("backgroundColor", "white");
+    elem.addProperty("borderColor", "black");
+    elem.addProperty("borderStyle", "solid");
+    elem.addProperty("borderWidth", 1);
+    elem.addProperty("borderRadius", 0);
 
     return elem;
 }
@@ -103,9 +107,9 @@ function Rectangle(id, parent) {
 function Image(id, parent) {
     var elem = new Item(id, parent);
 
-    elem.addProperty("text-align", "center");
+    elem.addProperty("textAlign", "center");
     elem.addProperty("src", "image.png");
-    elem.addProperty("background-image", function () {
+    elem.addProperty("backgroundImage", function () {
         if (this.src.indexOf("url('") === 0) {
             return this.src;
         }
@@ -119,9 +123,9 @@ function Image(id, parent) {
 function Button(id, parent) {
     var elem = new Item(id, parent);
 
-    elem.addProperty("text-align", "center");
+    elem.addProperty("textAlign", "center");
     elem.addProperty("cursor", "pointer");
-    elem.addProperty("background-color", "lightgray");
+    elem.addProperty("backgroundColor", "lightgray");
 
     return elem;
 }
@@ -130,12 +134,11 @@ function Input(id, parent) {
     var elem = new Item(id, parent, "input");
 
     elem.addProperty("-webkit-user-select", "auto");
-    elem.addProperty("-moz-user-select", "auto");
+    elem.addProperty("userSelect", "auto");
     elem.addProperty("hoverEnabled", true);
-    elem.addProperty("font-size", "12pt");
-    elem.addProperty("font-family", "Source Code Pro");
+    elem.addProperty("fontSize", "12pt");
+    elem.addProperty("fontFamily", "Source Code Pro");
     elem.addProperty("text", function() {
-        console.log("###", this.element.value);
         return this.element.value;
     });
 
@@ -179,8 +182,8 @@ QuickRendererDOM.prototype.createElement = function (typeHint, object) {
     };
     elem.onmousedown = function (event) {
         object.mousePressed = true;
-        object.mouseRelStartX = event.offsetX;
-        object.mouseRelStartY = event.offsetY;
+        object.mouseRelStartX = event.layerX;
+        object.mouseRelStartY = event.layerY;
         object.emit('mousedown');
     };
     elem.onmouseup = function (event) {
@@ -193,8 +196,8 @@ QuickRendererDOM.prototype.createElement = function (typeHint, object) {
         if (object.hoverEnabled) {
             object.mouseAbsX = event.clientX;
             object.mouseAbsY = event.clientY;
-            object.mouseRelX = event.offsetX;
-            object.mouseRelY = event.offsetY;
+            object.mouseRelX = event.layerX;
+            object.mouseRelY = event.layerY;
             object.emit('mousemove');
         }
     };
