@@ -54,4 +54,4 @@ Quick.compileScriptTags = function(scriptType) {
             Quick.compileScriptTagElement(script);
         }
     }
-}
+};

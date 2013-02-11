@@ -40,6 +40,21 @@ function Item(id, parent, typeHint) {
         var s = this.scale.toFixed(10);
         return "scale(" + s + ", " + s + ")";
     });
+    elem.addProperty("childrenWidth", function () {
+        var left = 0;
+        var right = 0;
+        for (var i = 0; i < this.children; ++i) {
+            var c = this.children[i];
+            if (c.left < left) {
+                left = c.left;
+            }
+            if ((c.left + c.width) > right) {
+                right = c.left + c.width;
+            }
+        }
+
+        return (right - left);
+    });
 
     return elem;
 }
@@ -73,8 +88,8 @@ function Text(id, parent) {
         var width = 0;
         var height = 0;
 
-        tmpTextElement.style["fontSize"] = elem["fontSize"];
-        tmpTextElement.style["fontFamily"] = elem["fontFamily"];
+        tmpTextElement.style.fontSize = elem.fontSize;
+        tmpTextElement.style.fontFamily = elem.fontFamily;
 
         if (tmpTextElement.textContent === tmpProperty) {
             width = (tmpTextElement.clientWidth + 1);

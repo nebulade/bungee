@@ -85,7 +85,9 @@ if (!Quick.Engine) {
             window.requestAnimFrame(advance);
             var i;
             for (i in _dirtyElements) {
-                _dirtyElements[i].render();
+                if (_dirtyElements.hasOwnProperty(i)) {
+                    _dirtyElements[i].render();
+                }
             }
             _dirtyElements = {};
         }
@@ -164,7 +166,7 @@ Element.prototype.addChildren = function (children) {
     }
 
     Quick.Engine.addElements(children, this);
-}
+};
 
 Element.prototype.addChild = function (child) {
     // adds child id to the namespace
@@ -235,16 +237,20 @@ Element.prototype.addBinding = function (name, value) {
     }
     this.bound[name] = [];
 
+    var bindingFunction = function() {
+        that[name] = value.apply(that);
+    };
+
     // TODO test break bindings as well!!
     for (var getter in getters) {
-        var tmp = getters[getter];
-        // store bindings to this for breaking
-        this.bound[name][this.bound[name].length] = { element: tmp.element, property: tmp.property };
+        if (getters.hasOwnProperty(getter)) {
+            var tmp = getters[getter];
+            // store bindings to this for breaking
+            this.bound[name][this.bound[name].length] = { element: tmp.element, property: tmp.property };
 
-        tmp.element.addChanged(tmp.property, function() {
-            that[name] = value.apply(that);
-        });
-        hasBinding = true;
+            tmp.element.addChanged(tmp.property, bindingFunction);
+            hasBinding = true;
+        }
     }
 
     return { hasBindings: hasBinding, value: val };
@@ -265,7 +271,7 @@ Element.prototype.addEventHandler = function (event, handler) {
     this.addChanged(signal, function () {
         handler.apply(that);
     });
-}
+};
 
 Element.prototype.addProperty = function (name, value) {
     var that = this;
@@ -308,20 +314,22 @@ Element.prototype.addProperty = function (name, value) {
 Element.prototype.initializeBindings = function () {
     var name, i;
     for (name in this.properties) {
-        var value = this.properties[name];
+        if (this.properties.hasOwnProperty(name)) {
+            var value = this.properties[name];
 
-        // console.log("Element.initializeBindings()", this.id, name, value);
+            // console.log("Element.initializeBindings()", this.id, name, value);
 
-        // initial set and binding discovery
-        if (typeof value === 'function') {
-            var ret = this.addBinding(name, value);
-            if (ret.hasBindings) {
-                this[name] = value;
+            // initial set and binding discovery
+            if (typeof value === 'function') {
+                var ret = this.addBinding(name, value);
+                if (ret.hasBindings) {
+                    this[name] = value;
+                } else {
+                    this[name] = ret.value;
+                }
             } else {
-                this[name] = ret.value;
+                this[name] = value;
             }
-        } else {
-            this[name] = value;
         }
     }
 
@@ -334,12 +342,12 @@ Element.prototype.initializeBindings = function () {
 };
 
 Element.prototype.emit = function (signal) {
-    // console.log("## emit signal " + signal);
     if (signal in this.connections) {
-        // console.log("### signal has connections", signal);
-        for (var slot in this.connections[signal]) {
-            // console.log("#### execute slot", slot);
-            this.connections[signal][slot]();
+        var slots = this.connections[signal];
+        for (var slot in slots) {
+            if (slots.hasOwnProperty(slot)) {
+                slots[slot]();
+            }
         }
     }
 };

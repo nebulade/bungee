@@ -190,7 +190,7 @@ if (!Quick.Tokenizer) {
             }
 
             return tokens;
-        }
+        };
 
 
         /*
@@ -198,8 +198,8 @@ if (!Quick.Tokenizer) {
          */
         ret.dumpTokens = function () {
             for (var i = 0; i < tokens.length; ++i)
-                console.log("TOKEN: " + tokens[i]["TOKEN"] + " " + (tokens[i]["DATA"] ? tokens[i]["DATA"] : ""));
-        }
+                console.log("TOKEN: " + tokens[i].TOKEN + " " + (tokens[i].DATA ? tokens[i].DATA : ""));
+        };
 
         return ret;
     }());

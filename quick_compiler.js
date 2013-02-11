@@ -393,7 +393,7 @@ Quick.Compiler = (function () {
 
             if (token.TOKEN === "ELEMENT") {
                 if (property) {
-                    objectTree.delegates.push({name: property, value: token.DATA})
+                    objectTree.delegates.push({name: property, value: token.DATA});
                     property = undefined;
                 } else {
                     elementType = token.DATA;
