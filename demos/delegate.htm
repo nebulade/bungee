@@ -111,14 +111,12 @@
             model: 200;
 
             onload: ^{
-                var children = [this.model];
                 for (var i = 0; i < this.model; ++i) {
                     var child = this.createdelegate();
                     child.modelData = i;
+                    this.addChild(child);
                     child.initializeBindings();
-                    children[i] = child;
                 }
-                this.addChildren(children);
             }^
         }
 

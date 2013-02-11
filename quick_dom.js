@@ -43,8 +43,8 @@ function Item(id, parent, typeHint) {
     elem.addProperty("childrenWidth", function () {
         var left = 0;
         var right = 0;
-        for (var i = 0; i < this.children; ++i) {
-            var c = this.children[i];
+        for (var i = 0; i < this._children; ++i) {
+            var c = this._children[i];
             if (c.left < left) {
                 left = c.left;
             }
@@ -55,6 +55,22 @@ function Item(id, parent, typeHint) {
 
         return (right - left);
     });
+    elem.addProperty("childrenHeight", function () {
+        var top = 0;
+        var bottom = 0;
+        for (var i = 0; i < this._children; ++i) {
+            var c = this._children[i];
+            if (c.top < top) {
+                top = c.top;
+            }
+            if ((c.top + c.height) > bottom) {
+                bottom = c.top + c.height;
+            }
+        }
+
+        return (bottom - top);
+    });
+
 
     return elem;
 }

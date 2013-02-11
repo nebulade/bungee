@@ -119,13 +119,14 @@ function Element(id, parent, typeHint) {
     this.id = id;
     this.element = Quick.Engine.createElement(typeHint ? typeHint : "object", this);
     this.parent = parent;
+
+    // internal use only
     this._internalIndex = Quick.Engine._elementIndex++;
     this._dirtyProperties = {};
-
-    this.properties = {};
-    this.connections = {};
-    this.children = [];
-    this.bound = {};
+    this._properties = {};
+    this._connections = {};
+    this._children = [];
+    this._bound = {};
 
     if (this.parent) {
         this.parent.addChild(this);
@@ -134,38 +135,12 @@ function Element(id, parent, typeHint) {
 
 Element.prototype.removeChildren = function () {
     var i;
-    for (i = 0; i < this.children.length; ++i) {
+    for (i = 0; i < this._children.length; ++i) {
         // TODO do we leak things here? elements are still referenced so maybe a delete?
-        Quick.Engine.removeElement(this.children[i], this);
+        Quick.Engine.removeElement(this._children[i], this);
     }
 
-    this.children = [];
-};
-
-Element.prototype.addChildren = function (children) {
-    for (var j = 0; j < children.length; ++j) {
-        var child = children[j];
-
-        // adds child id to the namespace
-        this[child.id] = child;
-
-        // adds the parents id to the child
-        child[this.id] = this;
-
-        // add child to siblings scope and vice versa
-        var i;
-        for (i = 0; i < this.children.length; ++i) {
-            this.children[i][child.id] = child;
-            child[this.children[i].id] = this.children[i];
-        }
-
-        // add newly added child to internal children array
-        this.children[this.children.length] = child;
-
-        child.parent = this;
-    }
-
-    Quick.Engine.addElements(children, this);
+    this._children = [];
 };
 
 Element.prototype.addChild = function (child) {
@@ -177,13 +152,13 @@ Element.prototype.addChild = function (child) {
 
     // add child to siblings scope and vice versa
     var i;
-    for (i = 0; i < this.children.length; ++i) {
-        this.children[i][child.id] = child;
-        child[this.children[i].id] = this.children[i];
+    for (i = 0; i < this._children.length; ++i) {
+        this._children[i][child.id] = child;
+        child[this._children[i].id] = this._children[i];
     }
 
     // add newly added child to internal children array
-    this.children[this.children.length] = child;
+    this._children[this._children.length] = child;
 
     child.parent = this;
     Quick.Engine.addElement(child, this);
@@ -196,16 +171,16 @@ Element.prototype.render = function () {
 };
 
 Element.prototype.addChanged = function (signal, callback) {
-    if (!this.connections[signal]) {
-        this.connections[signal] = [];
+    if (!this._connections[signal]) {
+        this._connections[signal] = [];
     }
 
-    this.connections[signal][this.connections[signal].length] = callback;
-    // console.log("connections for " + signal + " " + this.connections[signal].length);
+    this._connections[signal][this._connections[signal].length] = callback;
+    // console.log("connections for " + signal + " " + this._connections[signal].length);
 };
 
 Element.prototype.removeChanged = function (obj, signal) {
-    var signalConnections = this.connections[signal];
+    var signalConnections = this._connections[signal];
     // check if there are any connections for this signal
     if (!signalConnections) {
         return;
@@ -230,12 +205,13 @@ Element.prototype.addBinding = function (name, value) {
     var getters = Quick.Engine.exitMagicBindingState();
 
     // break all previous bindings
-    for (var i = 0; i < this.bound[name]; this.bound[name].length) {
-        console.log("!!! experimental untested: break binding for " + name);
-        var boundObject = this.bound[name][i];
-        boundObject.removeChanged(this, name);
+    if (this._bound[name]) {
+        for (var i = 0; i < this._bound[name].length; ++i) {
+            console.log("!!! experimental untested: break binding for " + name);
+            this._bound[name][i].removeChanged(this, name);
+        }
     }
-    this.bound[name] = [];
+    this._bound[name] = [];
 
     var bindingFunction = function() {
         that[name] = value.apply(that);
@@ -246,7 +222,10 @@ Element.prototype.addBinding = function (name, value) {
         if (getters.hasOwnProperty(getter)) {
             var tmp = getters[getter];
             // store bindings to this for breaking
-            this.bound[name][this.bound[name].length] = { element: tmp.element, property: tmp.property };
+            this._bound[name][this._bound[name].length] = {
+                element: tmp.element,
+                property: tmp.property
+            };
 
             tmp.element.addChanged(tmp.property, bindingFunction);
             hasBinding = true;
@@ -278,7 +257,7 @@ Element.prototype.addProperty = function (name, value) {
     var valueStore;
 
     // register property
-    this.properties[name] = value;
+    this._properties[name] = value;
 
     if (this.hasOwnProperty(name)) {
         this.name = value;
@@ -313,9 +292,9 @@ Element.prototype.addProperty = function (name, value) {
 // should only be called once
 Element.prototype.initializeBindings = function () {
     var name, i;
-    for (name in this.properties) {
-        if (this.properties.hasOwnProperty(name)) {
-            var value = this.properties[name];
+    for (name in this._properties) {
+        if (this._properties.hasOwnProperty(name)) {
+            var value = this._properties[name];
 
             // console.log("Element.initializeBindings()", this.id, name, value);
 
@@ -333,8 +312,8 @@ Element.prototype.initializeBindings = function () {
         }
     }
 
-    for (i = 0; i < this.children.length; ++i) {
-        this.children[i].initializeBindings();
+    for (i = 0; i < this._children.length; ++i) {
+        this._children[i].initializeBindings();
     }
 
     // this calls the onload slot, if defined
@@ -342,8 +321,8 @@ Element.prototype.initializeBindings = function () {
 };
 
 Element.prototype.emit = function (signal) {
-    if (signal in this.connections) {
-        var slots = this.connections[signal];
+    if (signal in this._connections) {
+        var slots = this._connections[signal];
         for (var slot in slots) {
             if (slots.hasOwnProperty(slot)) {
                 slots[slot]();
