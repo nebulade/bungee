@@ -133,6 +133,14 @@ function Element(id, parent, typeHint) {
     }
 }
 
+Element.prototype.children = function () {
+    if (Quick.Engine.magicBindingState) {
+        Quick.Engine.addCalledGetter(this, 'children');
+    }
+
+    return this._children;
+};
+
 Element.prototype.removeChildren = function () {
     var i;
     for (i = 0; i < this._children.length; ++i) {
@@ -141,6 +149,8 @@ Element.prototype.removeChildren = function () {
     }
 
     this._children = [];
+
+    this.emit("children");
 };
 
 Element.prototype.addChild = function (child) {
@@ -162,6 +172,7 @@ Element.prototype.addChild = function (child) {
 
     child.parent = this;
     Quick.Engine.addElement(child, this);
+    this.emit("children");
 
     return child;
 };
