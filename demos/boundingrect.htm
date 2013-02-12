@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <title> QuickJS </title>
+
+        <script type="text/javascript" src="../quick_tokenizer.js"></script>
+        <script type="text/javascript" src="../quick_compiler.js"></script>
+        <script type="text/javascript" src="../quick_dom.js"></script>
+        <script type="text/javascript" src="../quick_helper.js"></script>
+        <script type="text/javascript" src="../quick.js"></script>
+
+        <script type="text/javascript">
+
+        function init () {
+            Quick.useQueryFlags();
+            Quick.compileScriptTags();
+        }
+
+        </script>
+
+        <script type="text/jml">
+
+        Item {
+            width: window.innerWidth
+            height: window.innerHeight
+
+            hoverEnabled: true
+            onmousemove: ^{
+                this.foo.bar.left = this.mouseAbsX - this.foo.bar.width/2
+                this.foo.bar.top = this.mouseAbsY - this.foo.bar.height/2
+            }^
+
+            Item {
+                id: foo
+                backgroundColor: "green"
+                overflow: "hidden"
+                width: this.childrenWidth + 10
+                height: this.childrenHeight + 10
+
+                Item {
+                    left: 10
+                    top: 100
+                    backgroundColor: "purple";
+                    width: 800;
+                }
+
+                Item {
+                    id: bar;
+                    left: 200
+                    top: 40
+                    backgroundColor: "blue"
+                }
+            }
+        }
+
+        </script>
+    </head>
+
+    <body onload="init();">
+    </body>
+</html>
+
