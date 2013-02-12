@@ -86,6 +86,7 @@
             onload: this.a = pulseInit(this);
             hoverEnabled: true
             scale: this.opacity
+            onclick: this.parent.removeChild(this);
 
             Image {
                 id: delegateImage

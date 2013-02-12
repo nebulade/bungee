@@ -48,13 +48,15 @@ Quick.Item = function (id, parent, typeHint) {
         var left = 0;
         var right = 0;
         var kids = this.children();
-        for (var i = 0; i < kids.length; ++i) {
-            var c = kids[i];
-            if (c.left < left) {
-                left = c.left;
-            }
-            if ((c.left + c.width) > right) {
-                right = c.left + c.width;
+        for (var i in kids) {
+            if (kids.hasOwnProperty(i)) {
+                var c = kids[i];
+                if (c.left < left) {
+                    left = c.left;
+                }
+                if ((c.left + c.width) > right) {
+                    right = c.left + c.width;
+                }
             }
         }
 
@@ -64,13 +66,15 @@ Quick.Item = function (id, parent, typeHint) {
         var top = 0;
         var bottom = 0;
         var kids = this.children();
-        for (var i = 0; i < kids.length; ++i) {
-            var c = kids[i];
-            if (c.top < top) {
-                top = c.top;
-            }
-            if ((c.top + c.height) > bottom) {
-                bottom = c.top + c.height;
+        for (var i in kids) {
+            if (kids.hasOwnProperty(i)) {
+                var c = kids[i];
+                if (c.top < top) {
+                    top = c.top;
+                }
+                if ((c.top + c.height) > bottom) {
+                    bottom = c.top + c.height;
+                }
             }
         }
 

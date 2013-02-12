@@ -125,7 +125,7 @@ Quick.Element = function (id, parent, typeHint) {
     this._dirtyProperties = {};
     this._properties = {};
     this._connections = {};
-    this._children = [];
+    this._children = {};
     this._bound = {};
 
     if (this.parent) {
@@ -141,14 +141,24 @@ Quick.Element.prototype.children = function () {
     return this._children;
 };
 
+// TODO both removes need to break the bindings for the children as well
+Quick.Element.prototype.removeChild = function(child) {
+    Quick.Engine.removeElement(child, this);
+    delete this._children[child._internalIndex];
+
+    this.emit("children");
+};
+
 Quick.Element.prototype.removeChildren = function () {
     var i;
-    for (i = 0; i < this._children.length; ++i) {
-        // TODO do we leak things here? elements are still referenced so maybe a delete?
-        Quick.Engine.removeElement(this._children[i], this);
+    for (i in this._children) {
+        if (this._children.hasOwnProperty(i)) {
+            // TODO do we leak things here? elements are still referenced so maybe a delete?
+            Quick.Engine.removeElement(this._children[i], this);
+        }
     }
 
-    this._children = [];
+    this._children = {};
 
     this.emit("children");
 };
@@ -162,13 +172,15 @@ Quick.Element.prototype.addChild = function (child) {
 
     // add child to siblings scope and vice versa
     var i;
-    for (i = 0; i < this._children.length; ++i) {
-        this._children[i][child.id] = child;
-        child[this._children[i].id] = this._children[i];
+    for (i in this._children) {
+        if (this._children.hasOwnProperty(i)) {
+            this._children[i][child.id] = child;
+            child[this._children[i].id] = this._children[i];
+        }
     }
 
     // add newly added child to internal children array
-    this._children[this._children.length] = child;
+    this._children[child._internalIndex] = child;
 
     child.parent = this;
     Quick.Engine.addElement(child, this);
@@ -323,8 +335,10 @@ Quick.Element.prototype.initializeBindings = function () {
         }
     }
 
-    for (i = 0; i < this._children.length; ++i) {
-        this._children[i].initializeBindings();
+    for (i in this._children) {
+        if (this._children.hasOwnProperty(i)) {
+            this._children[i].initializeBindings();
+        }
     }
 
     // this calls the onload slot, if defined
