@@ -183,7 +183,6 @@ Quick.Input = function (id, parent) {
         return this.element.value;
     });
 
-
     return elem;
 };
 
@@ -228,6 +227,16 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
         object.emit('mousedown');
     };
     elem.onmouseup = function (event) {
+        object.mousePressed = false;
+        object.mouseRelStartX = 0;
+        object.mouseRelStartY = 0;
+        object.emit('mouseup');
+    };
+    elem.ontouchstart = function (event) {
+        object.mousePressed = true;
+        object.emit('mousedown');
+    };
+    elem.ontouchend = function (event) {
         object.mousePressed = false;
         object.mouseRelStartX = 0;
         object.mouseRelStartY = 0;
