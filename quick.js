@@ -47,7 +47,7 @@ if (!Quick.Engine) {
 
         // try to create a renderer backend, currently on DOM supported
         try {
-            var renderer = new QuickRendererDOM();
+            var renderer = new Quick.RendererDOM();
             ret.createElement = renderer.createElement;
             ret.addElement = renderer.addElement;
             ret.addElements = renderer.addElements;
@@ -115,7 +115,7 @@ if (!Quick.Engine) {
  * by using render hooks.
  *
  */
-function Element(id, parent, typeHint) {
+Quick.Element = function (id, parent, typeHint) {
     this.id = id;
     this.element = Quick.Engine.createElement(typeHint ? typeHint : "object", this);
     this.parent = parent;
@@ -131,9 +131,9 @@ function Element(id, parent, typeHint) {
     if (this.parent) {
         this.parent.addChild(this);
     }
-}
+};
 
-Element.prototype.children = function () {
+Quick.Element.prototype.children = function () {
     if (Quick.Engine.magicBindingState) {
         Quick.Engine.addCalledGetter(this, 'children');
     }
@@ -141,7 +141,7 @@ Element.prototype.children = function () {
     return this._children;
 };
 
-Element.prototype.removeChildren = function () {
+Quick.Element.prototype.removeChildren = function () {
     var i;
     for (i = 0; i < this._children.length; ++i) {
         // TODO do we leak things here? elements are still referenced so maybe a delete?
@@ -153,7 +153,7 @@ Element.prototype.removeChildren = function () {
     this.emit("children");
 };
 
-Element.prototype.addChild = function (child) {
+Quick.Element.prototype.addChild = function (child) {
     // adds child id to the namespace
     this[child.id] = child;
 
@@ -177,11 +177,11 @@ Element.prototype.addChild = function (child) {
     return child;
 };
 
-Element.prototype.render = function () {
+Quick.Element.prototype.render = function () {
     Quick.Engine.renderElement(this);
 };
 
-Element.prototype.addChanged = function (signal, callback) {
+Quick.Element.prototype.addChanged = function (signal, callback) {
     if (!this._connections[signal]) {
         this._connections[signal] = [];
     }
@@ -190,7 +190,7 @@ Element.prototype.addChanged = function (signal, callback) {
     // console.log("connections for " + signal + " " + this._connections[signal].length);
 };
 
-Element.prototype.removeChanged = function (obj, signal) {
+Quick.Element.prototype.removeChanged = function (obj, signal) {
     var signalConnections = this._connections[signal];
     // check if there are any connections for this signal
     if (!signalConnections) {
@@ -202,7 +202,7 @@ Element.prototype.removeChanged = function (obj, signal) {
     }
 };
 
-Element.prototype.addBinding = function (name, value) {
+Quick.Element.prototype.addBinding = function (name, value) {
     // console.log("addBinding", name);
 
     var that = this;
@@ -246,7 +246,7 @@ Element.prototype.addBinding = function (name, value) {
     return { hasBindings: hasBinding, value: val };
 };
 
-Element.prototype.addEventHandler = function (event, handler) {
+Quick.Element.prototype.addEventHandler = function (event, handler) {
     var that = this;
     var signal = event;
 
@@ -263,7 +263,7 @@ Element.prototype.addEventHandler = function (event, handler) {
     });
 };
 
-Element.prototype.addProperty = function (name, value) {
+Quick.Element.prototype.addProperty = function (name, value) {
     var that = this;
     var valueStore;
 
@@ -301,7 +301,7 @@ Element.prototype.addProperty = function (name, value) {
 
 // initial set of all properties and binding evaluation
 // should only be called once
-Element.prototype.initializeBindings = function () {
+Quick.Element.prototype.initializeBindings = function () {
     var name, i;
     for (name in this._properties) {
         if (this._properties.hasOwnProperty(name)) {
@@ -331,7 +331,7 @@ Element.prototype.initializeBindings = function () {
     this.emit("load");
 };
 
-Element.prototype.emit = function (signal) {
+Quick.Element.prototype.emit = function (signal) {
     if (signal in this._connections) {
         var slots = this._connections[signal];
         for (var slot in slots) {

@@ -18,6 +18,7 @@ Quick.Compiler = (function () {
 
     // TODO sort out this kindof global variable mess
     var ELEM_PREFIX = "e";      // just a define
+    var ELEM_NS = "Quick.";      // main namespace
     var output;                 // output buffer used by all render functions
     var index;                  // index used for tracking the indentation
 
@@ -138,7 +139,7 @@ Quick.Compiler = (function () {
         ++index;
         addIndentation();
 
-        output += "var " + ELEM_PREFIX + " = new " + type + "(";
+        output += "var " + ELEM_PREFIX + " = new " + ELEM_NS + type + "(";
         output += id ? "\"" + id + "\"" : "";
         output += ");\n";
     }
@@ -163,12 +164,12 @@ Quick.Compiler = (function () {
     function renderBeginType(type, inheritedType) {
         addIndentation();
 
-        output += "var " + type + " = function (id, parent) {\n";
+        output += ELEM_NS + type + " = function (id, parent) {\n";
 
         ++index;
         addIndentation();
 
-        output += "var " + ELEM_PREFIX + " = new " + inheritedType + "(id, parent);\n";
+        output += "var " + ELEM_PREFIX + " = new " + ELEM_NS + inheritedType + "(id, parent);\n";
     }
 
     /*
@@ -231,7 +232,7 @@ Quick.Compiler = (function () {
         addIndentation();
         output += ELEM_PREFIX + ".create" + property + " = function () {\n";
         addIndentation(1);
-        output += "return new " + value + "();\n";
+        output += "return new " + ELEM_NS + value + "();\n";
         addIndentation();
         output += "}\n";
     }

@@ -3,13 +3,17 @@
 
 "use strict";
 
+if (!Quick) {
+    var Quick = {};
+}
+
 /*
  **************************************************
  * Predefined basic elements
  **************************************************
  */
-function Item(id, parent, typeHint) {
-    var elem = new Element(id, parent, typeHint ? typeHint : "item");
+Quick.Item = function (id, parent, typeHint) {
+    var elem = new Quick.Element(id, parent, typeHint ? typeHint : "item");
 
     elem.addProperty("-webkit-user-select", "none");
     elem.addProperty("userSelect", "none");
@@ -75,12 +79,12 @@ function Item(id, parent, typeHint) {
 
 
     return elem;
-}
+};
 
 // FIXME global leak
 var tmpTextElement;
-function Text(id, parent) {
-    var elem = new Item(id, parent);
+Quick.Text = function (id, parent) {
+    var elem = new Quick.Item(id, parent);
 
     elem.addProperty("textWidth", 0);
     elem.addProperty("textHeight", 0);
@@ -123,10 +127,10 @@ function Text(id, parent) {
     });
 
     return elem;
-}
+};
 
-function Rectangle(id, parent) {
-    var elem = new Item(id, parent);
+Quick.Rectangle = function (id, parent) {
+    var elem = new Quick.Item(id, parent);
 
     elem.addProperty("backgroundColor", "white");
     elem.addProperty("borderColor", "black");
@@ -135,10 +139,10 @@ function Rectangle(id, parent) {
     elem.addProperty("borderRadius", 0);
 
     return elem;
-}
+};
 
-function Image(id, parent) {
-    var elem = new Item(id, parent);
+Quick.Image = function (id, parent) {
+    var elem = new Quick.Item(id, parent);
 
     elem.addProperty("textAlign", "center");
     elem.addProperty("src", "image.png");
@@ -151,20 +155,20 @@ function Image(id, parent) {
     });
 
     return elem;
-}
+};
 
-function Button(id, parent) {
-    var elem = new Item(id, parent);
+Quick.Button = function (id, parent) {
+    var elem = new Quick.Item(id, parent);
 
     elem.addProperty("textAlign", "center");
     elem.addProperty("cursor", "pointer");
     elem.addProperty("backgroundColor", "lightgray");
 
     return elem;
-}
+};
 
-function Input(id, parent) {
-    var elem = new Item(id, parent, "input");
+Quick.Input = function (id, parent) {
+    var elem = new Quick.Item(id, parent, "input");
 
     elem.addProperty("-webkit-user-select", "auto");
     elem.addProperty("userSelect", "auto");
@@ -177,18 +181,18 @@ function Input(id, parent) {
 
 
     return elem;
-}
+};
 
 /*
  **************************************************
  * DOM renderer
  **************************************************
  */
-function QuickRendererDOM() {
+Quick.RendererDOM = function () {
 
-}
+};
 
-QuickRendererDOM.prototype.createElement = function (typeHint, object) {
+Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
     var elem;
 
     if (typeHint === 'object') {
@@ -238,7 +242,7 @@ QuickRendererDOM.prototype.createElement = function (typeHint, object) {
     return elem;
 };
 
-QuickRendererDOM.prototype.addElement = function (element, parent) {
+Quick.RendererDOM.prototype.addElement = function (element, parent) {
     if (parent && parent.element) {
         parent.element.appendChild(element.element);
     } else {
@@ -246,7 +250,7 @@ QuickRendererDOM.prototype.addElement = function (element, parent) {
     }
 };
 
-QuickRendererDOM.prototype.removeElement = function (element, parent) {
+Quick.RendererDOM.prototype.removeElement = function (element, parent) {
     if (parent && parent.element) {
         parent.element.removeChild(element.element);
     } else {
@@ -254,7 +258,7 @@ QuickRendererDOM.prototype.removeElement = function (element, parent) {
     }
 };
 
-QuickRendererDOM.prototype.addElements = function (elements, parent) {
+Quick.RendererDOM.prototype.addElements = function (elements, parent) {
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < elements.length; ++i) {
@@ -268,7 +272,7 @@ QuickRendererDOM.prototype.addElements = function (elements, parent) {
     }
 };
 
-QuickRendererDOM.prototype.renderElement = function (element) {
+Quick.RendererDOM.prototype.renderElement = function (element) {
     // console.log("renderElement: " + element.id + " properties: " + Object.keys(element.properties).length);
     var name;
     if (element.element) {
