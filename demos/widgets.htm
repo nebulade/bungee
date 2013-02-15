@@ -1,0 +1,125 @@
+<html>
+    <head>
+        <title> QuickJS </title>
+
+        <script type="text/javascript" src="../quick_tokenizer.js"></script>
+        <script type="text/javascript" src="../quick_compiler.js"></script>
+        <script type="text/javascript" src="../quick_dom.js"></script>
+        <script type="text/javascript" src="../quick_helper.js"></script>
+        <script type="text/javascript" src="../quick.js"></script>
+
+        <script type="text/javascript">
+
+        // global config
+        var config = {};
+        config.normalBackgroundColor = "#0055cc";
+        config.hightlightBackgroundColor = "lightgrey";
+        config.downBackgroundColor = "darkgrey";
+        config.normalTextColor = "white";
+        config.highlightTextColor = "white";
+
+        function init () {
+            Quick.useQueryFlags();
+            Quick.compileScriptTags();
+        }
+
+        </script>
+
+        <script type="text/jml">
+
+        List @ Item {
+            width: this.childrenWidth
+            height: this.childrenHeight
+            spacing: 100
+            borderColor: "red"
+            borderStyle: "solid"
+            borderWidth: 10
+
+            onload: ^{
+                var kids = this.children();
+                var left = 0;
+                var j = 0;
+                for (var i in kids) {
+                    if (kids.hasOwnProperty(i)) {
+                        if (j !== 0)
+                            left += this.spacing + kids[i].width;
+                        kids[i].left = left;
+                        ++j;
+                    }
+                }
+            }^
+        }
+
+        Button @ Item {
+            label: "Click me"
+
+            hoverEnabled: true
+            backgroundColor: ^{
+                if (this.mousePressed) {
+                    return config.downBackgroundColor
+                } else if (this.containsMouse) {
+                    return config.hightlightBackgroundColor
+                } else {
+                    return config.normalBackgroundColor
+                }
+            }^
+            width: this.childrenWidth + 20
+            height: this.childrenHeight + 10
+            cursor: "default"
+
+            Text {
+                id: label
+                fontSize: "24px"
+                text: this.parent.label
+                left: this.parent.width / 2 - this.width / 2
+                top: this.parent.height / 2 - this.height / 2
+                color: config.normalTextColor
+            }
+        }
+
+        IconButton @ Item {
+            icon: ""
+            hoverEnabled: true
+            backgroundColor: ^{
+                if (this.mousePressed) {
+                    return config.downBackgroundColor
+                } else if (this.containsMouse) {
+                    return config.hightlightBackgroundColor
+                } else {
+                    return config.normalBackgroundColor
+                }
+            }^
+            width: 100
+            height: 50
+
+            Image {
+                src: "mail.png"
+                backgroundSize: "contain"
+                width: this.parent.height
+                height: this.width
+                left: this.parent.width / 2 - this.width / 2
+                top: this.parent.height / 2 - this.height / 2
+            }
+        }
+
+        </script>
+
+        <script type="text/jml">
+
+        List {
+            Button {
+                label: "Button 1"
+            }
+
+            IconButton {
+            }
+        }
+
+        </script>
+
+    </head>
+
+    <body onload="init();">
+    </body>
+</html>
+
