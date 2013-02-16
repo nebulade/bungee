@@ -1,0 +1,28 @@
+{
+    "name": "quick",
+    "version": "0.0.1",
+    "description": "declarative language",
+    "keywords": [
+        "qml",
+        "jml",
+        "quick",
+        "declarative"
+    ],
+    "author": {
+        "name": "Johannes Zellner",
+        "email": "webmaster@nebulon.de"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/nebulon1234/quickjs.git"
+    },
+    "main": "./quick.js",
+    "bin": {},
+    "engines": {
+        "node": ">=0.6"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "devDependencies": {},
+    "readmeFilename": "Readme.md"
+}

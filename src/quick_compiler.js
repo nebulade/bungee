@@ -12,7 +12,7 @@ if (!Quick) {
     var Quick = {};
 }
 
-Quick.Compiler = (function () {
+var compiler = (function () {
     // public compiler properties
     var compiler = {};
 
@@ -464,3 +464,10 @@ Quick.Compiler = (function () {
 
     return compiler;
 }());
+
+// TODO is this the proper check?
+if (typeof window === 'undefined') {
+    exports.Compiler = compiler;
+} else {
+    window.Quick.Compiler = compiler;
+}
