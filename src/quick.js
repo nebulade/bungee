@@ -275,6 +275,10 @@ Quick.Element.prototype.addEventHandler = function (event, handler) {
     });
 };
 
+Quick.Element.prototype.addFunction = function (name, value) {
+    this[name] = value;
+};
+
 Quick.Element.prototype.addProperty = function (name, value) {
     var that = this;
     var valueStore;

@@ -201,6 +201,25 @@ var compiler = (function () {
     }
 
     /*
+     * Renders a function for the current element/type in scope
+     * Functions will be generated whenever a property name
+     * contains a '(', a preceeding 'function ' is not necessary
+     * and will be stripped
+     */
+    function renderFunction(property, value) {
+        var name = property.slice(property.indexOf(' ') + 1, property.indexOf('('));
+        var args = property.slice(property.indexOf('(') + 1, -1);
+
+        addIndentation();
+        output += ELEM_PREFIX + ".addFunction(\"" + name + "\", ";
+        output += "function (" + args + ") {\n";
+        addIndentation();
+        output += value + "\n";
+        addIndentation();
+        output += "});\n";
+    }
+
+    /*
      * Renders a property for the current element/type in scope
      */
     function renderProperty(property, value) {
@@ -211,6 +230,11 @@ var compiler = (function () {
 
         if (property.indexOf('on') === 0) {
             renderEventHandler(property, value);
+            return;
+        }
+
+        if (property.indexOf('(') !== -1) {
+            renderFunction(property, value);
             return;
         }
 
