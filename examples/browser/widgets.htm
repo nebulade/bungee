@@ -30,24 +30,33 @@
         List @ Item {
             width: this.childrenWidth
             height: this.childrenHeight
-            spacing: 100
+            spacing: 10
             borderColor: "red"
             borderStyle: "solid"
             borderWidth: 10
+            layoutDirection: "horizontal"
 
-            onload: ^{
+            function layout(direction): ^{
+                if (direction !== this.layoutDirection)
+                    return;
+
                 var kids = this.children();
-                var left = 0;
-                var j = 0;
+                var sibling = undefined;
+
                 for (var i in kids) {
                     if (kids.hasOwnProperty(i)) {
-                        if (j !== 0)
-                            left += this.spacing + kids[i].width;
-                        kids[i].left = left;
-                        ++j;
+                        if (direction === "vertical") {
+                            kids[i].top = sibling ? (this.spacing + sibling.bottom) : 0;
+                        } else {
+                            kids[i].left = sibling ? (this.spacing + sibling.right) : 0;
+                        }
+                        sibling = kids[i];
                     }
                 }
             }^
+
+            childrenWidthChanged: this.layout('horizontal')
+            childrenHeightChanged: this.layout('vertical')
         }
 
         Button @ Item {
@@ -63,7 +72,7 @@
                     return config.normalBackgroundColor
                 }
             }^
-            width: this.childrenWidth + 20
+            width: 200
             height: this.childrenHeight + 10
             cursor: "default"
 
@@ -107,11 +116,20 @@
         <script type="text/jml">
 
         List {
-            Button {
-                label: "Button 1"
+            IconButton {
             }
 
             IconButton {
+            }
+
+            IconButton {
+            }
+
+            IconButton {
+            }
+
+            Button {
+                label: "Button 1"
             }
         }
 
