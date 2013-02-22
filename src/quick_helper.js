@@ -30,14 +30,18 @@ Quick.compileScriptTagElement = function(script) {
             console.log(" -- " + error.context);
         } else {
             try {
-                console.log("----------------------");
-                console.log(result);
-                console.log("----------------------");
-                console.log("eval...");
-                var o = new Date();
-                eval(result);
-                var n = new Date();
-                console.log("done, eval took time: ", (n - o), "ms");
+                if (Quick.verbose || Quick.debug) {
+                    console.log("----------------------");
+                    console.log(result);
+                    console.log("----------------------");
+                    console.log("eval...");
+                    var o = new Date();
+                    eval(result);
+                    var n = new Date();
+                    console.log("done, eval took time: ", (n - o), "ms");
+                } else {
+                    eval(result);
+                }
             } catch (e) {
                 console.log("Error evaluating generated JS code: " + e);
             }
