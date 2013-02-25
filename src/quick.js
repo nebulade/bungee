@@ -117,8 +117,14 @@ if (!Quick.Engine) {
  */
 Quick.Element = function (id, parent, typeHint) {
     this.id = id;
-    this.element = Quick.Engine.createElement(typeHint ? typeHint : "object", this);
+    this.typeHint = typeHint;
     this.parent = parent;
+
+    if (typeHint !== "object") {
+        this.element = Quick.Engine.createElement(typeHint, this);
+    } else {
+        this.element = null;
+    }
 
     // internal use only
     this._internalIndex = Quick.Engine._elementIndex++;

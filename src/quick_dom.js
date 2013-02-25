@@ -198,13 +198,11 @@ Quick.RendererDOM = function () {
 Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
     var elem;
 
-    if (typeHint === 'object') {
-        elem = document.createElement('object');
-    } else if (typeHint === 'item') {
+    if (typeHint === 'input') {
+        elem = document.createElement('input');
+    } else {
         elem = document.createElement('div');
         elem.style.position = 'absolute';
-    } else if (typeHint === 'input') {
-        elem = document.createElement('input');
     }
 
     elem.onclick = function () { object.emit('click'); };
@@ -256,6 +254,11 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
 };
 
 Quick.RendererDOM.prototype.addElement = function (element, parent) {
+    // in case we have no visual element, just return
+    if (!element.element) {
+        return;
+    }
+
     if (parent && parent.element) {
         parent.element.appendChild(element.element);
     } else {
@@ -264,6 +267,11 @@ Quick.RendererDOM.prototype.addElement = function (element, parent) {
 };
 
 Quick.RendererDOM.prototype.removeElement = function (element, parent) {
+    // in case we have no visual element, just return
+    if (!element.element) {
+        return;
+    }
+
     if (parent && parent.element) {
         parent.element.removeChild(element.element);
     } else {
@@ -275,6 +283,10 @@ Quick.RendererDOM.prototype.addElements = function (elements, parent) {
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < elements.length; ++i) {
+        if (!elements[i].element) {
+            continue;
+        }
+
         fragment.appendChild(elements[i].element);
     }
 
@@ -288,14 +300,18 @@ Quick.RendererDOM.prototype.addElements = function (elements, parent) {
 Quick.RendererDOM.prototype.renderElement = function (element) {
     // console.log("renderElement: " + element.id + " properties: " + Object.keys(element.properties).length);
     var name;
-    if (element.element) {
-        for (name in element._dirtyProperties) {
-            if (name === 'text') {
-                element.element.textContent = element[name];
-            } else {
-                element.element.style[name] = element[name];
-            }
-        }
-        element._dirtyProperties = {};
+
+    // in case we have no visual element, just return
+    if (!element.element) {
+        return;
     }
+
+    for (name in element._dirtyProperties) {
+        if (name === 'text') {
+            element.element.textContent = element[name];
+        } else {
+            element.element.style[name] = element[name];
+        }
+    }
+    element._dirtyProperties = {};
 };
