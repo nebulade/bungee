@@ -81,8 +81,13 @@ if (!Quick.Engine) {
         };
 
         // TODO should be part of the dom renderer?
+        var fps = {};
+        fps.d = new Date();
+        fps.l = 0;
+
         function advance() {
             window.requestAnimFrame(advance);
+
             var i;
             for (i in _dirtyElements) {
                 if (_dirtyElements.hasOwnProperty(i)) {
@@ -90,6 +95,16 @@ if (!Quick.Engine) {
                 }
             }
             _dirtyElements = {};
+
+            if (Quick.verbose) {
+                if ((new Date() - fps.d) >= 1000) {
+                    console.log("FPS: " + fps.l);
+                    fps.d = new Date();
+                    fps.l = 0;
+                } else {
+                    ++(fps.l);
+                }
+            }
         }
 
         advance();
