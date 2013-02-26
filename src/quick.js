@@ -236,8 +236,6 @@ Quick.Element.prototype.removeChanged = function (obj, signal) {
 };
 
 Quick.Element.prototype.addBinding = function (name, value) {
-    // console.log("addBinding", name);
-
     var that = this;
     var hasBinding = false;
 
@@ -245,22 +243,15 @@ Quick.Element.prototype.addBinding = function (name, value) {
     //  x: mouseArea.clicked ? a.y() : b:z();
     Quick.Engine.enterMagicBindingState();
     var val = value.apply(this);
-    // console.log("addBinding result", name, val);
     var getters = Quick.Engine.exitMagicBindingState();
 
-    // break all previous bindings
-    if (this._bound[name]) {
-        for (var i = 0; i < this._bound[name].length; ++i) {
-            this._bound[name][i].element.removeChanged(this, name);
-        }
-    }
-    this._bound[name] = [];
+    this.breakBindings(name);
 
     var bindingFunction = function() {
         that[name] = value.apply(that);
     };
 
-    // TODO test break bindings as well!!
+    // store found bindings
     for (var getter in getters) {
         if (getters.hasOwnProperty(getter)) {
             var tmp = getters[getter];
@@ -295,6 +286,17 @@ Quick.Element.prototype.addEventHandler = function (event, handler) {
     });
 };
 
+// Breaks all bindings assigned to this property
+Quick.Element.prototype.breakBindings = function (name) {
+    // break all previous bindings
+    if (this._bound[name]) {
+        for (var i = 0; i < this._bound[name].length; ++i) {
+            this._bound[name][i].element.removeChanged(this, name);
+        }
+    }
+    this._bound[name] = [];
+};
+
 // This allows to set the property without emit the change
 // Does not break the binding!
 Quick.Element.prototype.setSilent = function (name, value) {
@@ -306,13 +308,7 @@ Quick.Element.prototype.setSilent = function (name, value) {
 
 // This breaks all previous bindings and adds a new binding
 Quick.Element.prototype.set = function (name, value) {
-    // break all previous bindings
-    if (this._bound[name]) {
-        for (var i = 0; i < this._bound[name].length; ++i) {
-            this._bound[name][i].element.removeChanged(this, name);
-        }
-    }
-    this._bound[name] = [];
+    this.breakBindings(name);
 
     if (typeof value === 'function') {
         var ret = this.addBinding(name, value);
