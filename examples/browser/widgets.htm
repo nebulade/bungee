@@ -37,7 +37,7 @@
             layoutDirection: "horizontal"
 
             function _layout(direction): ^{
-                if (direction !== this.layoutDirection)
+                if (direction === this.layoutDirection)
                     return;
 
                 var kids = this.children();
@@ -57,8 +57,21 @@
                 }
             }^
 
+            function _setupListeners(): ^{
+                var kids = this.children();
+                var that = this;
+
+                for (var i in kids) {
+                    if (kids.hasOwnProperty(i)) {
+                        kids[i].addChanged('width', function () { that._layout() });
+                        kids[i].addChanged('height', function () { that._layout() });
+                    }
+                }
+            }^
+
             childrenWidthChanged: this._layout('horizontal')
             childrenHeightChanged: this._layout('vertical')
+            onload: this._setupListeners();
         }
 
         Button @ Item {
@@ -74,12 +87,12 @@
                     return config.normalBackgroundColor
                 }
             }^
-            width: 200
+            width: this.textLabel.textWidth + 100
             height: this.childrenHeight + 10
             cursor: "default"
 
             Text {
-                id: label
+                id: textLabel
                 fontSize: "24px"
                 text: this.parent.label
                 left: this.parent.width / 2 - this.width / 2
@@ -126,6 +139,16 @@
 
             List {
                 IconButton {
+                }
+
+                Button {
+                    label: "click me"
+                    onclick: ^{
+                        // setSilent() sets the value but does not emit the change nor breaks the binding
+                        this.setSilent("height", this.height === 50 ? 100 : 50);
+                        // set() sets the value breaks the binding and adds a new binding
+                        this.set("width", this.width === 200 ? 300 : 200);
+                    }^
                 }
 
                 IconButton {

@@ -251,8 +251,7 @@ Quick.Element.prototype.addBinding = function (name, value) {
     // break all previous bindings
     if (this._bound[name]) {
         for (var i = 0; i < this._bound[name].length; ++i) {
-            console.log("!!! experimental untested: break binding for " + name);
-            this._bound[name][i].removeChanged(this, name);
+            this._bound[name][i].element.removeChanged(this, name);
         }
     }
     this._bound[name] = [];
@@ -296,6 +295,37 @@ Quick.Element.prototype.addEventHandler = function (event, handler) {
     });
 };
 
+// This allows to set the property without emit the change
+// Does not break the binding!
+Quick.Element.prototype.setSilent = function (name, value) {
+    var setter = this.__lookupSetter__(name);
+    if (typeof setter === 'function') {
+        setter.call(this, value, true);
+    }
+};
+
+// This breaks all previous bindings and adds a new binding
+Quick.Element.prototype.set = function (name, value) {
+    // break all previous bindings
+    if (this._bound[name]) {
+        for (var i = 0; i < this._bound[name].length; ++i) {
+            this._bound[name][i].element.removeChanged(this, name);
+        }
+    }
+    this._bound[name] = [];
+
+    if (typeof value === 'function') {
+        var ret = this.addBinding(name, value);
+        if (ret.hasBindings) {
+            this[name] = value;
+        } else {
+            this[name] = ret.value;
+        }
+    } else {
+        this[name] = value;
+    }
+};
+
 Quick.Element.prototype.addFunction = function (name, value) {
     this[name] = value;
 };
@@ -321,7 +351,7 @@ Quick.Element.prototype.addProperty = function (name, value) {
 
                 return valueStore;
             },
-            set: function (val) {
+            set: function (val, silent) {
                 // console.log("setter: ", that.id, name, val);
                 if (valueStore === val)
                     return;
@@ -329,7 +359,9 @@ Quick.Element.prototype.addProperty = function (name, value) {
                 valueStore = val;
 
                 // connections are called like the properties
-                that.emit(name);
+                if (!silent)
+                    that.emit(name);
+
                 Quick.Engine.dirty(that, name);
             }
         });
