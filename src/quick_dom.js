@@ -117,11 +117,11 @@ Quick.Text = function (id, parent) {
         tmpTextElement.style.fontSize = elem.fontSize;
         tmpTextElement.style.fontFamily = elem.fontFamily;
 
-        if (tmpTextElement.textContent === tmpProperty) {
+        if (tmpTextElement.innerHTML === tmpProperty) {
             width = (tmpTextElement.clientWidth + 1);
             height = (tmpTextElement.clientHeight + 1);
         } else if (tmpProperty !== "") {
-            tmpTextElement.textContent = tmpProperty;
+            tmpTextElement.innerHTML = tmpProperty;
             width = (tmpTextElement.clientWidth + 1);
             height = (tmpTextElement.clientHeight + 1);
         }
@@ -198,6 +198,7 @@ Quick.Input = function (id, parent) {
     elem.addProperty("text", function() {
         return this.element.value;
     });
+    elem.addProperty("placeholder", "");
 
     return elem;
 };
@@ -324,7 +325,9 @@ Quick.RendererDOM.prototype.renderElement = function (element) {
 
     for (name in element._dirtyProperties) {
         if (name === 'text') {
-            element.element.textContent = element[name];
+            element.element.innerHTML = element[name];
+        } else if (name === 'placeholder') {
+            element.element.placeholder = element[name];
         } else {
             element.element.style[name] = element[name];
         }
