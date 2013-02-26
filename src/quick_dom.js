@@ -133,6 +133,22 @@ Quick.Text = function (id, parent) {
     return elem;
 };
 
+Quick.Window = function (id, parent) {
+    var elem = new Quick.Element(id, parent);
+    elem.addProperty("innerWidth", window.innerWidth);
+    elem.addProperty("innerHeight", window.innerHeight);
+
+    elem.addEventHandler("load", function () {
+        var that = this;
+        window.addEventListener("resize", function (event) {
+            that.innerWidth = event.srcElement.innerWidth;
+            that.innerHeight = event.srcElement.innerHeight;
+        });
+    });
+
+    return elem;
+};
+
 Quick.Rectangle = function (id, parent) {
     var elem = new Quick.Item(id, parent);
 

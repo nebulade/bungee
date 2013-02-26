@@ -31,12 +31,12 @@
             width: this.childrenWidth
             height: this.childrenHeight
             spacing: 10
-            borderColor: "red"
+            borderColor: "gray"
             borderStyle: "solid"
             borderWidth: 10
             layoutDirection: "horizontal"
 
-            function layout(direction): ^{
+            function _layout(direction): ^{
                 if (direction !== this.layoutDirection)
                     return;
 
@@ -47,7 +47,9 @@
                     if (kids.hasOwnProperty(i)) {
                         if (direction === "vertical") {
                             kids[i].top = sibling ? (this.spacing + sibling.bottom) : 0;
+                            kids[i].left = 0;
                         } else {
+                            kids[i].top = 0;
                             kids[i].left = sibling ? (this.spacing + sibling.right) : 0;
                         }
                         sibling = kids[i];
@@ -55,8 +57,8 @@
                 }
             }^
 
-            childrenWidthChanged: this.layout('horizontal')
-            childrenHeightChanged: this.layout('vertical')
+            childrenWidthChanged: this._layout('horizontal')
+            childrenHeightChanged: this._layout('vertical')
         }
 
         Button @ Item {
@@ -115,21 +117,30 @@
 
         <script type="text/jml">
 
-        List {
-            IconButton {
+        Window {
+            Item {
+                backgroundColor: "purple"
+                width: this.parent.innerWidth
+                height: this.parent.innerHeight
             }
 
-            IconButton {
-            }
+            List {
+                IconButton {
+                }
 
-            IconButton {
-            }
+                IconButton {
+                }
 
-            IconButton {
-            }
+                IconButton {
+                }
 
-            Button {
-                label: "Button 1"
+                IconButton {
+                }
+
+                Button {
+                    label: this.parent.layoutDirection
+                    onclick: this.parent.layoutDirection = this.parent.layoutDirection === 'horizontal' ? 'vertical' : 'horizontal'
+                }
             }
         }
 
@@ -137,7 +148,7 @@
 
     </head>
 
-    <body onload="init();">
+    <body onload="init();" style="margin: 0">
     </body>
 </html>
 

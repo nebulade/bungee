@@ -81,7 +81,6 @@
                 backgroundColor: this.hoverEnabled ? "#ff00ff" : "#770077";
                 onmousemove: ^{
                     if (this.mousePressed) {
-                        console.log("left: ", this.mouseAbsX, this.mouseRelStartX)
                         this.left = this.mouseAbsX - this.mouseRelStartX;
                         this.top = this.mouseAbsY - this.mouseRelStartY;
                     }
