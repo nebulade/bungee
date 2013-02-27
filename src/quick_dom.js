@@ -15,8 +15,10 @@ if (!Quick) {
 Quick.Item = function (id, parent, typeHint) {
     var elem = new Quick.Element(id, parent, typeHint ? typeHint : "item");
 
-    elem.addProperty("-webkit-user-select", "none");
-    elem.addProperty("userSelect", "none");
+    elem.addProperty("selectable", false);
+    elem.addProperty("userSelect", function () { return this.selectable ? "auto" : "none"; });
+    elem.addProperty("-webkit-user-select", function () { return this.selectable ? "auto" : "none"; });
+
     elem.addProperty("hoverEnabled", false);
     elem.addProperty("mouseAbsX", 0);
     elem.addProperty("mouseAbsY", 0);
