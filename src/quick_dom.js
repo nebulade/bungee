@@ -211,11 +211,12 @@ Quick.Input = function (id, parent) {
  **************************************************
  */
 Quick.RendererDOM = function () {
-
+    this.currentMouseElement = undefined;
 };
 
 Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
     var elem;
+    var that = this;
 
     if (typeHint === 'input') {
         elem = document.createElement('input');
@@ -224,7 +225,10 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
         elem.style.position = 'absolute';
     }
 
-    elem.onclick = function () { object.emit('click'); };
+    elem.onclick = function () {
+        object.emit('activated');
+        object.emit('click');
+    };
     elem.onmouseover = function () {
         if (object.hoverEnabled) {
             object.containsMouse = true;
@@ -238,6 +242,7 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
         }
     };
     elem.onmousedown = function (event) {
+        that.currentMouseElement = this;
         object.mousePressed = true;
         object.mouseRelStartX = event.layerX;
         object.mouseRelStartY = event.layerY;
@@ -248,8 +253,13 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
         object.mouseRelStartX = 0;
         object.mouseRelStartY = 0;
         object.emit('mouseup');
+        if (that.currentMouseElement === this) {
+            object.emit('activated');
+        }
+        that.currentMouseElement = undefined;
     };
     elem.ontouchstart = function (event) {
+        that.currentMouseElement = this;
         object.mousePressed = true;
         object.emit('mousedown');
     };
@@ -258,6 +268,10 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
         object.mouseRelStartX = 0;
         object.mouseRelStartY = 0;
         object.emit('mouseup');
+        if (that.currentMouseElement === this) {
+            object.emit('activated');
+        }
+        that.currentMouseElement = undefined;
     };
     elem.onmousemove = function (event) {
         if (object.hoverEnabled) {
