@@ -23,6 +23,7 @@ Quick.Animation = function (id, parent) {
 
     elem.addProperty("property", undefined);
     elem.addProperty("from", 1);
+    elem.addProperty("middle", 0.5);
     elem.addProperty("to", 0);
     elem.addProperty("duration", 250);
     elem.addProperty("delay", 0);
@@ -71,6 +72,7 @@ Quick.Animation = function (id, parent) {
 
         rule += "@-webkit-keyframes " + keyFramesName + " { \n";
         rule += "   0% { " + elem.property + ": " + elem.from + "; }";
+        rule += "   50% { " + elem.property + ": " + elem.middle + "; }";
         rule += "   100% { " + elem.property + ": " + elem.to + "; }";
         rule += "}";
 
@@ -92,6 +94,7 @@ Quick.Animation = function (id, parent) {
     elem.addChanged("property", updateRules);
     elem.addChanged("from", updateRules);
     elem.addChanged("to", updateRules);
+    elem.addChanged("middle", updateRules);
     elem.addChanged("duration", updateRules);
     elem.addChanged("delay", updateRules);
     elem.addChanged("loops", updateRules);
