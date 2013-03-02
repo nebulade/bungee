@@ -5,6 +5,7 @@
         <script type="text/javascript" src="../../src/quick_tokenizer.js"></script>
         <script type="text/javascript" src="../../src/quick_compiler.js"></script>
         <script type="text/javascript" src="../../src/quick_dom.js"></script>
+        <script type="text/javascript" src="../../src/quick_animation.js"></script>
         <script type="text/javascript" src="../../src/quick_helper.js"></script>
         <script type="text/javascript" src="../../src/quick.js"></script>
 
@@ -131,12 +132,6 @@
         <script type="text/jml">
 
         Window {
-            Item {
-                backgroundColor: "purple"
-                width: this.parent.innerWidth
-                height: this.parent.innerHeight
-            }
-
             List {
                 IconButton {
                 }
@@ -158,6 +153,21 @@
                 }
 
                 IconButton {
+                }
+
+                IconButton {
+                }
+
+                IconButton {
+                    onclick: this.animation.start()
+
+                    Animation {
+                        id: animation
+                        target: this.parent
+                        property: "width"
+                        from: this.parent.width
+                        to: 0
+                    }
                 }
 
                 Button {
