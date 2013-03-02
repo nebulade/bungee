@@ -19,6 +19,7 @@ Quick.Item = function (id, parent, typeHint) {
     elem.addProperty("userSelect", function () { return this.selectable ? "auto" : "none"; });
     elem.addProperty("-webkit-user-select", function () { return this.selectable ? "auto" : "none"; });
 
+    elem.addProperty("className", "");
     elem.addProperty("hoverEnabled", false);
     elem.addProperty("mouseAbsX", 0);
     elem.addProperty("mouseAbsY", 0);
@@ -344,6 +345,8 @@ Quick.RendererDOM.prototype.renderElement = function (element) {
             element.element.innerHTML = element[name];
         } else if (name === 'placeholder') {
             element.element.placeholder = element[name];
+        } else if (name === 'className') {
+            element.element.className = element[name];
         } else {
             element.element.style[name] = element[name];
         }
