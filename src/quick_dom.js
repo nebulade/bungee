@@ -94,8 +94,9 @@ Quick.Text = function (id, parent) {
 
     elem.addProperty("textWidth", 0);
     elem.addProperty("textHeight", 0);
-    elem.addProperty("fontSize", "12pt");
-    elem.addProperty("fontFamily", "Source Code Pro");
+    elem.addProperty("fontSize", "");
+    elem.addProperty("fontFamily", "");
+    elem.addProperty("fontFamily", "");
     elem.addProperty("text", "");
     elem.addProperty("width", function() { return this.textWidth; });
     elem.addProperty("height", function() { return this.textHeight; });
@@ -194,9 +195,6 @@ Quick.Input = function (id, parent) {
 
     elem.addProperty("-webkit-user-select", "auto");
     elem.addProperty("userSelect", "auto");
-    elem.addProperty("hoverEnabled", true);
-    elem.addProperty("fontSize", "12pt");
-    elem.addProperty("fontFamily", "Source Code Pro");
     elem.addProperty("text", function() {
         return this.element.value;
     });
