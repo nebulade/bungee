@@ -26,8 +26,7 @@
             width: 700;
             height: 70
             backgroundColor: "#0055cc"
-            onmouseover: ^{ this.anim.reverse = false; this.anim.start() }^;
-            onmouseout: ^{ this.anim.reverse = true; this.anim.start(); }^
+            onmouseover: this.anim.start();
             hoverEnabled: true
             scale: this.opacity
             onclick: this.parent.removeChild(this);
@@ -36,10 +35,10 @@
             Animation {
                 id: anim
                 target: this.parent
-                property: "width"
-                from: this.parent.width
+                property: "opacity"
+                from: 1
                 middle: 0
-                to: this.parent.width
+                to: 1
                 easing: "ease-in-out"
                 duration: 1000
             }
@@ -65,7 +64,7 @@
 
         Item {
             delegate: MyDelegate;
-            model: 10;
+            model: 100;
 
             onload: ^{
                 for (var i = 0; i < this.model; ++i) {
