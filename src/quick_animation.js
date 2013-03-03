@@ -19,35 +19,37 @@ Quick.Animation = function (id, parent) {
     var style;
     var index = Quick._animationIndex++;
     var dirty = true;
-    var animationName = "Animation" + index;
-    var keyFramesName = "AnimationKeyFrames" + index;
+    var hasRules = false;
+    var animationName = "quickAnimation" + index;
+    var keyFramesName = "quickAnimationKeyFrames" + index;
 
     elem.addProperty("target", undefined);
     elem.addProperty("property", undefined);
+
+    // TODO from,middle,to is suboptimal
     elem.addProperty("from", 1);
     elem.addProperty("middle", 0.5);
     elem.addProperty("to", 0);
+
     elem.addProperty("duration", 250);
     elem.addProperty("delay", 0);
     elem.addProperty("loops", 1);
     elem.addProperty("reverse", false);
     elem.addProperty("easing", "ease");
 
-    elem._finishCallback = function () {
-        console.log("Animation finished");
-    };
-
     function animationStart(event) {
-        console.log("start", event);
+        // console.log("start", event);
+        elem.emit("started");
     }
 
     function animationIteration(event) {
-        console.log("iteration", event);
+        // console.log("iteration", event);
     }
 
     function animationEnd(event) {
+        // console.log("end", event);
         elem.stop();
-        console.log("end", event);
+        elem.emit("finished");
     }
 
     function updateRules() {
@@ -61,6 +63,27 @@ Quick.Animation = function (id, parent) {
         if (!Quick._style) {
             Quick._style = document.createElement('style');
             document.getElementsByTagName('head')[0].appendChild(Quick._style);
+        }
+
+        if (hasRules) {
+            var tmpName = "." + animationName;
+            var i;
+
+            // remove key frames rule
+            for (i = 0; i < Quick._style.sheet.cssRules.length; ++i) {
+                if (Quick._style.sheet.cssRules[i].name === keyFramesName) {
+                    Quick._style.sheet.deleteRule(i);
+                    break;
+                }
+            }
+
+            // remove animation rule
+            for (i = 0; i < Quick._style.sheet.cssRules.length; ++i) {
+                if (Quick._style.sheet.cssRules[i].selectorText === tmpName) {
+                    Quick._style.sheet.deleteRule(i);
+                    break;
+                }
+            }
         }
 
         rule1 += "." + animationName + " {\n";
@@ -79,9 +102,10 @@ Quick.Animation = function (id, parent) {
         rule2 += "   100% { " + elem.property + ": " + elem.to + "; }";
         rule2 += "}";
 
-        // TODO also remove previous rules!
         Quick._style.sheet.insertRule(rule1, 0);
         Quick._style.sheet.insertRule(rule2, 0);
+
+        hasRules = true;
     }
 
     function addEventListeners() {
@@ -124,10 +148,6 @@ Quick.Animation = function (id, parent) {
     elem.restart = function () {
         elem.stop();
         elem.start();
-    };
-
-    elem.onFinish = function (callback) {
-        elem._finishCallback = callback;
     };
 
     return elem;
