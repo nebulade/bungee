@@ -88,17 +88,14 @@ if (!Quick.Engine) {
         function advance() {
             window.requestAnimFrame(advance);
 
-            var i;
-            for (i in _dirtyElements) {
-                if (_dirtyElements.hasOwnProperty(i)) {
-                    _dirtyElements[i].render();
-                }
+            for (var i in _dirtyElements) {
+                _dirtyElements[i].render();
             }
             _dirtyElements = {};
 
             if (Quick.verbose) {
-                if ((new Date() - fps.d) >= 1000) {
-                    console.log("FPS: " + fps.l);
+                if ((new Date() - fps.d) >= 2000) {
+                    console.log("FPS: " + fps.l / 2.0);
                     fps.d = new Date();
                     fps.l = 0;
                 } else {
