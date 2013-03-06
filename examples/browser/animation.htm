@@ -1,0 +1,171 @@
+<html>
+    <head>
+        <title> QuickJS </title>
+
+        <script type="text/javascript" src="../../src/quick_tokenizer.js"></script>
+        <script type="text/javascript" src="../../src/quick_compiler.js"></script>
+        <script type="text/javascript" src="../../src/quick_dom.js"></script>
+        <script type="text/javascript" src="../../src/quick_animation.js"></script>
+        <script type="text/javascript" src="../../src/quick_helper.js"></script>
+        <script type="text/javascript" src="../../src/quick.js"></script>
+
+        <script type="text/javascript">
+
+        // global config
+        var config = {};
+        config.normalBackgroundColor = "#0055cc";
+        config.hightlightBackgroundColor = "lightgrey";
+        config.downBackgroundColor = "darkgrey";
+        config.normalTextColor = "white";
+        config.highlightTextColor = "white";
+
+        function init () {
+            Quick.useQueryFlags();
+            Quick.compileScriptTags();
+        }
+
+        </script>
+
+        <script type="text/jml">
+
+        List @ Item {
+            width: this.childrenWidth
+            height: this.childrenHeight
+            spacing: 10
+            borderColor: "gray"
+            borderStyle: "solid"
+            borderWidth: 10
+            layoutDirection: "horizontal"
+
+            function _layout(direction): ^{
+                if (direction === this.layoutDirection)
+                    return;
+
+                var kids = this.children();
+                var sibling = undefined;
+
+                for (var i in kids) {
+                    if (kids.hasOwnProperty(i)) {
+                        if (direction === "vertical") {
+                            kids[i].top = sibling ? (this.spacing + sibling.bottom) : 0;
+                            kids[i].left = 0;
+                        } else {
+                            kids[i].top = 0;
+                            kids[i].left = sibling ? (this.spacing + sibling.right) : 0;
+                        }
+                        sibling = kids[i];
+                    }
+                }
+            }^
+
+            function _setupListeners(): ^{
+                var kids = this.children();
+                var that = this;
+
+                for (var i in kids) {
+                    if (kids.hasOwnProperty(i)) {
+                        kids[i].addChanged('width', function () { that._layout() });
+                        kids[i].addChanged('height', function () { that._layout() });
+                    }
+                }
+            }^
+
+            childrenWidthChanged: this._layout('horizontal')
+            childrenHeightChanged: this._layout('vertical')
+            onload: this._setupListeners();
+        }
+
+        Button @ Item {
+            label: "Click me"
+
+            hoverEnabled: true
+            backgroundColor: ^{
+                if (this.mousePressed) {
+                    return config.downBackgroundColor
+                } else if (this.containsMouse) {
+                    return config.hightlightBackgroundColor
+                } else {
+                    return config.normalBackgroundColor
+                }
+            }^
+            width: this.textLabel.textWidth + 100
+            height: this.childrenHeight + 10
+            cursor: "default"
+
+            Text {
+                id: textLabel
+                fontSize: "24px"
+                text: this.parent.label
+                left: this.parent.width / 2 - this.width / 2
+                top: this.parent.height / 2 - this.height / 2
+                color: config.normalTextColor
+            }
+        }
+
+        IconButton @ Item {
+            icon: ""
+            hoverEnabled: true
+            backgroundColor: ^{
+                if (this.mousePressed) {
+                    return config.downBackgroundColor
+                } else if (this.containsMouse) {
+                    return config.hightlightBackgroundColor
+                } else {
+                    return config.normalBackgroundColor
+                }
+            }^
+            width: 100
+            height: 50
+
+            Image {
+                src: "mail.png"
+                backgroundSize: "contain"
+                width: this.parent.height
+                height: this.width
+                left: this.parent.width / 2 - this.width / 2
+                top: this.parent.height / 2 - this.height / 2
+            }
+        }
+
+        </script>
+
+        <script type="text/jml">
+
+        Item {
+            backgroundColor: "purple"
+            onactivated: this.anim.start();
+            width: 500
+
+            Animation {
+                id: anim
+                target: this.parent
+                duration: 2000
+
+                Step {
+                    percentage: 0
+                    height: this.parent.parent.height
+                    opacity: 1
+                }
+
+                Step {
+                    percentage: 90
+                    height: 10
+                    opacity: 0.5
+                }
+
+                Step {
+                    percentage: 100
+                    height: this.parent.parent.height
+                    opacity: 1
+                }
+            }
+        }
+
+        </script>
+
+    </head>
+
+    <body onload="init();" style="margin: 0">
+    </body>
+</html>
+
