@@ -121,10 +121,11 @@
                 id: animation
                 target: this.parent
                 duration: 1000
+                loops: 3
 
                 Step {
                     percentage: 0
-                    width: this.parent.width
+                    width: this.parent.parent.width
                 }
 
                 Step {
@@ -133,8 +134,13 @@
                 }
 
                 Step {
+                    percentage: 70
+                    width: this.parent.parent.width * 1.5
+                }
+
+                Step {
                     percentage: 100
-                    width: this.parent.width
+                    width: this.parent.parent.width
                 }
             }
 
