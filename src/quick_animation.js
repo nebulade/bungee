@@ -107,7 +107,6 @@ Quick.Animation = function (id, parent) {
             for (var property in child._properties) {
                 if (child.hasOwnProperty(property) && property !== 'percentage') {
                     rule2 += property + ": " + child[property] + "; ";
-                    console.log("property", property, child[property]);
                 }
             }
 

@@ -13,9 +13,9 @@
 
         // global config
         var config = {};
-        config.normalBackgroundColor = "#0055cc";
-        config.hightlightBackgroundColor = "lightgrey";
-        config.downBackgroundColor = "darkgrey";
+        config.normalBackgroundColor = "#3C7DC1";
+        config.hightlightBackgroundColor = "#36A7DF";
+        config.downBackgroundColor = "#006B9F";
         config.normalTextColor = "white";
         config.highlightTextColor = "white";
 
@@ -106,9 +106,7 @@
             icon: ""
             hoverEnabled: true
             backgroundColor: ^{
-                if (this.mousePressed) {
-                    return config.downBackgroundColor
-                } else if (this.containsMouse) {
+                if (this.containsMouse) {
                     return config.hightlightBackgroundColor
                 } else {
                     return config.normalBackgroundColor
@@ -116,6 +114,29 @@
             }^
             width: 100
             height: 50
+
+            onclick: this.animation.restart()
+
+            Animation {
+                id: animation
+                target: this.parent
+                duration: 1000
+
+                Step {
+                    percentage: 0
+                    width: this.parent.width
+                }
+
+                Step {
+                    percentage: 50
+                    width: 0
+                }
+
+                Step {
+                    percentage: 100
+                    width: this.parent.width
+                }
+            }
 
             Image {
                 src: "mail.png"
@@ -159,28 +180,6 @@
                 }
 
                 IconButton {
-                    onclick: this.animation.start()
-
-                    Animation {
-                        id: animation
-                        target: this.parent
-                        duration: 1000
-
-                        Step {
-                            percentage: 0
-                            width: this.parent.width
-                        }
-
-                        Step {
-                            percentage: 50
-                            width: 0
-                        }
-
-                        Step {
-                            percentage: 100
-                            width: this.parent.width
-                        }
-                    }
                 }
 
                 Button {
