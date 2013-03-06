@@ -14,6 +14,14 @@ Quick._animationIndex = 0;
  * Basic Animation
  **************************************************
  */
+Quick.Step = function (id, parent) {
+    var elem = new Quick.Element(id, parent, "object");
+
+    elem.addProperty("percentage", 0);
+
+    return elem;
+};
+
 Quick.Animation = function (id, parent) {
     var elem = new Quick.Element(id, parent, "object");
     var style;
@@ -24,13 +32,6 @@ Quick.Animation = function (id, parent) {
     var keyFramesName = "quickAnimationKeyFrames" + index;
 
     elem.addProperty("target", undefined);
-    elem.addProperty("property", undefined);
-
-    // TODO from,middle,to is suboptimal
-    elem.addProperty("from", 1);
-    elem.addProperty("middle", 0.5);
-    elem.addProperty("to", 0);
-
     elem.addProperty("duration", 250);
     elem.addProperty("delay", 0);
     elem.addProperty("loops", 1);
@@ -55,10 +56,6 @@ Quick.Animation = function (id, parent) {
     function updateRules() {
         var rule1 = "";
         var rule2 = "";
-
-        if (!elem.property) {
-            return;
-        }
 
         if (!Quick._style) {
             Quick._style = document.createElement('style');
@@ -97,9 +94,26 @@ Quick.Animation = function (id, parent) {
         rule1 += "}\n";
 
         rule2 += "@-webkit-keyframes " + keyFramesName + " { \n";
-        rule2 += "   0% { " + elem.property + ": " + elem.from + "; }";
-        rule2 += "   50% { " + elem.property + ": " + elem.middle + "; }";
-        rule2 += "   100% { " + elem.property + ": " + elem.to + "; }";
+
+        for (var j in elem.children()) {
+            var child = elem.children()[j];
+
+            if (typeof child.percentage === 'undefined') {
+                continue;
+            }
+
+            rule2 += "   " + child.percentage + "% { ";
+
+            for (var property in child._properties) {
+                if (child.hasOwnProperty(property) && property !== 'percentage') {
+                    rule2 += property + ": " + child[property] + "; ";
+                    console.log("property", property, child[property]);
+                }
+            }
+
+            rule2 += " }";
+        }
+
         rule2 += "}";
 
         Quick._style.sheet.insertRule(rule1, 0);
@@ -122,10 +136,6 @@ Quick.Animation = function (id, parent) {
     }
 
     elem.addChanged("target", addEventListeners);
-    elem.addChanged("property", markDirty);
-    elem.addChanged("from", markDirty);
-    elem.addChanged("to", markDirty);
-    elem.addChanged("middle", markDirty);
     elem.addChanged("duration", markDirty);
     elem.addChanged("delay", markDirty);
     elem.addChanged("loops", markDirty);

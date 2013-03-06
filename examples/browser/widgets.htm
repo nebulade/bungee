@@ -164,11 +164,22 @@
                     Animation {
                         id: animation
                         target: this.parent
-                        property: "width"
-                        from: this.parent.width
-                        middle: 0
-                        to: this.parent.width
                         duration: 1000
+
+                        Step {
+                            percentage: 0
+                            width: this.parent.width
+                        }
+
+                        Step {
+                            percentage: 50
+                            width: 0
+                        }
+
+                        Step {
+                            percentage: 100
+                            width: this.parent.width
+                        }
                     }
                 }
 
