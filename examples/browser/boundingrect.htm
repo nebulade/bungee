@@ -8,6 +8,18 @@
         <script type="text/javascript" src="../../src/quick_helper.js"></script>
         <script type="text/javascript" src="../../src/quick.js"></script>
 
+        <script type="text/javascript">
+
+        // global config
+        var config = {};
+        config.normalBackgroundColor = "#3C7DC1";
+        config.hightlightBackgroundColor = "#36A7DF";
+        config.downBackgroundColor = "#006B9F";
+        config.normalTextColor = "white";
+        config.highlightTextColor = "white";
+
+        </script>
+
         <script type="text/jml">
 
         Item {
@@ -22,7 +34,7 @@
 
             Item {
                 id: foo
-                backgroundColor: "green"
+                backgroundColor: config.normalBackgroundColor
                 overflow: "hidden"
                 width: this.childrenWidth + 10
                 height: this.childrenHeight + 10
@@ -35,7 +47,7 @@
                 Item {
                     left: 10
                     top: 100
-                    backgroundColor: "purple";
+                    backgroundColor: config.hightlightBackgroundColor;
                     width: 800;
                 }
 
@@ -43,7 +55,7 @@
                     id: bar;
                     left: 200
                     top: 40
-                    backgroundColor: "blue"
+                    backgroundColor: config.normalTextColor
                 }
             }
         }
