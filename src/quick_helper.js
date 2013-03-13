@@ -16,6 +16,11 @@ if (!Quick) {
 Quick.debug = false;
 Quick.verbose = false;
 
+Quick.run = function () {
+    Quick.useQueryFlags();
+    Quick.compileScriptTags();
+};
+
 Quick.useQueryFlags = function() {
     // TODO improve detection
     Quick.verbose = (window.location.href.indexOf("verbose") >= 0);

@@ -19,11 +19,6 @@
         config.normalTextColor = "white";
         config.highlightTextColor = "white";
 
-        function init () {
-            Quick.useQueryFlags();
-            Quick.compileScriptTags();
-        }
-
         </script>
 
         <script type="text/jml">
@@ -199,7 +194,7 @@
 
     </head>
 
-    <body onload="init();" style="margin: 0">
+    <body onload="Quick.run();" style="margin: 0">
     </body>
 </html>
 
