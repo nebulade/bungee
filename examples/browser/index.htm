@@ -1,0 +1,219 @@
+<html>
+    <head>
+        <title> QuickJS </title>
+
+        <script type="text/javascript" src="../../src/quick_tokenizer.js"></script>
+        <script type="text/javascript" src="../../src/quick_compiler.js"></script>
+        <script type="text/javascript" src="../../src/quick_dom.js"></script>
+        <script type="text/javascript" src="../../src/quick_animation.js"></script>
+        <script type="text/javascript" src="../../src/quick_helper.js"></script>
+        <script type="text/javascript" src="../../src/quick.js"></script>
+
+        <script type="text/javascript">
+
+        // global config
+        var config = {};
+        config.normalBackgroundColor = "#3C7DC1";
+        config.hightlightBackgroundColor = "#36A7DF";
+        config.downBackgroundColor = "#006B9F";
+        config.normalTextColor = "white";
+        config.highlightTextColor = "white";
+
+        </script>
+
+        <script type="text/jml">
+
+        List @ Item {
+            width: this.childrenWidth
+            height: this.childrenHeight
+            spacing: 10
+            layoutDirection: "horizontal"
+
+            function _layout(direction): ^{
+                if (direction === this.layoutDirection)
+                    return;
+
+                var kids = this.children();
+                var sibling = undefined;
+
+                for (var i in kids) {
+                    if (kids.hasOwnProperty(i)) {
+                        if (direction === "vertical") {
+                            kids[i].top = sibling ? (this.spacing + sibling.bottom) : 0;
+                            kids[i].left = 0;
+                        } else {
+                            kids[i].top = 0;
+                            kids[i].left = sibling ? (this.spacing + sibling.right) : 0;
+                        }
+                        sibling = kids[i];
+                    }
+                }
+            }^
+
+            function _setupListeners(): ^{
+                var kids = this.children();
+                var that = this;
+
+                for (var i in kids) {
+                    if (kids.hasOwnProperty(i)) {
+                        kids[i].addChanged('width', function () { that._layout() });
+                        kids[i].addChanged('height', function () { that._layout() });
+                    }
+                }
+            }^
+
+            childrenWidthChanged: this._layout('horizontal')
+            childrenHeightChanged: this._layout('vertical')
+            onload: this._setupListeners();
+        }
+
+        Button @ Item {
+            label: "Demo"
+            src: ""
+            onactivated: window.document.getElementById("demoArea").src = this.src
+
+            hoverEnabled: true
+            backgroundColor: ^{
+                if (this.mousePressed) {
+                    return config.downBackgroundColor
+                } else if (this.containsMouse) {
+                    return config.hightlightBackgroundColor
+                } else {
+                    return config.normalBackgroundColor
+                }
+            }^
+            width: this.textLabel.textWidth + 100
+            height: this.childrenHeight + 10
+            cursor: "default"
+
+            onactivated: this.animation.restart()
+
+            Animation {
+                id: animation
+                target: this.parent
+                duration: 2000
+
+                Step {
+                    percentage: 0
+                    width: this.parent.parent.width
+                }
+
+                Step {
+                    percentage: 50
+                    width: 0
+                }
+
+                Step {
+                    percentage: 70
+                    width: this.parent.parent.width * 1.5
+                }
+
+                Step {
+                    percentage: 100
+                    width: this.parent.parent.width
+                }
+            }
+
+            onmouseover: this.hoverAnimation.restart()
+
+            Animation {
+                id: hoverAnimation
+                target: this.parent
+                duration: 1000
+
+                Step {
+                    percentage: 0
+                    background-color: config.hightlightBackgroundColor
+                }
+
+                Step {
+                    percentage: 25
+                    background-color: "pink"
+                }
+
+                Step {
+                    percentage: 50
+                    background-color: "silver"
+                }
+
+                Step {
+                    percentage: 75
+                    background-color: "cyan"
+                }
+
+                Step {
+                    percentage: 100
+                    width: config.hightlightBackgroundColor
+                }
+            }
+
+
+            Text {
+                id: textLabel
+                fontSize: "24px"
+                text: this.parent.label
+                left: this.parent.width / 2 - this.width / 2
+                top: this.parent.height / 2 - this.height / 2
+                color: config.normalTextColor
+            }
+        }
+
+        </script>
+
+        <script type="text/jml">
+
+        Window {
+            top: 0
+            left: 0
+
+            // TODO add quick sort for list!!!
+
+            List {
+                Button {
+                    label: "Types"
+                    src: "types.htm"
+                }
+
+                Button {
+                    label: "Pin Entry"
+                    src: "pin.htm"
+                }
+
+                Button {
+                    label: "Animation"
+                    src: "animation.htm"
+                }
+
+                Button {
+                    label: "Bounding Rect"
+                    src: "boundingrect.htm"
+                }
+
+                Button {
+                    label: "Delegates"
+                    src: "delegate.htm"
+                }
+
+                Button {
+                    label: "Widgets"
+                    src: "widgets.htm"
+                }
+
+                Button {
+                    label: "A bit of everything"
+                    src: "demo.htm"
+                }
+            }
+        }
+
+        </script>
+
+    </head>
+
+    <body onload="Quick.run();" style="padding: 0; margin: 0; width: 100%; height: 100%">
+        <div style="margin: 0; margin-left: 300px">
+            <iframe id="demoArea" src="demo.htm" style="background-color: white; border-width: 0; margin: auto; width: 99%; height: 99%"></iframe>
+        </div>
+    </body>
+</html>
+
