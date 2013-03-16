@@ -13,41 +13,60 @@
 
         Item {
             backgroundColor: "purple"
-            onactivated: this.anim.start();
-            width: 500
+            onload: this.anim.start();
             left: window.innerWidth/2 - this.width/2
             top: window.innerHeight/2 - this.height/2
 
             Animation {
                 id: anim
                 target: this.parent
-                duration: 2000
+                duration: 7000
+                loops: "infinite"
 
                 Step {
                     percentage: 0
-                    height: this.parent.parent.height
+                    left: 0
+                    top: 0
                     opacity: 1
                 }
 
                 Step {
-                    percentage: 90
-                    height: 10
+                    percentage: 25
+                    left: window.innerWidth - this.parent.parent.width
+                    top: 100
+                    opacity: 0.5
+                }
+
+                Step {
+                    percentage: 50
+                    top: window.innerHeight - this.parent.parent.height
+                    left: window.innerWidth - this.parent.parent.width
+                    opacity: 1
+                }
+
+                Step {
+                    percentage: 75
+                    top: window.innerHeight - this.parent.parent.height - 300
+                    left: 200
                     opacity: 0.5
                 }
 
                 Step {
                     percentage: 100
-                    height: this.parent.parent.height
+                    left: 0
+                    top: 0
                     opacity: 1
                 }
             }
         }
 
         Item {
-            backgroundColor: "gray"
+            backgroundColor: "#3C7DC1"
             hoverEnabled: true
             onactivated: this.left = this.left !== 0 ? 0 : (window.innerWidth - this.width)
+            width: 200
             left: 0
+            top: window.innerHeight/2 - this.height/2
 
             Behavior {
                 left: "2s"
