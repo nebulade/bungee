@@ -118,9 +118,11 @@ var tokenizer = (function () {
                 continue;
             }
 
-            if (c === '\n') {
+            if (c === '\n' || c === ';') {
                 comment = false;
                 colonOnLine = false;
+                addToken("BREAK");
+
                 ++line;
                 lineContext = "";
 
