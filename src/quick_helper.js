@@ -31,8 +31,8 @@ Quick.compileScriptTagElement = function(script) {
     var tokens = Quick.Tokenizer.parse(script.text);
     Quick.Compiler.render(tokens, function (error, result) {
         if (error) {
-            console.log("Error rendering JavaScript on line " + error.line + ": " + error.message);
-            console.log(" -- " + error.context);
+            console.error("QuickJS compile error: " + error.line + ": " + error.message);
+            console.error(" -- " + error.context);
         } else {
             try {
                 if (Quick.verbose || Quick.debug) {
@@ -48,7 +48,8 @@ Quick.compileScriptTagElement = function(script) {
                     eval(result);
                 }
             } catch (e) {
-                console.log("Error evaluating generated JS code: " + e);
+                console.error("QuickJS error in generated JavaScript: " + e);
+                console.error(e);
             }
         }
     });

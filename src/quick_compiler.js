@@ -39,12 +39,14 @@ var compiler = (function () {
     errorMessages[errorCodes.NO_PROPERTY] =     "No property to assing expression.";
     errorMessages[errorCodes.NO_ELEMENTTYPE] =  "No type to create an element.";
     errorMessages[errorCodes.NO_TYPENAME] =     "No typename for the new type definition.";
+    errorMessages[errorCodes.NO_COLON] =        "Property must be followed by a ':'.";
+    errorMessages[errorCodes.NO_EXPRESSION] =   "No right-hand-side expression or element found.";
 
     function error(code, token) {
         var ret = {};
         ret.code = code;
         ret.context = token ? token.CONTEXT : undefined;
-        ret.message = "Compile error: " + errorMessages[code];
+        ret.message = errorMessages[code];
         ret.line = token ? token.LINE : -1;
 
         return ret;
@@ -417,12 +419,7 @@ var compiler = (function () {
             }
 
             if (token.TOKEN === "ELEMENT") {
-                if (property) {
-                    objectTree.delegates.push({name: property, value: token.DATA});
-                    property = undefined;
-                } else {
-                    elementType = token.DATA;
-                }
+                elementType = token.DATA;
             }
 
             if (token.TOKEN === "SCOPE_START") {
@@ -458,26 +455,39 @@ var compiler = (function () {
             }
 
             if (token.TOKEN === "EXPRESSION") {
-                if (!property) {
-                    var next_token = (i + 1 < token_length) ? tokens[i + 1] : undefined;
-                    if (next_token && next_token.TOKEN === "COLON") {
-                        property = token.DATA;
-                        log("property found", property);
-                        i += 1;
-                    } else {
-                        callback(error(errorCodes.NO_PROPERTY, token), null);
-                        return;
-                    }
+                // next token must be COLON
+                var next_token = (i + 1 < token_length) ? tokens[i + 1] : undefined;
+                if (next_token && next_token.TOKEN === "COLON") {
+                    property = token.DATA;
+                    log("property found '" + property + "'");
+                    i += 1;
+                    next_token = undefined;
                 } else {
-                    log("right-hand-side expression found for property", property, token.DATA);
+                    callback(error(errorCodes.NO_COLON, token), null);
+                    return;
+                }
+
+                // next token must be EXPRESSION or ELEMENT
+                next_token = (i + 1 < token_length) ? tokens[i + 1] : undefined;
+                if (next_token && next_token.TOKEN === "EXPRESSION") {
+                    log("right-hand-side expression found for property '" + property + "' '" + next_token.DATA + "'");
 
                     // special treatment for element IDs they are no real properties
                     if (property === "id") {
-                        objectTree.id = token.DATA;
+                        objectTree.id = next_token.DATA;
                     } else {
-                        objectTree.properties.push({name: property, value: token.DATA});
+                        objectTree.properties.push({name: property, value: next_token.DATA});
                     }
+                    i += 1;
                     property = undefined;
+                } else if (next_token && next_token.TOKEN === "ELEMENT") {
+                    log("right-hand-side element found for property", property, next_token.DATA);
+                    objectTree.delegates.push({name: property, value: next_token.DATA});
+                    i += 1;
+                    property = undefined;
+                } else {
+                    callback(error(errorCodes.NO_EXPRESSION, next_token), null);
+                    return;
                 }
             }
         }
