@@ -352,8 +352,10 @@ Quick.Element.prototype.addProperty = function (name, value) {
                 valueStore = val;
 
                 // connections are called like the properties
-                if (!silent)
+                if (!silent) {
                     that.emit(name);
+                    that.emit('changed');
+                }
 
                 Quick.Engine.dirty(that, name);
             }

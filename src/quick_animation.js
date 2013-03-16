@@ -24,7 +24,6 @@ Quick.Step = function (id, parent) {
 
 Quick.Animation = function (id, parent) {
     var elem = new Quick.Element(id, parent, "object");
-    var style;
     var index = Quick._animationIndex++;
     var dirty = true;
     var hasRules = false;
@@ -135,11 +134,7 @@ Quick.Animation = function (id, parent) {
     }
 
     elem.addChanged("target", addEventListeners);
-    elem.addChanged("duration", markDirty);
-    elem.addChanged("delay", markDirty);
-    elem.addChanged("loops", markDirty);
-    elem.addChanged("reverse", markDirty);
-    elem.addChanged("easing", markDirty);
+    elem.addChanged("changed", markDirty);
 
     elem.start = function () {
         if (dirty) {
@@ -147,7 +142,8 @@ Quick.Animation = function (id, parent) {
             dirty = false;
         }
 
-        elem._element.className = animationName;
+        if (elem._element)
+            elem._element.className = animationName;
     };
 
     elem.stop = function () {
@@ -158,6 +154,83 @@ Quick.Animation = function (id, parent) {
         elem.stop();
         elem.start();
     };
+
+    return elem;
+};
+
+
+Quick.Behavior = function (id, parent) {
+    var elem = new Quick.Element(id, parent, "object");
+    var index = Quick._animationIndex++;
+    var hasRules = false;
+    var animationName = "quickAnimation" + index;
+
+    elem.addProperty("target", undefined);
+
+    function animationStart(event) {
+        // console.log("start", event);
+        elem.emit("started");
+    }
+
+    function animationIteration(event) {
+        // console.log("iteration", event);
+    }
+
+    function animationEnd(event) {
+        // console.log("end", event);
+        elem.stop();
+        elem.emit("finished");
+    }
+
+    function updateRules() {
+        var rule = "";
+
+        if (!Quick._style) {
+            Quick._style = document.createElement('style');
+            document.getElementsByTagName('head')[0].appendChild(Quick._style);
+        }
+
+        if (hasRules) {
+            var tmpName = "." + animationName;
+            var i;
+
+            // remove animation rule
+            for (i = 0; i < Quick._style.sheet.cssRules.length; ++i) {
+                if (Quick._style.sheet.cssRules[i].selectorText === tmpName) {
+                    Quick._style.sheet.deleteRule(i);
+                    break;
+                }
+            }
+        }
+
+        rule += "." + animationName + " {\n";
+        rule += "   -webkit-transition: ";
+
+        for (var property in elem._properties) {
+            if (elem.hasOwnProperty(property) && property !== 'target') {
+                rule += property + " " + elem[property] + "\n";
+            }
+        }
+
+        rule += "}\n";
+
+        Quick._style.sheet.insertRule(rule, 0);
+
+        hasRules = true;
+    }
+
+    function addEventListeners() {
+        elem._element = elem.target;
+        if (elem._element && elem._element.element) {
+            elem._element.element.addEventListener("webkitAnimationStart", animationStart, false);
+            elem._element.element.addEventListener("webkitAnimationIteration", animationIteration, false);
+            elem._element.element.addEventListener("webkitAnimationEnd", animationEnd, false);
+            elem._element.className = animationName;
+        }
+    }
+
+    elem.addChanged("target", addEventListeners);
+    elem.addChanged("changed", updateRules);
 
     return elem;
 };

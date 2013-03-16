@@ -43,6 +43,18 @@
             }
         }
 
+        Item {
+            backgroundColor: "gray"
+            hoverEnabled: true
+            onactivated: this.left = this.left !== 0 ? 0 : (window.innerWidth - this.width)
+            left: 0
+
+            Behavior {
+                left: "2s"
+                target: this.parent
+            }
+        }
+
         </script>
 
     </head>
