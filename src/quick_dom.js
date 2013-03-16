@@ -16,6 +16,7 @@ Quick.Item = function (id, parent, typeHint) {
     var elem = new Quick.Element(id, parent, typeHint ? typeHint : "item");
 
     elem.addProperty("selectable", false);
+    elem.addProperty("mouseEnabled", true);
     elem.addProperty("userSelect", function () { return this.selectable ? "auto" : "none"; });
     elem.addProperty("-webkit-user-select", function () { return this.selectable ? "auto" : "none"; });
 
@@ -93,6 +94,7 @@ var tmpTextElement;
 Quick.Text = function (id, parent) {
     var elem = new Quick.Item(id, parent);
 
+    elem.addProperty("mouseEnabled", false);
     elem.addProperty("textWidth", 0);
     elem.addProperty("textHeight", 0);
     elem.addProperty("fontSize", "");
@@ -225,44 +227,70 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
     }
 
     elem.onclick = function () {
-        object.emit('activated');
+        if (!object.mouseEnabled) {
+            return;
+        }
+
         object.emit('click');
+        if (!object.hoverEnabled) {
+            object.emit('activated');
+        }
     };
     elem.onmouseover = function () {
-        if (object.hoverEnabled) {
+        if (object.hoverEnabled && object.mouseEnabled) {
             object.containsMouse = true;
             object.emit('mouseover');
         }
     };
     elem.onmouseout = function () {
-        if (object.hoverEnabled) {
+        if (object.hoverEnabled && object.mouseEnabled) {
             object.containsMouse = false;
             object.emit('mouseout');
         }
     };
     elem.onmousedown = function (event) {
-        that.currentMouseElement = this;
+        if (!object.mouseEnabled) {
+            return;
+        }
+
+        if (!event.used) {
+            that.currentMouseElement = this;
+            event.used = true;
+        }
         object.mousePressed = true;
         object.mouseRelStartX = event.layerX;
         object.mouseRelStartY = event.layerY;
         object.emit('mousedown');
     };
     elem.onmouseup = function (event) {
+        if (!object.mouseEnabled) {
+            return;
+        }
+
         object.mousePressed = false;
         object.mouseRelStartX = 0;
         object.mouseRelStartY = 0;
         object.emit('mouseup');
+
         if (that.currentMouseElement === this) {
             object.emit('activated');
         }
         that.currentMouseElement = undefined;
     };
     elem.ontouchstart = function (event) {
+        if (!object.mouseEnabled) {
+            return;
+        }
+
         that.currentMouseElement = this;
         object.mousePressed = true;
         object.emit('mousedown');
     };
     elem.ontouchend = function (event) {
+        if (!object.mouseEnabled) {
+            return;
+        }
+
         object.mousePressed = false;
         object.mouseRelStartX = 0;
         object.mouseRelStartY = 0;
@@ -273,7 +301,7 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
         that.currentMouseElement = undefined;
     };
     elem.onmousemove = function (event) {
-        if (object.hoverEnabled) {
+        if (object.hoverEnabled && object.mouseEnabled) {
             object.mouseAbsX = event.clientX;
             object.mouseAbsY = event.clientY;
             object.mouseRelX = event.layerX;
