@@ -13,7 +13,6 @@ exports.quick = (function () {
             if (error) {
                 callback(error);
             } else {
-                console.log(data);
                 ret.compile(data, callback);
             }
         });

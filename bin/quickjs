@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+
+/*jshint globalstrict: true*/
+/*jshint node: true*/
+
+"use strict";
+
+var quick = require('../');
+var util = require('util');
+var fs = require('fs');
+var optimist = require('optimist');
+var argv = optimist.usage('Usage: $0 [input] [output]')
+    .alias('h', 'help')
+    .describe('h', 'Show this help.')
+    .boolean('s')
+    .default('s', false)
+    .alias('s', ['silent', 'quiet'])
+    .describe('s', 'Suppress console output.')
+    .argv;
+
+if (argv._.length <= 1 || argv.h) {
+    optimist.showHelp();
+    process.exit(1);
+}
+
+var input = argv._[0];
+var output = argv._[1];
+var log = !argv.s;
+
+log && console.log("Compile '" + input + "' to '" + output + "' ...");
+
+quick.quick.compileFile(input, function (error, result) {
+    if (error) {
+        console.error("");
+        console.error("Error: " + input + ":" + error.line);
+        console.error("> '" + error.context + "'");
+        console.error(" " + error.message);
+        console.error("");
+
+        process.exit(2);
+    }
+
+    fs.writeFile(output, result, function (error) {
+        if (error) {
+            console.error(util.inspect(error));
+            process.exit(3);
+        }
+
+        log && console.log("Done.");
+        process.exit(0);
+    });
+});

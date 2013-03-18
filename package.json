@@ -17,12 +17,16 @@
         "url": "git://github.com/nebulon1234/quickjs.git"
     },
     "main": "./quick.js",
-    "bin": {},
+    "bin": {
+        "quickjs": "bin/quickjs"
+    },
     "engines": {
         "node": ">=0.6"
     },
     "scripts": {},
-    "dependencies": {},
+    "dependencies": {
+        "optimist": "*"
+    },
     "devDependencies": {},
     "readmeFilename": "Readme.md"
 }
