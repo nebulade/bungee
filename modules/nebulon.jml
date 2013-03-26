@@ -1,0 +1,90 @@
+
+Label @ Text {
+    color: "#3C7DC1"
+    fontSize: "32px"
+    fontFamily: "Liberation Sans"
+}
+
+Button @ Item {
+    width: this.l.textWidth < 100 ? 100 : (this.l.textWidth + 40)
+    height: 50
+    label: ""
+    cursor: "default"
+    hoverEnabled: true
+    backgroundColor: ^{
+        if (this.mousePressed) {
+            return "#006B9F";
+        } else if (this.containsMouse) {
+            return "#30A7DF";
+        } else {
+            return "#3C7DC1";
+        }
+    }^
+
+    Label {
+        id: l
+        color: "white"
+        text: this.parent.label
+        left: this.parent.width/2 - this.textWidth/2
+        top: this.parent.height/2 - this.textHeight/2
+    }
+}
+
+Frame @ Item {
+    width: this.parent.width
+    height: this.parent.height
+    title: ""
+
+    Label {
+        text: this.parent.title
+        left: this.parent.width/2 - this.textWidth/2
+    }
+}
+
+Layout @ Item {
+    width: this.childrenWidth
+    height: this.childrenHeight
+    spacing: 10
+    orientation: "vertical"
+
+    function _layout(): ^{
+        var kids = this.children();
+        var sibling = undefined;
+
+        for (var i in kids) {
+            if (kids.hasOwnProperty(i)) {
+                if (this.orientation === "vertical") {
+                    kids[i].top = sibling ? (this.spacing + sibling.bottom) : 0;
+                    kids[i].left = 0;
+                } else {
+                    kids[i].top = 0;
+                    kids[i].left = sibling ? (this.spacing + sibling.right) : 0;
+                }
+                sibling = kids[i];
+            }
+        }
+    }^
+
+    function _setupListeners(): ^{
+        var kids = this.children();
+        var that = this;
+
+        for (var i in kids) {
+            if (kids.hasOwnProperty(i)) {
+                kids[i].addChanged('width', function () { that._layout() });
+                kids[i].addChanged('height', function () { that._layout() });
+            }
+        }
+    }^
+
+    orientationChanged: this._layout();
+    onload: this._setupListeners();
+}
+
+VerticalLayout @ Layout {
+    orientation: "vertical"
+}
+
+HorizontalLayout @ Layout {
+    orientation: "horizontal"
+}
