@@ -323,6 +323,9 @@ Quick.Element.prototype.addFunction = function (name, value) {
     this[name] = value;
 };
 
+var defPropCount = 0;
+var notdefPropCount = 0;
+
 Quick.Element.prototype.addProperty = function (name, value) {
     var that = this;
     var valueStore;

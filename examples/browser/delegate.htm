@@ -22,6 +22,29 @@
             scale: this.opacity
             onclick: this.parent.removeChild(this);
             overflow: "hidden"
+            onload: this.anim2.restart();
+
+            Animation {
+                id: anim2
+                target: this.parent
+                easing: "ease-in-out"
+                duration: 1000
+
+                Step {
+                    percentage: 0
+                    width: 0
+                }
+
+                Step {
+                    percentage: 80
+                    width: this.parent.parent.width*1.2
+                }
+
+                Step {
+                    percentage: 100
+                    width: this.parent.parent.width
+                }
+            }
 
             Animation {
                 id: anim
@@ -65,15 +88,32 @@
         }
 
         Item {
+            id: listView
+            overflow: "scroll"
+            scrollTopchanged: this.updateDelegates();
+            width: window.innerWidth
+            height: window.innerHeight
             delegate: MyDelegate;
             model: 50;
+            i: 0
 
-            onload: ^{
-                for (var i = 0; i < this.model; ++i) {
-                    var child = this.createdelegate();
-                    child.modelData = i;
-                    this.addChild(child);
-                    child.initializeBindings();
+            Item {
+                height: 10000000
+            }
+
+            function buildDelegate(j): ^{
+                var child = this.createdelegate();
+                child.modelData = j;
+                this.addChild(child);
+                child.initializeBindings();
+            }^
+
+            function updateDelegates(): ^{
+                // console.log("update", this.scrollTop, this.height, this.i, (this.scrollTop+this.height) / 72)
+                if ((this.scrollTop + this.height) / 72 > this.i) {
+                    console.log("create the delegates", this.i)
+                    this.buildDelegate(this.i);
+                    ++this.i;
                 }
             }^
         }

@@ -40,6 +40,13 @@ Quick.Item = function (id, parent, typeHint) {
     elem.addProperty("containsMouse", false);
     elem.addProperty("scale", 1);
     elem.addProperty("opacity", 1);
+
+    // scrolling
+    elem.addProperty("scrollTop", 0);
+    elem.addProperty("scrollLeft", 0);
+    elem.addProperty("srollWidth", 0);
+    elem.addProperty("scrollHeight", 0);
+
     elem.addProperty("-webkit-transform", function () {
         var s = this.scale.toFixed(10);
         return "scale(" + s + ", " + s + ")";
@@ -183,16 +190,6 @@ Quick.Image = function (id, parent) {
     return elem;
 };
 
-Quick.Button = function (id, parent) {
-    var elem = new Quick.Item(id, parent);
-
-    elem.addProperty("textAlign", "center");
-    elem.addProperty("cursor", "pointer");
-    elem.addProperty("backgroundColor", "lightgray");
-
-    return elem;
-};
-
 Quick.Input = function (id, parent) {
     var elem = new Quick.Item(id, parent, "input");
 
@@ -225,6 +222,13 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
         elem = document.createElement('div');
         elem.style.position = 'absolute';
     }
+
+    elem.onscroll = function (e) {
+        object.scrollTop = e.target.scrollTop;
+        object.scrollLeft = e.target.scrollLeft;
+        object.srollWidth = e.target.scrollWidth;
+        object.scrollHeight = e.target.scrollHeight;
+    };
 
     elem.onclick = function () {
         if (!object.mouseEnabled) {
