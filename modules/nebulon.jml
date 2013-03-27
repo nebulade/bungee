@@ -30,14 +30,52 @@ Button @ Item {
     }
 }
 
-Frame @ Item {
+Deck @ Item {
+    activeCard: undefined
     width: this.parent.width
     height: this.parent.height
-    title: ""
+    overflow: "hidden"
 
-    Label {
-        text: this.parent.title
-        left: this.parent.width/2 - this.textWidth/2
+    function showCard(card): ^{
+        if (this.activeCard === card) {
+            return;
+        }
+
+        if (this.activeCard) {
+            this.activeCard.top = this.bottom;
+        }
+
+        this.activeCard = card;
+        this.activeCard.top = 0;
+    }^
+
+    onload: ^{
+        var kids = this.children();
+
+        for (var i in kids) {
+            if (kids.hasOwnProperty(i)) {
+                if (!this.activeCard) {
+                    this.activeCard = kids[i];
+                }
+
+                if (kids[i] === this.activeCard) {
+                    kids[i].top = 0;
+                } else {
+                    kids[i].top = this.bottom;
+                }
+            }
+        }
+    }^
+}
+
+Card @ Item {
+    width: this.parent.width
+    height: this.parent.height
+    backgroundColor: "white"
+
+    Behavior {
+        top: "500ms"
+        target: this.parent
     }
 }
 
