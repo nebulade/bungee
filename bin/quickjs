@@ -16,6 +16,9 @@ var argv = optimist.usage('Usage: $0 [input] [output]')
     .default('s', false)
     .alias('s', ['silent', 'quiet'])
     .describe('s', 'Suppress console output.')
+    .alias('e', 'event')
+    .describe('e', 'Defer script evaluation until DOM event is fired')
+    .string('e')
     .argv;
 
 if (argv._.length <= 1 || argv.h) {
@@ -26,10 +29,18 @@ if (argv._.length <= 1 || argv.h) {
 var input = argv._[0];
 var output = argv._[1];
 var log = !argv.s;
+var options = {}
 
 log && console.log("Compile '" + input + "' to '" + output + "' ...");
 
-quick.quick.compileFile(input, function (error, result) {
+if (argv.e) {
+    log && console.log(" Script evaluation will wait for event '" + argv.e + "'.");
+    options.event = argv.e;
+} else {
+    log && console.log(" Script will be evaluated immediately.");
+}
+
+quick.quick.compileFile(input, options, function (error, result) {
     if (error) {
         console.error("");
         console.error("Error: " + input + ":" + error.line);

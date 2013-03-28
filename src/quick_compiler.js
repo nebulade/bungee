@@ -74,12 +74,19 @@ var compiler = (function () {
      * Renders the head of the javascript output
      * Only called once
      */
-    function renderBegin() {
-        output += "(function() {\n";
+    function renderBegin(options) {
         if (Quick.debug) {
             addIndentation(1);
             output += "debugger;\n";
         }
+
+        if (options.event) {
+            output += "window.document.addEventListener('" + options.event + "', ";
+        } else {
+            output += "(";
+        }
+
+        output += "function() {\n";
 
         // add pseudo parent
         addIndentation();
@@ -121,12 +128,18 @@ var compiler = (function () {
      * Render the end of the javascript output
      * Only called once
      */
-    function renderEnd() {
+    function renderEnd(options) {
         addIndentation();
         output += ELEM_PREFIX + ".initializeBindings();\n";
         addIndentation();
         output += ELEM_PREFIX + ".render();\n";
-        output += "}());\n";
+        output += "}";
+
+        if (options.event) {
+            output += ");\n";
+        } else {
+            output += ")();\n";
+        }
     }
 
     /*
@@ -305,12 +318,12 @@ var compiler = (function () {
      * Takes a TreeObject tree to render
      * The first tree object is root and needs special treatment
      */
-    function renderTree(tree) {
+    function renderTree(tree, options) {
         var i;
         index = 1;
         output = "";
 
-        renderBegin();
+        renderBegin(options);
 
         for (i = 0; i < tree.types.length; ++i) {
             renderTreeObject(tree.types[i]);
@@ -320,7 +333,7 @@ var compiler = (function () {
             renderTreeObject(tree.elements[i]);
         }
 
-        renderEnd();
+        renderEnd(options);
 
         return output;
     }
@@ -377,7 +390,7 @@ var compiler = (function () {
      * Take all tokens and compile it to real elements with properties and bindings
      * This is basically the only real API of this object
      */
-    compiler.render = function (tok, callback) {
+    compiler.render = function (tok, options, callback) {
         var property;
         var tokens = tok;
         var token_length = tokens.length;
@@ -385,15 +398,20 @@ var compiler = (function () {
         var elementTypeDefinition;
         var i, j;
 
+        if (typeof callback === 'undefined') {
+            callback = options;
+            options = {};
+        }
+
         if (typeof callback !== "function") {
             return;
         }
 
         // TreeObject is a helper to pass information to the renderer
         var TreeObject = function (parent) {
-            this.id;
-            this.type;
-            this.typeDefinition;
+            this.id = undefined;
+            this.type = undefined;
+            this.typeDefinition = undefined;
             this.parent = parent;
             this.types = [];
             this.elements = [];
@@ -493,7 +511,7 @@ var compiler = (function () {
         }
 
         // dumpObjectTree(objectTreeRoot);
-        callback(null, renderTree(objectTreeRoot));
+        callback(null, renderTree(objectTreeRoot, options));
     };
 
     return compiler;
