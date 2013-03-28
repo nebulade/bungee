@@ -108,6 +108,7 @@ Quick.Text = function (id, parent) {
     elem.addProperty("fontFamily", "");
     elem.addProperty("fontFamily", "");
     elem.addProperty("text", "");
+    elem.addProperty("-text", function () { return this.text; });
     elem.addProperty("width", function() { return this.textWidth; });
     elem.addProperty("height", function() { return this.textHeight; });
 
@@ -371,7 +372,12 @@ Quick.RendererDOM.prototype.renderElement = function (element) {
     }
 
     for (name in element._dirtyProperties) {
-        if (name === 'text') {
+        // ignore properties prefixed with _
+        if (name[0] === '_') {
+            continue;
+        }
+
+        if (name === '-text') {
             element.element.innerHTML = element[name];
         } else if (name === 'placeholder') {
             element.element.placeholder = element[name];
