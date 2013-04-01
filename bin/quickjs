@@ -40,7 +40,7 @@ if (argv.e) {
     log && console.log(" Script will be evaluated immediately.");
 }
 
-quick.quick.compileFile(input, options, function (error, result) {
+quick.compileFile(input, options, function (error, result) {
     if (error) {
         console.error("");
         console.error("Error: " + input + ":" + error.line);

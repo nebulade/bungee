@@ -2,11 +2,11 @@
 
 var fs = require('fs');
 
-var quickjs_tokenizer = require('./src/quick_tokenizer.js');
-var quickjs_compiler = require('./src/quick_compiler.js');
-
-exports.quick = (function () {
+module.exports = (function () {
     var ret = {};
+
+    ret.tokenizer = require('./src/quick_tokenizer.js');
+    ret.compiler = require('./src/quick_compiler.js');
 
     ret.compileFile = function(file, options, callback) {
         fs.readFile(file, 'utf8', function (error, data) {
@@ -19,8 +19,8 @@ exports.quick = (function () {
     };
 
     ret.compile = function(source, options, callback) {
-        var tokens = quickjs_tokenizer.Tokenizer.parse(source);
-        quickjs_compiler.Compiler.render(tokens, options, function (error, result) {
+        var tokens = ret.tokenizer.parse(source);
+        ret.compiler.render(tokens, options, function (error, result) {
             if (error) {
                 callback(error);
             } else {

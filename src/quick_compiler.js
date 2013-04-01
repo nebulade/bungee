@@ -519,7 +519,7 @@ var compiler = (function () {
 
 // TODO is this the proper check?
 if (typeof window === 'undefined') {
-    exports.Compiler = compiler;
+    module.exports = compiler;
 } else {
-    window.Quick.Compiler = compiler;
+    window.Quick = compiler;
 }

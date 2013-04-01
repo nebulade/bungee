@@ -207,8 +207,8 @@ var tokenizer = (function () {
 
 // TODO is this the proper check?
 if (typeof window === 'undefined') {
-    exports.Tokenizer = tokenizer;
+    module.exports = tokenizer;
 } else {
-    window.Quick.Tokenizer = tokenizer;
+    window.Quick = tokenizer;
 }
 
