@@ -521,5 +521,5 @@ var compiler = (function () {
 if (typeof window === 'undefined') {
     module.exports = compiler;
 } else {
-    window.Quick = compiler;
+    window.Quick.Compiler = compiler;
 }

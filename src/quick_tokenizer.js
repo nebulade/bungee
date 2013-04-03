@@ -209,6 +209,6 @@ var tokenizer = (function () {
 if (typeof window === 'undefined') {
     module.exports = tokenizer;
 } else {
-    window.Quick = tokenizer;
+    window.Quick.Tokenizer = tokenizer;
 }
 
