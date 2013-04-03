@@ -8,6 +8,7 @@ if (!Quick) {
 }
 
 Quick._animationIndex = 0;
+Quick._debugAnimation = false;
 
 /*
  **************************************************
@@ -38,16 +39,16 @@ Quick.Animation = function (id, parent) {
     elem.addProperty("easing", "ease");
 
     function animationStart(event) {
-        // console.log("start", event);
+        Quick._debugAnimation && console.log("start", event);
         elem.emit("started");
     }
 
     function animationIteration(event) {
-        // console.log("iteration", event);
+        Quick._debugAnimation && console.log("iteration", event);
     }
 
     function animationEnd(event) {
-        // console.log("end", event);
+        Quick._debugAnimation && console.log("end", event);
         elem.stop();
         elem.emit("finished");
     }
@@ -114,6 +115,8 @@ Quick.Animation = function (id, parent) {
 
         rule2 += "}";
 
+        Quick._debugAnimation && console.log("Quick Animation rule", rule1, rule2);
+
         Quick._style.sheet.insertRule(rule1, 0);
         Quick._style.sheet.insertRule(rule2, 0);
 
@@ -168,22 +171,23 @@ Quick.Behavior = function (id, parent) {
     elem.addProperty("target", undefined);
 
     function animationStart(event) {
-        // console.log("start", event);
+        Quick._debugAnimation && console.log("start", event);
         elem.emit("started");
     }
 
     function animationIteration(event) {
-        // console.log("iteration", event);
+        Quick._debugAnimation && console.log("iteration", event);
     }
 
     function animationEnd(event) {
-        // console.log("end", event);
+        Quick._debugAnimation && console.log("end", event);
         elem.stop();
         elem.emit("finished");
     }
 
     function updateRules() {
         var rule = "";
+        var gotProperties = false;
 
         if (!Quick._style) {
             Quick._style = document.createElement('style');
@@ -208,15 +212,25 @@ Quick.Behavior = function (id, parent) {
 
         for (var property in elem._properties) {
             if (elem.hasOwnProperty(property) && property !== 'target') {
-                rule += property + " " + elem[property] + "\n";
+                if (gotProperties) {
+                    rule += ", ";
+                } else {
+                    gotProperties = true;
+                }
+
+                rule += property + " " + elem[property];
             }
         }
 
-        rule += "}\n";
+        rule += "\n}\n";
 
-        Quick._style.sheet.insertRule(rule, 0);
+        // only actually insert rules if there is no property undefined
+        if (gotProperties && rule.indexOf('undefined') === -1) {
+            Quick._debugAnimation && console.log("Quick Behavior rule", rule);
 
-        hasRules = true;
+            Quick._style.sheet.insertRule(rule, 0);
+            hasRules = true;
+        }
     }
 
     function addEventListeners() {

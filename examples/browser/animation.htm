@@ -67,9 +67,11 @@
             width: 200
             left: 0
             top: window.innerHeight/2 - this.height/2
+            opacity: 1-(this.left/window.innerWidth)
 
             Behavior {
                 left: "2s"
+                opacity: "4s"
                 target: this.parent
             }
         }
