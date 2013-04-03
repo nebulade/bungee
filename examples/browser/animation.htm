@@ -19,7 +19,7 @@
 
             Animation {
                 id: anim
-                target: this.parent
+                target: this.parent // this is already implicit
                 duration: 7000
                 loops: "infinite"
 
@@ -72,7 +72,6 @@
             Behavior {
                 left: "2s"
                 opacity: "4s"
-                target: this.parent
             }
         }
 

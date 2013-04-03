@@ -31,7 +31,7 @@ Quick.Animation = function (id, parent) {
     var animationName = "quickAnimation" + index;
     var keyFramesName = "quickAnimationKeyFrames" + index;
 
-    elem.addProperty("target", undefined);
+    elem.addProperty("target", function () { return this.parent; });
     elem.addProperty("duration", 250);
     elem.addProperty("delay", 0);
     elem.addProperty("loops", 1);
@@ -168,7 +168,7 @@ Quick.Behavior = function (id, parent) {
     var hasRules = false;
     var animationName = "quickAnimation" + index;
 
-    elem.addProperty("target", undefined);
+    elem.addProperty("target", function () { return this.parent; });
 
     function animationStart(event) {
         Quick._debugAnimation && console.log("start", event);
@@ -205,6 +205,11 @@ Quick.Behavior = function (id, parent) {
                     break;
                 }
             }
+        }
+
+        // nothing to do when we got no properties
+        if (elem._properties.length === 0) {
+            return;
         }
 
         rule += "." + animationName + " {\n";
