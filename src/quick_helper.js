@@ -19,6 +19,7 @@ Quick.verbose = false;
 Quick.run = function () {
     Quick.useQueryFlags();
     Quick.compileScriptTags();
+    Quick.Engine.start();
 };
 
 Quick.useQueryFlags = function() {

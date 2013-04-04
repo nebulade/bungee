@@ -80,13 +80,17 @@ var compiler = (function () {
             output += "debugger;\n";
         }
 
-        if (options.event) {
-            output += "window.document.addEventListener('" + options.event + "', ";
-        } else {
-            output += "(";
-        }
+        output += "if (!window.Quick) {\n";
+        output += "    window.Quick = {};\n";
+        output += "}\n\n";
 
-        output += "function() {\n";
+        if (options.module) {
+            output += "window.Quick.Slab = function () {\n";
+        } else {
+            output += "(function() {\n";
+        }
+        addIndentation();
+        output += "'use strict';\n\n";
 
         // add pseudo parent
         addIndentation();
@@ -121,7 +125,7 @@ var compiler = (function () {
         output += "}\n";
 
         addIndentation();
-        output += "}\n";
+        output += "};\n\n";
     }
 
     /*
@@ -133,12 +137,11 @@ var compiler = (function () {
         output += ELEM_PREFIX + ".initializeBindings();\n";
         addIndentation();
         output += ELEM_PREFIX + ".render();\n";
-        output += "}";
 
-        if (options.event) {
-            output += ");\n";
+        if (options.module) {
+            output += "};\n";
         } else {
-            output += ")();\n";
+            output += "})();\n";
         }
     }
 

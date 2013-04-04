@@ -104,7 +104,9 @@ if (!Quick.Engine) {
             }
         }
 
-        advance();
+        ret.start = function () {
+            advance();
+        };
 
         ret.dirty = function (element, property) {
             element._dirtyProperties[property] = true;

@@ -16,9 +16,9 @@ var argv = optimist.usage('Usage: $0 [input] [output]')
     .default('s', false)
     .alias('s', ['silent', 'quiet'])
     .describe('s', 'Suppress console output.')
-    .alias('e', 'event')
-    .describe('e', 'Defer script evaluation until DOM event is fired')
-    .string('e')
+    .alias('m', 'module')
+    .describe('m', 'Module name under which this file will be available in Quick.')
+    .string('m')
     .argv;
 
 if (argv._.length <= 1 || argv.h) {
@@ -33,12 +33,17 @@ var options = {}
 
 log && console.log("Compile '" + input + "' to '" + output + "' ...");
 
-if (argv.e) {
-    log && console.log(" Script evaluation will wait for event '" + argv.e + "'.");
-    options.event = argv.e;
+if (argv.m) {
+    options.module = argv.m;
 } else {
-    log && console.log(" Script will be evaluated immediately.");
+    if (input.indexOf('.jml') > 0) {
+        options.module = input.slice(0, input.indexOf('.jml'));
+    } else {
+        options.module = input;
+    }
 }
+
+log && console.log(" Script will be available under Quick.Modules." + options.module);
 
 quick.compileFile(input, options, function (error, result) {
     if (error) {
