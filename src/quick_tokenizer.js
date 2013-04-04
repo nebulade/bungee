@@ -121,7 +121,6 @@ var tokenizer = (function () {
             if (c === '\n' || c === ';') {
                 comment = false;
                 colonOnLine = false;
-                addToken("BREAK");
 
                 ++line;
                 lineContext = "";
@@ -147,7 +146,7 @@ var tokenizer = (function () {
                 continue;
             }
 
-            if ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c === '"' || c === '\'' || c === '(' || c === '-') {
+            if ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c === '"' || c === '\'' || c === '(' || c === '-' || c === '_') {
                 addToken("EXPRESSION", parseExpression());
                 continue;
             }
