@@ -400,6 +400,9 @@ var compiler = (function () {
     /*
      * Take all tokens and compile it to real elements with properties and bindings
      * This is basically the only real API of this object
+     * options:
+     *  - 'dump'        dump object tree
+     *  - 'dryrun'      callback with object tree instead of render output
      */
     compiler.render = function (tok, options, callback) {
         var property;
@@ -527,8 +530,15 @@ var compiler = (function () {
             }
         }
 
-        // dumpObjectTree(objectTreeRoot);
-        callback(null, renderTree(objectTreeRoot, options));
+        if (options.dump) {
+            dumpObjectTree(objectTreeRoot);
+        }
+
+        if (options.dryrun) {
+            callback(null, objectTreeRoot);
+        } else {
+            callback(null, renderTree(objectTreeRoot, options));
+        }
     };
 
     return compiler;

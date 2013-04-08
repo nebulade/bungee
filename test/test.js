@@ -250,5 +250,24 @@ describe('Compiler', function () {
                 should.not.exist(result);
             });
         });
+        it('with properties width id', function () {
+            var tmp = "";
+
+            tmp += "Element {\n";
+            tmp += "id: myelement;\n";
+            tmp += "}\n";
+
+            quick.compile(tmp, { dryrun: true }, function (error, result) {
+                should.not.exist(error);
+                should.exist(result);
+
+                // root element has no id
+                should.not.exist(result.id);
+                should.exist(result.elements);
+                result.elements.should.have.length(1);
+                should.exist(result.elements[0]);
+                result.elements[0].id.should.be.equal('myelement');
+            });
+        });
     });
 });

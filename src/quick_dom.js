@@ -224,6 +224,11 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
         elem.style.position = 'absolute';
     }
 
+    // set id attribute
+    if (object.id) {
+        elem.id = object.id;
+    }
+
     elem.onscroll = function (e) {
         object.scrollTop = e.target.scrollTop;
         object.scrollLeft = e.target.scrollLeft;
@@ -381,7 +386,7 @@ Quick.RendererDOM.prototype.renderElement = function (element) {
             element.element.innerHTML = element[name];
         } else if (name === 'placeholder') {
             element.element.placeholder = element[name];
-        } else if (name === 'className') {
+        } else if (name === 'className' && element[name] !== '') {
             element.element.className = element[name];
         } else {
             element.element.style[name] = element[name];
