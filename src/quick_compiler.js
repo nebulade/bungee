@@ -23,24 +23,28 @@ var compiler = (function () {
     var index;                  // index used for tracking the indentation
 
     var errorCodes = {
-        GENERIC:            0,
-        UNKNOWN_ELEMENT:    1,
-        NO_PROPERTY:        2,
-        NO_ELEMENTTYPE:     3,
-        NO_TYPENAME:        4
+        GENERIC:                0,
+        UNKNOWN_ELEMENT:        1,
+        NO_PROPERTY:            2,
+        NO_ELEMENTTYPE:         3,
+        NO_TYPENAME:            4,
+        NO_EXPRESSION:          5,
+        NO_COLON:               6,
+        INVALID_PROPERTY_NAME:  7
     };
 
     // make error codes public
     compiler.errorCodes = errorCodes;
 
     var errorMessages = [];
-    errorMessages[errorCodes.GENERIC] =         "generic error";
-    errorMessages[errorCodes.UNKNOWN_ELEMENT] = "Cannot create element.";
-    errorMessages[errorCodes.NO_PROPERTY] =     "No property to assing expression.";
-    errorMessages[errorCodes.NO_ELEMENTTYPE] =  "No type to create an element.";
-    errorMessages[errorCodes.NO_TYPENAME] =     "No typename for the new type definition.";
-    errorMessages[errorCodes.NO_COLON] =        "Property must be followed by a ':'.";
-    errorMessages[errorCodes.NO_EXPRESSION] =   "No right-hand-side expression or element found.";
+    errorMessages[errorCodes.GENERIC] =                 "generic error";
+    errorMessages[errorCodes.UNKNOWN_ELEMENT] =         "Cannot create element.";
+    errorMessages[errorCodes.NO_PROPERTY] =             "No property to assing expression.";
+    errorMessages[errorCodes.NO_ELEMENTTYPE] =          "No type to create an element.";
+    errorMessages[errorCodes.NO_TYPENAME] =             "No typename for the new type definition.";
+    errorMessages[errorCodes.NO_COLON] =                "Property must be followed by a ':'.";
+    errorMessages[errorCodes.NO_EXPRESSION] =           "No right-hand-side expression or element found.";
+    errorMessages[errorCodes.INVALID_PROPERTY_NAME] =   "Invalid property name found.";
 
     function error(code, token) {
         var ret = {};
@@ -56,6 +60,10 @@ var compiler = (function () {
         if (Quick.verbose) {
             console.log(msg);
         }
+    }
+
+    function isNumeric (c) {
+        return (c >= '0' && c <= '9');
     }
 
     /*
@@ -481,6 +489,12 @@ var compiler = (function () {
                 if (next_token && next_token.TOKEN === "COLON") {
                     property = token.DATA;
                     log("property found '" + property + "'");
+                    // check for valid property names
+                    if (isNumeric(property[0])) {
+                        log("property name '" + property + "' is invalid.");
+                        callback(error(errorCodes.INVALID_PROPERTY_NAME, token), null);
+                        return;
+                    }
                     i += 1;
                     next_token = undefined;
                 } else {

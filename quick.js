@@ -21,11 +21,7 @@ module.exports = (function () {
     ret.compile = function(source, options, callback) {
         var tokens = ret.tokenizer.parse(source);
         ret.compiler.render(tokens, options, function (error, result) {
-            if (error) {
-                callback(error);
-            } else {
-                callback(null, result);
-            }
+            callback(error, result);
         });
     };
 

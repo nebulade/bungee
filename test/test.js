@@ -173,8 +173,24 @@ describe('Tokenizer', function () {
             var tmp = "";
 
             tmp += "Element {\n";
-            tmp += "1property: 1;\n";
             tmp += "prop2erty3: 2;\n";
+            tmp += "}\n";
+
+            var tokens = quick.tokenizer.parse(tmp);
+            verifyTokens(tokens, [
+                ['ELEMENT', 'Element'],
+                ['SCOPE_START', undefined],
+                ['EXPRESSION', 'prop2erty3'],
+                ['COLON', undefined],
+                ['EXPRESSION', '2'],
+                ['SCOPE_END', undefined]
+            ]);
+        });
+        it('with properties beginning with a number (should fail in compilation)', function () {
+            var tmp = "";
+
+            tmp += "Element {\n";
+            tmp += "1property: 1;\n";
             tmp += "}\n";
 
             var tokens = quick.tokenizer.parse(tmp);
@@ -184,9 +200,6 @@ describe('Tokenizer', function () {
                 ['EXPRESSION', '1property'],
                 ['COLON', undefined],
                 ['EXPRESSION', '1'],
-                ['EXPRESSION', 'prop2erty3'],
-                ['COLON', undefined],
-                ['EXPRESSION', '2'],
                 ['SCOPE_END', undefined]
             ]);
         });
@@ -219,6 +232,22 @@ describe('Compiler', function () {
                 }
 
                 done();
+            });
+        });
+    });
+    describe('Compile code', function () {
+        it('with properties beginning with a number', function () {
+            var tmp = "";
+
+            tmp += "Element {\n";
+            tmp += "1property: 1;\n";
+            tmp += "}\n";
+
+            quick.compile(tmp, {}, function (error, result) {
+                should.exist(error);
+                error.code.should.be.equal(7);
+                error.line.should.be.equal(2);
+                should.not.exist(result);
             });
         });
     });
