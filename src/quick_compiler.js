@@ -329,7 +329,7 @@ var compiler = (function () {
      * Takes a TreeObject tree to render
      * The first tree object is root and needs special treatment
      */
-    function renderTree(tree, options) {
+    compiler.renderTree = function (tree, options, callback) {
         var i;
         index = 1;
         output = "";
@@ -346,8 +346,8 @@ var compiler = (function () {
 
         renderEnd(options);
 
-        return output;
-    }
+        callback(null, output);
+    };
 
     /*
      * Dump out the current object tree to the console
@@ -398,28 +398,15 @@ var compiler = (function () {
     }
 
     /*
-     * Take all tokens and compile it to real elements with properties and bindings
-     * This is basically the only real API of this object
-     * options:
-     *  - 'dump'        dump object tree
-     *  - 'dryrun'      callback with object tree instead of render output
+     * Take all tokens and compile it to a object tree, which can be rendered
      */
-    compiler.render = function (tok, options, callback) {
+    compiler.createObjectTree = function (tok, options, callback) {
         var property;
         var tokens = tok;
         var token_length = tokens.length;
         var elementType;
         var elementTypeDefinition;
         var i, j;
-
-        if (typeof callback === 'undefined') {
-            callback = options;
-            options = {};
-        }
-
-        if (typeof callback !== "function") {
-            return;
-        }
 
         // TreeObject is a helper to pass information to the renderer
         var TreeObject = function (parent) {
@@ -530,15 +517,27 @@ var compiler = (function () {
             }
         }
 
-        if (options.dump) {
-            dumpObjectTree(objectTreeRoot);
-        }
+        callback(null, objectTreeRoot);
+    };
 
-        if (options.dryrun) {
-            callback(null, objectTreeRoot);
-        } else {
-            callback(null, renderTree(objectTreeRoot, options));
-        }
+    /*
+     * Take all tokens, compile it to a object tree and render it
+     * options:
+     *  - 'dump'        dump object tree
+     */
+    compiler.compileAndRender = function (tok, options, callback) {
+        compiler.createObjectTree(tok, options, function (error, result) {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+
+            if (options.dump) {
+                dumpObjectTree(result);
+            }
+
+            compiler.renderTree(result, options, callback);
+        });
     };
 
     return compiler;

@@ -20,7 +20,7 @@ module.exports = (function () {
 
     ret.compile = function(source, options, callback) {
         var tokens = ret.tokenizer.parse(source);
-        ret.compiler.render(tokens, options, function (error, result) {
+        ret.compiler.compileAndRender(tokens, options, function (error, result) {
             callback(error, result);
         });
     };

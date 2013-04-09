@@ -30,7 +30,7 @@ Quick.useQueryFlags = function() {
 
 Quick.compileScriptTagElement = function(script) {
     var tokens = Quick.Tokenizer.parse(script.text);
-    Quick.Compiler.render(tokens, function (error, result) {
+    Quick.Compiler.compileAndRender(tokens, {}, function (error, result) {
         if (error) {
             console.error("QuickJS compile error: " + error.line + ": " + error.message);
             console.error(" -- " + error.context);

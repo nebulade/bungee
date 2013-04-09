@@ -243,7 +243,9 @@ describe('Compiler', function () {
             tmp += "1property: 1;\n";
             tmp += "}\n";
 
-            quick.compile(tmp, {}, function (error, result) {
+            var tokens = quick.tokenizer.parse(tmp);
+            should.exist(tokens);
+            quick.compiler.createObjectTree(tokens, {}, function (error, result) {
                 should.exist(error);
                 error.code.should.be.equal(7);
                 error.line.should.be.equal(2);
@@ -257,7 +259,9 @@ describe('Compiler', function () {
             tmp += "id: myelement;\n";
             tmp += "}\n";
 
-            quick.compile(tmp, { dryrun: true }, function (error, result) {
+            var tokens = quick.tokenizer.parse(tmp);
+            should.exist(tokens);
+            quick.compiler.createObjectTree(tokens, {}, function (error, result) {
                 should.not.exist(error);
                 should.exist(result);
 
