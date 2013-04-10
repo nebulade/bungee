@@ -6,8 +6,8 @@ Label @ Text {
 }
 
 Button @ Item {
-    width: this.l.textWidth < 100 ? 100 : (this.l.textWidth + 40)
-    height: 50
+    width: this.l.textWidth < 140 ? 100 : (this.l.textWidth + 40)
+    height: this.l.textHeight < 70 ? 50 : (this.l.textHeight + 20)
     label: ""
     cursor: "default"
     hoverEnabled: true
@@ -20,6 +20,7 @@ Button @ Item {
             return "#3C7DC1";
         }
     }^
+    fontSize: "32px"
 
     Label {
         id: l
@@ -27,6 +28,7 @@ Button @ Item {
         text: this.parent.label
         left: this.parent.width/2 - this.textWidth/2
         top: this.parent.height/2 - this.textHeight/2
+        fontSize: this.parent.fontSize
     }
 }
 
@@ -89,10 +91,17 @@ Layout @ Item {
         var kids = this.children();
         var sibling = undefined;
 
+        if (this.spacing === 50)
+            console.error("----------------------")
         for (var i in kids) {
             if (kids.hasOwnProperty(i)) {
                 if (this.orientation === "vertical") {
+                    if (this.spacing === 50)
+                        console.log(sibling)
                     kids[i].top = sibling ? (this.spacing + sibling.bottom) : 0;
+                    if (this.spacing === 50) {
+                        console.log(kids[i].getSilent("top"), kids[i].getSilent("height"))
+                    }
                     kids[i].left = 0;
                 } else {
                     kids[i].top = 0;
