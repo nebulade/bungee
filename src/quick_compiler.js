@@ -93,7 +93,7 @@ var compiler = (function () {
         output += "}\n\n";
 
         if (options.module) {
-            output += "window.Quick.Slab = function () {\n";
+            output += "window.Quick." + options.module + " = function () {\n";
         } else {
             output += "(function() {\n";
         }
@@ -147,6 +147,8 @@ var compiler = (function () {
         output += ELEM_PREFIX + ".render();\n";
 
         if (options.module) {
+            addIndentation();
+            output += "return " + ELEM_PREFIX + ";\n";
             output += "};\n";
         } else {
             output += "})();\n";
