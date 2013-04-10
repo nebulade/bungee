@@ -305,6 +305,14 @@ Quick.Element.prototype.setSilent = function (name, value) {
     }
 };
 
+// This allows to get the property without notify the get
+Quick.Element.prototype.getSilent = function (name) {
+    var getter = this.__lookupGetter__(name);
+    if (typeof getter === 'function') {
+        return getter.call(this, true);
+    }
+};
+
 // This breaks all previous bindings and adds a new binding
 Quick.Element.prototype.set = function (name, value) {
     this.breakBindings(name);
@@ -339,9 +347,9 @@ Quick.Element.prototype.addProperty = function (name, value) {
         this.name = value;
     } else {
         Object.defineProperty(this, name, {
-            get: function () {
+            get: function (silent) {
                 // console.log("getter: ", that.id, name);
-                if (Quick.Engine.magicBindingState)
+                if (!silent && Quick.Engine.magicBindingState)
                     Quick.Engine.addCalledGetter(that, name);
 
                 if (typeof valueStore === 'function')
