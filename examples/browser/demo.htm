@@ -79,12 +79,16 @@
                     height: 20;
                     left: 20;
                     top: 20;
-                    text: "Toggle drag"
+                    Text {
+                        text: "Toggle drag"
+                        left: this.parent.width/2 - this.width/2
+                        top: this.parent.height/2 - this.height/2
+                    }
                     hoverEnabled: true;
                     borderRadius: this.mousePressed ? 4 : 2;
                     borderColor: this.containsMouse ? "black" : "gray";
                     backgroundColor: this.mousePressed ? "gray" : "lightgray";
-                    onclick: ^{
+                    onactivated: ^{
                         this.parent.hoverEnabled = !this.parent.hoverEnabled;
                         console.log("toggle dragging");
                     }^;

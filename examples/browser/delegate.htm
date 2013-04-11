@@ -11,11 +11,10 @@
             left: 10
             width: 700;
             height: 70
-            backgroundColor: "#3C7DC1"
+            backgroundColor: this.mousePressed ? "purple" : "#3C7DC1"
             onmouseover: this.anim.restart();
             hoverEnabled: true
             scale: this.opacity
-            onclick: this.parent.removeChild(this);
             overflow: "hidden"
             onload: this.anim2.restart();
 

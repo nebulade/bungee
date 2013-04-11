@@ -20,7 +20,7 @@
                 this.mousePressed;
                 return this.containsMouse ? (this.mousePressed ? "purple" : "gray") : "black";
             }^
-            onclick: ^{
+            onactivated: ^{
                 console.log("button " + this.text + " pressed");
                 if(this.parent.parent.label === '0')
                     this.parent.parent.label = this.label

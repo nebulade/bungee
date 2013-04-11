@@ -35,7 +35,7 @@
                 width: this.childrenWidth + 10
                 height: this.childrenHeight + 10
 
-                onclick: this.popup(this.width, this.height);
+                onactivated: this.popup(this.width, this.height);
                 function popup(a, b): ^{
                     alert("Size: " + a + "x" + b);
                 }^
@@ -52,6 +52,7 @@
                     left: 200
                     top: 40
                     backgroundColor: config.normalTextColor
+                    mouseEnabled: false
                 }
             }
         }

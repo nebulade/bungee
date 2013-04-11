@@ -235,17 +235,6 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
         object.srollWidth = e.target.scrollWidth;
         object.scrollHeight = e.target.scrollHeight;
     };
-
-    elem.onclick = function () {
-        if (!object.mouseEnabled) {
-            return;
-        }
-
-        object.emit('click');
-        if (!object.hoverEnabled) {
-            object.emit('activated');
-        }
-    };
     elem.onmouseover = function () {
         if (object.hoverEnabled && object.mouseEnabled) {
             object.containsMouse = true;
