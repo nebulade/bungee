@@ -9,18 +9,15 @@
         MyDelegate @ Item {
             top: 0 + (this.modelData * (this.height + 2));
             left: 10
-            width: 700;
+            width: 700
             height: 70
             backgroundColor: this.mousePressed ? "purple" : "#3C7DC1"
-            onmouseover: this.anim.restart();
-            hoverEnabled: true
             scale: this.opacity
             overflow: "hidden"
             onload: this.anim2.restart();
 
             Animation {
                 id: anim2
-                target: this.parent
                 easing: "ease-in-out"
                 duration: 1000
 
@@ -42,7 +39,6 @@
 
             Animation {
                 id: anim
-                target: this.parent
                 easing: "ease-in-out"
                 duration: 1000
 
@@ -68,7 +64,7 @@
                 width: 64
                 height: 64
                 left: 20
-                top: this.parent.verticalCenter - this.verticalCenter
+                top: this.parent.height/2 - this.height/2
             }
 
             Text {
@@ -76,19 +72,24 @@
                 text: "Delegate " + this.parent.modelData + " and a bit more..."
                 color: "white"
                 fontSize: 24
-                left: this.delegateImage.right + 10
-                top: this.parent.verticalCenter - this.verticalCenter
+                left: this.delegateImage.left + this.delegateImage.width + 10
+                top: this.parent.height/2 - this.height/2
+            }
+
+            InputArea {
+                id: input
+                onmouseover: this.anim.restart();
             }
         }
 
-        Item {
+        InputArea {
             id: listView
             overflow: "scroll"
             scrollTopchanged: this.updateDelegates();
             width: window.innerWidth
             height: window.innerHeight
             delegate: MyDelegate;
-            model: 50;
+            model: 5;
             i: 0
 
             Item {
@@ -103,12 +104,18 @@
             }^
 
             function updateDelegates(): ^{
+                if (this.stillUpdating) {
+                    return;
+                }
+
+                this.stillUpdating = true;
                 // console.log("update", this.scrollTop, this.height, this.i, (this.scrollTop+this.height) / 72)
-                if ((this.scrollTop + this.height) / 72 > this.i) {
+                while ((this.scrollTop + this.height) / 72 > this.i) {
                     console.log("create the delegates", this.i)
                     this.buildDelegate(this.i);
                     ++this.i;
                 }
+                this.stillUpdating = false;
             }^
         }
 

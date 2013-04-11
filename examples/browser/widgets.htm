@@ -37,11 +37,11 @@
                 for (var i in kids) {
                     if (kids.hasOwnProperty(i)) {
                         if (direction === "vertical") {
-                            kids[i].top = sibling ? (this.spacing + sibling.bottom) : 0;
+                            kids[i].top = sibling ? (this.spacing + sibling.top + sibling.height) : 0;
                             kids[i].left = 0;
                         } else {
                             kids[i].top = 0;
-                            kids[i].left = sibling ? (this.spacing + sibling.right) : 0;
+                            kids[i].left = sibling ? (this.spacing + sibling.left + sibling.width) : 0;
                         }
                         sibling = kids[i];
                     }
@@ -70,17 +70,24 @@
 
             hoverEnabled: true
             backgroundColor: ^{
-                if (this.mousePressed) {
+                if (this.input.mousePressed) {
                     return config.downBackgroundColor
-                } else if (this.containsMouse) {
+                } else if (this.input.containsMouse) {
                     return config.hightlightBackgroundColor
                 } else {
                     return config.normalBackgroundColor
                 }
             }^
             width: this.textLabel.textWidth + 100
-            height: this.childrenHeight + 10
+            height: this.textLabel.textHeight + 10
             cursor: "default"
+
+            Item {
+                width: this.parent.width
+                height: this.parent.height
+                backgroundColor: "white"
+                opacity: 0.3
+            }
 
             Text {
                 id: textLabel
@@ -90,13 +97,18 @@
                 top: this.parent.height / 2 - this.height / 2
                 color: config.normalTextColor
             }
+
+            InputArea {
+                id: input
+                onactivated: this.parent.emit("clicked");
+            }
         }
 
         IconButton @ Item {
             icon: ""
             hoverEnabled: true
             backgroundColor: ^{
-                if (this.containsMouse) {
+                if (this.input.containsMouse) {
                     return config.hightlightBackgroundColor
                 } else {
                     return config.normalBackgroundColor
@@ -104,8 +116,6 @@
             }^
             width: 100
             height: 50
-
-            onactivated: this.animation.restart()
 
             Animation {
                 id: animation
@@ -141,7 +151,14 @@
                 height: this.width
                 left: this.parent.width / 2 - this.width / 2
                 top: this.parent.height / 2 - this.height / 2
-                mouseEnabled: false
+            }
+
+            InputArea {
+                id: input
+                onactivated: ^{
+                    // this.parent.emit("clicked");
+                    this.animation.restart();
+                }^
             }
         }
 
@@ -155,8 +172,8 @@
                 }
 
                 Button {
-                    label: "click me"
-                    onactivated: ^{
+                    label: "Silent Setters"
+                    onclicked: ^{
                         // setSilent() sets the value but does not emit the change nor breaks the binding
                         this.setSilent("height", this.height === 50 ? 100 : 50);
                         // set() sets the value breaks the binding and adds a new binding
@@ -181,7 +198,7 @@
 
                 Button {
                     label: this.parent.layoutDirection
-                    onactivated: this.parent.layoutDirection = this.parent.layoutDirection === 'horizontal' ? 'vertical' : 'horizontal'
+                    onclicked: this.parent.layoutDirection = this.parent.layoutDirection === 'horizontal' ? 'vertical' : 'horizontal'
                 }
             }
         }

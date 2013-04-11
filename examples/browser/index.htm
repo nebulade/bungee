@@ -2,7 +2,7 @@
     <head>
         <title> QuickJS </title>
 
-         <script type="text/javascript" src="../../quick_full.min.js"></script>
+        <script type="text/javascript" src="../../quick_full.min.js"></script>
 
         <script type="text/javascript">
 
@@ -34,11 +34,11 @@
                 for (var i in kids) {
                     if (kids.hasOwnProperty(i)) {
                         if (direction === "vertical") {
-                            kids[i].top = sibling ? (this.spacing + sibling.bottom) : 0;
+                            kids[i].top = sibling ? (this.spacing + sibling.top + sibling.height) : 0;
                             kids[i].left = 0;
                         } else {
                             kids[i].top = 0;
-                            kids[i].left = sibling ? (this.spacing + sibling.right) : 0;
+                            kids[i].left = sibling ? (this.spacing + sibling.left + sibling.width) : 0;
                         }
                         sibling = kids[i];
                     }
@@ -65,23 +65,19 @@
         Button @ Item {
             label: "Demo"
             src: ""
-            onactivated: window.document.getElementById("demoArea").src = this.src
 
-            hoverEnabled: true
             backgroundColor: ^{
-                if (this.mousePressed) {
+                if (this.input.mousePressed) {
                     return config.downBackgroundColor
-                } else if (this.containsMouse) {
+                } else if (this.input.containsMouse) {
                     return config.hightlightBackgroundColor
                 } else {
                     return config.normalBackgroundColor
                 }
             }^
             width: this.textLabel.textWidth + 100
-            height: this.childrenHeight + 10
+            height: this.textLabel.textHeight + 10
             cursor: "default"
-
-            onactivated: this.animation.restart()
 
             Animation {
                 id: animation
@@ -108,8 +104,6 @@
                     width: this.parent.parent.width
                 }
             }
-
-            onmouseover: this.hoverAnimation.restart()
 
             Animation {
                 id: hoverAnimation
@@ -142,7 +136,6 @@
                 }
             }
 
-
             Text {
                 id: textLabel
                 fontSize: "24px"
@@ -150,6 +143,15 @@
                 left: this.parent.width / 2 - this.width / 2
                 top: this.parent.height / 2 - this.height / 2
                 color: config.normalTextColor
+            }
+
+            InputArea {
+                id: input
+                onmouseover: this.parent.hoverAnimation.restart()
+                onactivated: ^{
+                    this.parent.animation.restart();
+                    window.document.getElementById("demoArea").src = this.parent.src;
+                }^
             }
         }
 

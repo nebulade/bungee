@@ -252,7 +252,7 @@ describe('Compiler', function () {
                 should.not.exist(result);
             });
         });
-        it('with properties width id', function () {
+        it('with property id', function () {
             var tmp = "";
 
             tmp += "Element {\n";
@@ -271,6 +271,69 @@ describe('Compiler', function () {
                 result.elements.should.have.length(1);
                 should.exist(result.elements[0]);
                 result.elements[0].id.should.be.equal('myelement');
+            });
+        });
+        it('with a delegate property', function () {
+            var tmp = "";
+
+            tmp += "Element {\n";
+            tmp += "id: myelement;\n";
+            tmp += "delegate: Element\n";
+            tmp += "}\n";
+
+            var tokens = quick.tokenizer.parse(tmp);
+            should.exist(tokens);
+            quick.compiler.createObjectTree(tokens, {}, function (error, result) {
+                should.not.exist(error);
+                should.exist(result);
+
+                // root element has no id
+                should.not.exist(result.id);
+                should.exist(result.elements);
+                result.elements.should.have.length(1);
+                should.exist(result.elements[0]);
+                result.elements[0].id.should.be.equal('myelement');
+
+                should.exist(result.elements[0].delegates);
+                result.elements[0].delegates.should.have.length(1);
+
+                should.exist(result.elements[0].delegates[0]);
+                result.elements[0].delegates[0].name.should.be.equal('delegate');
+                result.elements[0].delegates[0].value.should.be.equal('Element');
+            });
+        });
+        xit('with two delegate properties', function () {
+            var tmp = "";
+
+            tmp += "Element {\n";
+            tmp += "id: myelement;\n";
+            tmp += "delegate: Element\n";
+            tmp += "delegate2: Element2\n";
+            tmp += "}\n";
+
+            var tokens = quick.tokenizer.parse(tmp);
+            should.exist(tokens);
+            quick.compiler.createObjectTree(tokens, {}, function (error, result) {
+                should.not.exist(error);
+                should.exist(result);
+
+                // root element has no id
+                should.not.exist(result.id);
+                should.exist(result.elements);
+                result.elements.should.have.length(1);
+                should.exist(result.elements[0]);
+                result.elements[0].id.should.be.equal('myelement');
+
+                should.exist(result.elements[0].delegates);
+                result.elements[0].delegates.should.have.length(2);
+
+                should.exist(result.elements[0].delegates[0]);
+                result.elements[0].delegates[0].name.should.be.equal('delegate');
+                result.elements[0].delegates[0].value.should.be.equal('Element');
+
+                should.exist(result.elements[0].delegates[1]);
+                result.elements[0].delegates[1].name.should.be.equal('delegate2');
+                result.elements[0].delegates[1].value.should.be.equal('Element2');
             });
         });
     });

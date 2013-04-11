@@ -22,23 +22,12 @@
             width: window.innerWidth
             height: window.innerHeight
 
-            hoverEnabled: true
-            onmousemove: ^{
-                this.foo.bar.left = this.mouseAbsX - this.foo.bar.width/2
-                this.foo.bar.top = this.mouseAbsY - this.foo.bar.height/2
-            }^
-
             Item {
                 id: foo
                 backgroundColor: config.normalBackgroundColor
                 overflow: "hidden"
                 width: this.childrenWidth + 10
                 height: this.childrenHeight + 10
-
-                onactivated: this.popup(this.width, this.height);
-                function popup(a, b): ^{
-                    alert("Size: " + a + "x" + b);
-                }^
 
                 Item {
                     left: 10
@@ -52,8 +41,15 @@
                     left: 200
                     top: 40
                     backgroundColor: config.normalTextColor
-                    mouseEnabled: false
                 }
+            }
+
+            InputArea {
+                id: input
+                onmousemove: ^{
+                    this.parent.foo.bar.left = this.mouseAbsX - this.parent.foo.bar.width/2
+                    this.parent.foo.bar.top = this.mouseAbsY - this.parent.foo.bar.height/2
+                }^
             }
         }
 

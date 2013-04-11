@@ -58,7 +58,6 @@
         Item {
             backgroundColor: "#3C7DC1"
             hoverEnabled: true
-            onactivated: this.left = this.left !== 0 ? 0 : (window.innerWidth - this.width)
             width: 200
             left: 0
             top: window.innerHeight/2 - this.height/2
@@ -67,6 +66,11 @@
             Behavior {
                 left: "2s"
                 opacity: "4s"
+            }
+
+            InputArea {
+                id: input
+                onactivated: this.parent.left = this.parent.left !== 0 ? 0 : (window.innerWidth - this.parent.width)
             }
         }
 

@@ -781,46 +781,12 @@ if (!Quick) {
 Quick.Item = function (id, parent, typeHint) {
     var elem = new Quick.Element(id, parent, typeHint ? typeHint : "item");
 
-    elem.addProperty("selectable", false);
-    elem.addProperty("mouseEnabled", true);
-    elem.addProperty("userSelect", function () { return this.selectable ? "auto" : "none"; });
-    elem.addProperty("-webkit-user-select", function () { return this.selectable ? "auto" : "none"; });
-
     elem.addProperty("className", "");
-    elem.addProperty("hoverEnabled", false);
-    elem.addProperty("mouseAbsX", 0);
-    elem.addProperty("mouseAbsY", 0);
-    elem.addProperty("mouseRelX", 0);
-    elem.addProperty("mouseRelY", 0);
     elem.addProperty("width", 100);
     elem.addProperty("height", 100);
     elem.addProperty("top", 0);
-    elem.addProperty("bottom", function () { return this.top + this.height; });
-    elem.addProperty("verticalCenter", function () { return this.height / 2.0; });
     elem.addProperty("left", 0);
-    elem.addProperty("right", function () { return this.left + this.width; });
-    elem.addProperty("horizontalCenter", function () { return this.width / 2.0; });
-    elem.addProperty("mouseRelStartX", 0);
-    elem.addProperty("mouseRelStartY", 0);
-    elem.addProperty("mousePressed", false);
-    elem.addProperty("containsMouse", false);
-    elem.addProperty("scale", 1);
-    elem.addProperty("opacity", 1);
 
-    // scrolling
-    elem.addProperty("scrollTop", 0);
-    elem.addProperty("scrollLeft", 0);
-    elem.addProperty("srollWidth", 0);
-    elem.addProperty("scrollHeight", 0);
-
-    elem.addProperty("-webkit-transform", function () {
-        var s = this.scale.toFixed(10);
-        return "scale(" + s + ", " + s + ")";
-    });
-    elem.addProperty("transform", function () {
-        var s = this.scale.toFixed(10);
-        return "scale(" + s + ", " + s + ")";
-    });
     elem.addProperty("childrenWidth", function () {
         var left = 0;
         var right = 0;
@@ -862,6 +828,31 @@ Quick.Item = function (id, parent, typeHint) {
     return elem;
 };
 
+Quick.InputItem = function (id, parent) {
+    var elem = new Quick.Item(id, parent, "InputItem");
+
+    // default to fill parent
+    elem.addProperty("width", function () { return this.parent ? this.parent.width : 0; });
+    elem.addProperty("height", function () { return this.parent ? this.parent.height : 0; });
+
+    elem.addProperty("mouseAbsX", 0);
+    elem.addProperty("mouseAbsY", 0);
+    elem.addProperty("mouseRelX", 0);
+    elem.addProperty("mouseRelY", 0);
+    elem.addProperty("mouseRelStartX", 0);
+    elem.addProperty("mouseRelStartY", 0);
+    elem.addProperty("mousePressed", false);
+    elem.addProperty("containsMouse", false);
+
+    // scrolling
+    elem.addProperty("scrollTop", 0);
+    elem.addProperty("scrollLeft", 0);
+    elem.addProperty("srollWidth", 0);
+    elem.addProperty("scrollHeight", 0);
+
+    return elem;
+};
+
 // FIXME global leak
 var tmpTextElement;
 Quick.Text = function (id, parent) {
@@ -871,7 +862,6 @@ Quick.Text = function (id, parent) {
     elem.addProperty("textWidth", 0);
     elem.addProperty("textHeight", 0);
     elem.addProperty("fontSize", "");
-    elem.addProperty("fontFamily", "");
     elem.addProperty("fontFamily", "");
     elem.addProperty("text", "");
     elem.addProperty("-text", function () { return this.text; });
@@ -889,7 +879,7 @@ Quick.Text = function (id, parent) {
         document.body.appendChild(tmpTextElement);
     }
 
-    elem.addChanged("text", function () {
+    function relayout() {
         var tmpProperty = elem.text;
         var width = 0;
         var height = 0;
@@ -908,7 +898,9 @@ Quick.Text = function (id, parent) {
 
         elem.textWidth = width;
         elem.textHeight = height;
-    });
+    }
+
+    elem.addChanged("text", relayout);
 
     return elem;
 };
@@ -995,85 +987,69 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
         elem.id = object.id;
     }
 
-    elem.onscroll = function (e) {
-        object.scrollTop = e.target.scrollTop;
-        object.scrollLeft = e.target.scrollLeft;
-        object.srollWidth = e.target.scrollWidth;
-        object.scrollHeight = e.target.scrollHeight;
-    };
-    elem.onmouseover = function () {
-        if (object.hoverEnabled && object.mouseEnabled) {
+    if (typeHint === "InputItem") {
+        elem.onscroll = function (e) {
+            object.scrollTop = e.target.scrollTop;
+            object.scrollLeft = e.target.scrollLeft;
+            object.srollWidth = e.target.scrollWidth;
+            object.scrollHeight = e.target.scrollHeight;
+        };
+        elem.onmouseover = function () {
             object.containsMouse = true;
             object.emit('mouseover');
-        }
-    };
-    elem.onmouseout = function () {
-        if (object.hoverEnabled && object.mouseEnabled) {
+        };
+        elem.onmouseout = function () {
             object.containsMouse = false;
             object.emit('mouseout');
-        }
-    };
-    elem.onmousedown = function (event) {
-        if (!object.mouseEnabled) {
-            return;
-        }
-
-        if (!event.used) {
-            that.currentMouseElement = this;
-            event.used = true;
-        }
-        object.mousePressed = true;
-        object.mouseRelStartX = event.layerX;
-        object.mouseRelStartY = event.layerY;
-        object.emit('mousedown');
-    };
-    elem.onmouseup = function (event) {
-        if (!object.mouseEnabled) {
-            return;
-        }
-
-        object.mousePressed = false;
-        object.mouseRelStartX = 0;
-        object.mouseRelStartY = 0;
-        object.emit('mouseup');
-
-        if (that.currentMouseElement === this) {
-            object.emit('activated');
-        }
-        that.currentMouseElement = undefined;
-    };
-    elem.ontouchstart = function (event) {
-        if (!object.mouseEnabled) {
-            return;
-        }
-
-        that.currentMouseElement = this;
-        object.mousePressed = true;
-        object.emit('mousedown');
-    };
-    elem.ontouchend = function (event) {
-        if (!object.mouseEnabled) {
-            return;
-        }
-
-        object.mousePressed = false;
-        object.mouseRelStartX = 0;
-        object.mouseRelStartY = 0;
-        object.emit('mouseup');
-        if (that.currentMouseElement === this) {
-            object.emit('activated');
-        }
-        that.currentMouseElement = undefined;
-    };
-    elem.onmousemove = function (event) {
-        if (object.hoverEnabled && object.mouseEnabled) {
+        };
+        elem.onmousemove = function (event) {
             object.mouseAbsX = event.clientX;
             object.mouseAbsY = event.clientY;
             object.mouseRelX = event.layerX;
             object.mouseRelY = event.layerY;
             object.emit('mousemove');
+        };
+
+        if ('ontouchstart' in document.documentElement) {
+            elem.ontouchstart = function (event) {
+                that.currentMouseElement = this;
+                object.mousePressed = true;
+                object.emit('mousedown');
+            };
+            elem.ontouchend = function (event) {
+                object.mousePressed = false;
+                object.mouseRelStartX = 0;
+                object.mouseRelStartY = 0;
+                object.emit('mouseup');
+                if (that.currentMouseElement === this) {
+                    object.emit('activated');
+                }
+                that.currentMouseElement = undefined;
+            };
+        } else {
+            elem.onmousedown = function (event) {
+                if (!event.used) {
+                    that.currentMouseElement = this;
+                    event.used = true;
+                }
+                object.mousePressed = true;
+                object.mouseRelStartX = event.layerX;
+                object.mouseRelStartY = event.layerY;
+                object.emit('mousedown');
+            };
+            elem.onmouseup = function (event) {
+                object.mousePressed = false;
+                object.mouseRelStartX = 0;
+                object.mouseRelStartY = 0;
+                object.emit('mouseup');
+
+                if (that.currentMouseElement === this) {
+                    object.emit('activated');
+                }
+                that.currentMouseElement = undefined;
+            };
         }
-    };
+    }
 
     return elem;
 };
@@ -1143,6 +1119,11 @@ Quick.RendererDOM.prototype.renderElement = function (element) {
             element.element.placeholder = element[name];
         } else if (name === 'className' && element[name] !== '') {
             element.element.className = element[name];
+        } else if (name === 'scale') {
+            var s = element.scale.toFixed(10);
+            var tmp = "scale(" + s + ", " + s + ")";
+            element.element.style['-webkit-transform'] = tmp;
+            element.element.style['transform'] = tmp;
         } else {
             element.element.style[name] = element[name];
         }
@@ -1555,12 +1536,16 @@ if (!Quick.Engine) {
         };
 
         // TODO should be part of the dom renderer?
+        var rendering = false;
         var fps = {};
         fps.d = new Date();
         fps.l = 0;
 
         function advance() {
-            console.timeStamp("advance")
+            if (!rendering) {
+                return;
+            }
+
             window.requestAnimFrame(advance);
 
             for (var i in _dirtyElements) {
@@ -1580,7 +1565,12 @@ if (!Quick.Engine) {
         }
 
         ret.start = function () {
+            rendering = true;
             advance();
+        };
+
+        ret.stop = function () {
+            rendering = false;
         };
 
         ret.dirty = function (element, property) {
@@ -1824,6 +1814,7 @@ Quick.Element.prototype.addProperty = function (name, value) {
         Object.defineProperty(this, name, {
             get: function (silent) {
                 // console.log("getter: ", that.id, name);
+
                 if (!silent && Quick.Engine.magicBindingState)
                     Quick.Engine.addCalledGetter(that, name);
 

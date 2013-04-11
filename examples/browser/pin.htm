@@ -10,23 +10,14 @@
             width: 50;
             height: 50;
             label: "0"
-            hoverEnabled: true;
             color: "white";
             cursor: "pointer";
             borderWidth: 0;
-            scale: this.containsMouse ? 1.2 : 1;
-
+            scale: this.input.containsMouse ? 1.2 : 1;
             backgroundColor: ^{
-                this.mousePressed;
-                return this.containsMouse ? (this.mousePressed ? "purple" : "gray") : "black";
+                this.input.mousePressed;
+                return this.input.containsMouse ? (this.input.mousePressed ? "purple" : "gray") : "black";
             }^
-            onactivated: ^{
-                console.log("button " + this.text + " pressed");
-                if(this.parent.parent.label === '0')
-                    this.parent.parent.label = this.label
-                else
-                    this.parent.parent.label = this.parent.parent.label + this.label
-            }^;
 
             Text {
                 id: text;
@@ -35,6 +26,16 @@
                 top: (this.parent.height / 2.0) - (this.textHeight / 2.0)
                 textColor: "white";
                 text: this.parent.label;
+            }
+
+            InputArea {
+                id: input
+                onactivated: ^{
+                    if(this.parent.parent.parent.label === '0')
+                        this.parent.parent.parent.label = this.parent.label
+                    else
+                        this.parent.parent.parent.label = this.parent.parent.parent.label + this.parent.label
+                }^;
             }
         }
 

@@ -81,11 +81,16 @@ if (!Quick.Engine) {
         };
 
         // TODO should be part of the dom renderer?
+        var rendering = false;
         var fps = {};
         fps.d = new Date();
         fps.l = 0;
 
         function advance() {
+            if (!rendering) {
+                return;
+            }
+
             window.requestAnimFrame(advance);
 
             for (var i in _dirtyElements) {
@@ -105,7 +110,12 @@ if (!Quick.Engine) {
         }
 
         ret.start = function () {
+            rendering = true;
             advance();
+        };
+
+        ret.stop = function () {
+            rendering = false;
         };
 
         ret.dirty = function (element, property) {
@@ -349,6 +359,7 @@ Quick.Element.prototype.addProperty = function (name, value) {
         Object.defineProperty(this, name, {
             get: function (silent) {
                 // console.log("getter: ", that.id, name);
+
                 if (!silent && Quick.Engine.magicBindingState)
                     Quick.Engine.addCalledGetter(that, name);
 
