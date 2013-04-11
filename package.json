@@ -1,7 +1,7 @@
 {
     "name": "quick",
-    "version": "0.0.3",
-    "description": "QuickJS is a declarative language engine.",
+    "version": "0.0.4",
+    "description": "QuickJS is a declarative language engine to run inside a browser.",
     "keywords": [
         "qml",
         "jml",
@@ -23,10 +23,15 @@
     "engines": {
         "node": ">=0.6"
     },
-    "scripts": {},
+    "scripts": {
+        "test": "cd test; ../node_modules/mocha/bin/mocha -R spec;"
+    },
     "dependencies": {
         "optimist": "*"
     },
-    "devDependencies": {},
+    "devDependencies": {
+        "mocha": "*",
+        "should": "*"
+    },
     "readmeFilename": "Readme.md"
 }
