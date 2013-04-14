@@ -31,7 +31,8 @@
     },
     "devDependencies": {
         "mocha": "*",
-        "should": "*"
+        "should": "*",
+        "uglify-js": "*"
     },
     "readmeFilename": "Readme.md"
 }
