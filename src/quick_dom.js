@@ -66,8 +66,8 @@ Quick.InputItem = function (id, parent) {
     var elem = new Quick.Item(id, parent, "InputItem");
 
     // default to fill parent
-    elem.addProperty("width", function () { return this.parent ? this.parent.width : 0; });
-    elem.addProperty("height", function () { return this.parent ? this.parent.height : 0; });
+    elem.addProperty("width", function () { return this.parent ? this.parent.width : 100; });
+    elem.addProperty("height", function () { return this.parent ? this.parent.height : 100; });
 
     elem.addProperty("mouseAbsX", 0);
     elem.addProperty("mouseAbsY", 0);
@@ -221,67 +221,98 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
         elem.id = object.id;
     }
 
+    function handleTouchStartEvents(event) {
+        that.currentMouseElement = this;
+        object.mousePressed = true;
+        object.emit('mousedown');
+    }
+
+    function handleTouchEndEvents(event) {
+        object.mousePressed = false;
+        object.mouseRelStartX = 0;
+        object.mouseRelStartY = 0;
+        object.emit('mouseup');
+        if (that.currentMouseElement === this) {
+            object.emit('activated');
+        }
+        that.currentMouseElement = undefined;
+    }
+
+    function handleTouchMoveEvents(event) {
+        object.mouseAbsX = event.clientX || event.targetTouches[0].clientX;
+        object.mouseAbsY = event.clientY || event.targetTouches[0].clientY;
+        object.mouseRelX = event.layerX || event.targetTouches[0].layerX;
+        object.mouseRelY = event.layerY || event.targetTouches[0].layerY;
+        object.emit('mousemove');
+    }
+
+    function handleMouseDownEvents(event) {
+        if (!event.used) {
+            that.currentMouseElement = this;
+            event.used = true;
+        }
+        object.mousePressed = true;
+        object.mouseRelStartX = event.layerX;
+        object.mouseRelStartY = event.layerY;
+        object.emit('mousedown');
+    }
+
+    function handleMouseUpEvents(event) {
+        object.mousePressed = false;
+        object.mouseRelStartX = 0;
+        object.mouseRelStartY = 0;
+        object.emit('mouseup');
+
+        if (that.currentMouseElement === this) {
+            object.emit('activated');
+        }
+        that.currentMouseElement = undefined;
+    }
+
+    function handleMouseMoveEvents(event) {
+        object.mouseAbsX = event.clientX;
+        object.mouseAbsY = event.clientY;
+        object.mouseRelX = event.layerX;
+        object.mouseRelY = event.layerY;
+        object.emit('mousemove');
+    }
+
+    function handleMouseOverEvents(event) {
+        object.containsMouse = true;
+        object.emit('mouseover');
+    }
+
+    function handleMouseOutEvents(event) {
+        object.containsMouse = false;
+        object.emit('mouseout');
+    }
+
+    function handleScrollEvents(event) {
+        object.scrollTop = event.target.scrollTop;
+        object.scrollLeft = event.target.scrollLeft;
+        object.srollWidth = event.target.scrollWidth;
+        object.scrollHeight = event.target.scrollHeight;
+    }
+
     if (typeHint === "InputItem") {
-        elem.onscroll = function (e) {
-            object.scrollTop = e.target.scrollTop;
-            object.scrollLeft = e.target.scrollLeft;
-            object.srollWidth = e.target.scrollWidth;
-            object.scrollHeight = e.target.scrollHeight;
-        };
-        elem.onmouseover = function () {
-            object.containsMouse = true;
-            object.emit('mouseover');
-        };
-        elem.onmouseout = function () {
-            object.containsMouse = false;
-            object.emit('mouseout');
-        };
-        elem.onmousemove = function (event) {
-            object.mouseAbsX = event.clientX;
-            object.mouseAbsY = event.clientY;
-            object.mouseRelX = event.layerX;
-            object.mouseRelY = event.layerY;
-            object.emit('mousemove');
-        };
+        elem.addEventListener("scroll", handleScrollEvents, false);
 
         if ('ontouchstart' in document.documentElement) {
-            elem.ontouchstart = function (event) {
-                that.currentMouseElement = this;
-                object.mousePressed = true;
-                object.emit('mousedown');
-            };
-            elem.ontouchend = function (event) {
-                object.mousePressed = false;
-                object.mouseRelStartX = 0;
-                object.mouseRelStartY = 0;
-                object.emit('mouseup');
-                if (that.currentMouseElement === this) {
-                    object.emit('activated');
-                }
-                that.currentMouseElement = undefined;
-            };
+            if (window.navigator.msPointerEnabled) {
+                elem.addEventListener("MSPointerDown", handleTouchStartEvents, false);
+                elem.addEventListener("MSPointerMove", handleTouchMoveEvents, false);
+                elem.addEventListener("MSPointerUp", handleTouchEndEvents, false);
+            } else {
+                elem.addEventListener("touchstart", handleTouchStartEvents, false);
+                elem.addEventListener("touchmove", handleTouchMoveEvents, false);
+                elem.addEventListener("touchend", handleTouchEndEvents, false);
+            }
         } else {
-            elem.onmousedown = function (event) {
-                if (!event.used) {
-                    that.currentMouseElement = this;
-                    event.used = true;
-                }
-                object.mousePressed = true;
-                object.mouseRelStartX = event.layerX;
-                object.mouseRelStartY = event.layerY;
-                object.emit('mousedown');
-            };
-            elem.onmouseup = function (event) {
-                object.mousePressed = false;
-                object.mouseRelStartX = 0;
-                object.mouseRelStartY = 0;
-                object.emit('mouseup');
-
-                if (that.currentMouseElement === this) {
-                    object.emit('activated');
-                }
-                that.currentMouseElement = undefined;
-            };
+            elem.addEventListener("mousedown", handleMouseDownEvents, false);
+            elem.addEventListener("mouseup", handleMouseUpEvents, false);
+            elem.addEventListener("mousemove", handleMouseMoveEvents, false);
+            elem.addEventListener("mouseover", handleMouseOverEvents, false);
+            elem.addEventListener("mouseout", handleMouseOutEvents, false);
         }
     }
 

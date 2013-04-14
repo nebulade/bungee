@@ -832,8 +832,8 @@ Quick.InputItem = function (id, parent) {
     var elem = new Quick.Item(id, parent, "InputItem");
 
     // default to fill parent
-    elem.addProperty("width", function () { return this.parent ? this.parent.width : 0; });
-    elem.addProperty("height", function () { return this.parent ? this.parent.height : 0; });
+    elem.addProperty("width", function () { return this.parent ? this.parent.width : 100; });
+    elem.addProperty("height", function () { return this.parent ? this.parent.height : 100; });
 
     elem.addProperty("mouseAbsX", 0);
     elem.addProperty("mouseAbsY", 0);
@@ -987,67 +987,98 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
         elem.id = object.id;
     }
 
+    function handleTouchStartEvents(event) {
+        that.currentMouseElement = this;
+        object.mousePressed = true;
+        object.emit('mousedown');
+    }
+
+    function handleTouchEndEvents(event) {
+        object.mousePressed = false;
+        object.mouseRelStartX = 0;
+        object.mouseRelStartY = 0;
+        object.emit('mouseup');
+        if (that.currentMouseElement === this) {
+            object.emit('activated');
+        }
+        that.currentMouseElement = undefined;
+    }
+
+    function handleTouchMoveEvents(event) {
+        object.mouseAbsX = event.clientX || event.targetTouches[0].clientX;
+        object.mouseAbsY = event.clientY || event.targetTouches[0].clientY;
+        object.mouseRelX = event.layerX || event.targetTouches[0].layerX;
+        object.mouseRelY = event.layerY || event.targetTouches[0].layerY;
+        object.emit('mousemove');
+    }
+
+    function handleMouseDownEvents(event) {
+        if (!event.used) {
+            that.currentMouseElement = this;
+            event.used = true;
+        }
+        object.mousePressed = true;
+        object.mouseRelStartX = event.layerX;
+        object.mouseRelStartY = event.layerY;
+        object.emit('mousedown');
+    }
+
+    function handleMouseUpEvents(event) {
+        object.mousePressed = false;
+        object.mouseRelStartX = 0;
+        object.mouseRelStartY = 0;
+        object.emit('mouseup');
+
+        if (that.currentMouseElement === this) {
+            object.emit('activated');
+        }
+        that.currentMouseElement = undefined;
+    }
+
+    function handleMouseMoveEvents(event) {
+        object.mouseAbsX = event.clientX;
+        object.mouseAbsY = event.clientY;
+        object.mouseRelX = event.layerX;
+        object.mouseRelY = event.layerY;
+        object.emit('mousemove');
+    }
+
+    function handleMouseOverEvents(event) {
+        object.containsMouse = true;
+        object.emit('mouseover');
+    }
+
+    function handleMouseOutEvents(event) {
+        object.containsMouse = false;
+        object.emit('mouseout');
+    }
+
+    function handleScrollEvents(event) {
+        object.scrollTop = event.target.scrollTop;
+        object.scrollLeft = event.target.scrollLeft;
+        object.srollWidth = event.target.scrollWidth;
+        object.scrollHeight = event.target.scrollHeight;
+    }
+
     if (typeHint === "InputItem") {
-        elem.onscroll = function (e) {
-            object.scrollTop = e.target.scrollTop;
-            object.scrollLeft = e.target.scrollLeft;
-            object.srollWidth = e.target.scrollWidth;
-            object.scrollHeight = e.target.scrollHeight;
-        };
-        elem.onmouseover = function () {
-            object.containsMouse = true;
-            object.emit('mouseover');
-        };
-        elem.onmouseout = function () {
-            object.containsMouse = false;
-            object.emit('mouseout');
-        };
-        elem.onmousemove = function (event) {
-            object.mouseAbsX = event.clientX;
-            object.mouseAbsY = event.clientY;
-            object.mouseRelX = event.layerX;
-            object.mouseRelY = event.layerY;
-            object.emit('mousemove');
-        };
+        elem.addEventListener("scroll", handleScrollEvents, false);
 
         if ('ontouchstart' in document.documentElement) {
-            elem.ontouchstart = function (event) {
-                that.currentMouseElement = this;
-                object.mousePressed = true;
-                object.emit('mousedown');
-            };
-            elem.ontouchend = function (event) {
-                object.mousePressed = false;
-                object.mouseRelStartX = 0;
-                object.mouseRelStartY = 0;
-                object.emit('mouseup');
-                if (that.currentMouseElement === this) {
-                    object.emit('activated');
-                }
-                that.currentMouseElement = undefined;
-            };
+            if (window.navigator.msPointerEnabled) {
+                elem.addEventListener("MSPointerDown", handleTouchStartEvents, false);
+                elem.addEventListener("MSPointerMove", handleTouchMoveEvents, false);
+                elem.addEventListener("MSPointerUp", handleTouchEndEvents, false);
+            } else {
+                elem.addEventListener("touchstart", handleTouchStartEvents, false);
+                elem.addEventListener("touchmove", handleTouchMoveEvents, false);
+                elem.addEventListener("touchend", handleTouchEndEvents, false);
+            }
         } else {
-            elem.onmousedown = function (event) {
-                if (!event.used) {
-                    that.currentMouseElement = this;
-                    event.used = true;
-                }
-                object.mousePressed = true;
-                object.mouseRelStartX = event.layerX;
-                object.mouseRelStartY = event.layerY;
-                object.emit('mousedown');
-            };
-            elem.onmouseup = function (event) {
-                object.mousePressed = false;
-                object.mouseRelStartX = 0;
-                object.mouseRelStartY = 0;
-                object.emit('mouseup');
-
-                if (that.currentMouseElement === this) {
-                    object.emit('activated');
-                }
-                that.currentMouseElement = undefined;
-            };
+            elem.addEventListener("mousedown", handleMouseDownEvents, false);
+            elem.addEventListener("mouseup", handleMouseUpEvents, false);
+            elem.addEventListener("mousemove", handleMouseMoveEvents, false);
+            elem.addEventListener("mouseover", handleMouseOverEvents, false);
+            elem.addEventListener("mouseout", handleMouseOutEvents, false);
         }
     }
 
@@ -1140,7 +1171,7 @@ if (!Quick) {
 }
 
 Quick._animationIndex = 0;
-Quick._debugAnimation = false;
+Quick._debugAnimation = true;
 
 /*
  **************************************************
@@ -1188,6 +1219,8 @@ Quick.Animation = function (id, parent) {
     function updateRules() {
         var rule1 = "";
         var rule2 = "";
+        var rule3 = "";
+        var rule4 = "";
 
         if (!Quick._style) {
             Quick._style = document.createElement('style');
@@ -1216,6 +1249,13 @@ Quick.Animation = function (id, parent) {
         }
 
         rule1 += "." + animationName + " {\n";
+        rule1 += "   animation: ";
+        rule1 += keyFramesName + " ";
+        rule1 += elem.duration + "ms ";
+        rule1 += elem.easing + " ";
+        rule1 += elem.delay + " ";
+        rule1 += elem.loops + " ";
+        rule1 += (elem.reverse ? "alternate" : "normal") + ";\n";
         rule1 += "   -webkit-animation: ";
         rule1 += keyFramesName + " ";
         rule1 += elem.duration + "ms ";
@@ -1225,8 +1265,8 @@ Quick.Animation = function (id, parent) {
         rule1 += (elem.reverse ? "alternate" : "normal") + ";\n";
         rule1 += "}\n";
 
-        rule2 += "@-webkit-keyframes " + keyFramesName + " { \n";
-
+        rule2 += "@keyframes " + keyFramesName + " { \n";
+        rule3 += "@-webkit-keyframes " + keyFramesName + " { \n";
         for (var j in elem.children()) {
             var child = elem.children()[j];
 
@@ -1234,23 +1274,41 @@ Quick.Animation = function (id, parent) {
                 continue;
             }
 
-            rule2 += "   " + child.percentage + "% { ";
+            rule2 += "   " + child.percentage + "% {\n";
+            rule3 += "   " + child.percentage + "% {\n";
 
             for (var property in child._properties) {
                 if (child.hasOwnProperty(property) && property !== 'percentage') {
-                    rule2 += property + ": " + child[property] + "; ";
+                    rule2 += "      " + property + ": " + child[property] + ";\n";
+                    rule3 += "      " + property + ": " + child[property] + ";\n";
                 }
             }
 
-            rule2 += " }";
+            rule2 += "   }\n";
+            rule3 += "   }\n";
+        }
+        rule2 += "}\n";
+        rule3 += "}\n";
+
+        Quick._debugAnimation && console.log("Quick Animation rules:\n", rule2, rule3, rule1);
+
+        try {
+            Quick._style.sheet.insertRule(rule3, Quick._style.sheet.rules.length);
+        } catch (e) {
+            Quick._debugAnimation && console.error("Quick Animation rule", rule3, "could not be inserted.", e);
         }
 
-        rule2 += "}";
+        try {
+            Quick._style.sheet.insertRule(rule2, Quick._style.sheet.rules.length);
+        } catch (e) {
+            Quick._debugAnimation && console.error("Quick Animation rule", rule2, "could not be inserted.", e);
+        }
 
-        Quick._debugAnimation && console.log("Quick Animation rule", rule1, rule2);
-
-        Quick._style.sheet.insertRule(rule1, 0);
-        Quick._style.sheet.insertRule(rule2, 0);
+        try {
+            Quick._style.sheet.insertRule(rule1, Quick._style.sheet.rules.length);
+        } catch (e) {
+            Quick._debugAnimation && console.error("Quick Animation rule", rule1, "could not be inserted.", e);
+        }
 
         hasRules = true;
     }
@@ -1319,6 +1377,7 @@ Quick.Behavior = function (id, parent) {
 
     function updateRules() {
         var rule = "";
+        var rulepart = "";
         var gotProperties = false;
 
         if (!Quick._style) {
@@ -1344,28 +1403,33 @@ Quick.Behavior = function (id, parent) {
             return;
         }
 
-        rule += "." + animationName + " {\n";
-        rule += "   -webkit-transition: ";
-
+        // create shared parts of the css
         for (var property in elem._properties) {
             if (elem.hasOwnProperty(property) && property !== 'target') {
                 if (gotProperties) {
-                    rule += ", ";
+                    rulepart += ", ";
                 } else {
                     gotProperties = true;
                 }
 
-                rule += property + " " + elem[property];
+                rulepart += property + " " + elem[property];
             }
         }
 
-        rule += "\n}\n";
+        rule += "." + animationName + " {\n";
+        rule += "   -webkit-transition: " + rulepart + ";\n";
+        rule += "   transition: " + rulepart + ";\n";
+        rule += "}\n";
 
         // only actually insert rules if there is no property undefined
         if (gotProperties && rule.indexOf('undefined') === -1) {
             Quick._debugAnimation && console.log("Quick Behavior rule", rule);
 
-            Quick._style.sheet.insertRule(rule, 0);
+            try {
+                Quick._style.sheet.insertRule(rule, Quick._style.sheet.rules.length);
+            } catch (e) {
+                Quick._debugAnimation && console.error("Quick Animation rule", rule, "could not be inserted.", e);
+            }
             hasRules = true;
         }
     }
