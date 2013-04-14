@@ -6,7 +6,7 @@
 
         <script type="text/jml">
 
-        MyDelegate @ Item {
+        MyDelegate @ InputItem {
             top: 0 + (this.modelData * (this.height + 2));
             left: 10
             width: 700
@@ -76,13 +76,10 @@
                 top: this.parent.height/2 - this.height/2
             }
 
-            InputArea {
-                id: input
-                onmouseover: this.anim.restart();
-            }
+            onmouseover: this.anim.restart();
         }
 
-        InputArea {
+        InputItem {
             id: listView
             overflow: "scroll"
             scrollTopchanged: this.updateDelegates();

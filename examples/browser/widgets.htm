@@ -65,14 +65,14 @@
             onload: this._setupListeners();
         }
 
-        Button @ Item {
+        Button @ InputItem {
             label: "Click me"
 
             hoverEnabled: true
             backgroundColor: ^{
-                if (this.input.mousePressed) {
+                if (this.mousePressed) {
                     return config.downBackgroundColor
-                } else if (this.input.containsMouse) {
+                } else if (this.containsMouse) {
                     return config.hightlightBackgroundColor
                 } else {
                     return config.normalBackgroundColor
@@ -97,18 +97,13 @@
                 top: this.parent.height / 2 - this.height / 2
                 color: config.normalTextColor
             }
-
-            InputArea {
-                id: input
-                onactivated: this.parent.emit("clicked");
-            }
         }
 
-        IconButton @ Item {
+        IconButton @ InputItem {
             icon: ""
             hoverEnabled: true
             backgroundColor: ^{
-                if (this.input.containsMouse) {
+                if (this.containsMouse) {
                     return config.hightlightBackgroundColor
                 } else {
                     return config.normalBackgroundColor
@@ -153,13 +148,9 @@
                 top: this.parent.height / 2 - this.height / 2
             }
 
-            InputArea {
-                id: input
-                onactivated: ^{
-                    // this.parent.emit("clicked");
-                    this.animation.restart();
-                }^
-            }
+            onactivated: ^{
+                this.animation.restart();
+            }^
         }
 
         </script>
@@ -173,7 +164,7 @@
 
                 Button {
                     label: "Silent Setters"
-                    onclicked: ^{
+                    onactivated: ^{
                         // setSilent() sets the value but does not emit the change nor breaks the binding
                         this.setSilent("height", this.height === 50 ? 100 : 50);
                         // set() sets the value breaks the binding and adds a new binding
@@ -198,7 +189,7 @@
 
                 Button {
                     label: this.parent.layoutDirection
-                    onclicked: this.parent.layoutDirection = this.parent.layoutDirection === 'horizontal' ? 'vertical' : 'horizontal'
+                    onactivated: this.parent.layoutDirection = this.parent.layoutDirection === 'horizontal' ? 'vertical' : 'horizontal'
                 }
             }
         }

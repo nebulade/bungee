@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <title> QuickJS </title>
+
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, target-densitydpi=device-dpi" />
+
+        <script type="text/javascript" src="../../quick_full.min.js"></script>
+
+        <script type="text/jml">
+
+        Tab @ Item {
+            backgroundColor: "#3C7DC1"
+            opacity: this.modelData / this.parent.count
+            width: this.parent.width
+            height: 30
+            label: "Tab " + this.modelData
+            tmpPos: (this.modelData * this.parent.height / this.parent.count) / this.parent.height;
+            top: this.parent.mouseAbsY * this.tmpPos;
+
+            Text {
+                text: this.parent.label
+                top: this.parent.height/2 - this.textHeight/2
+                left: 20
+                color: "white"
+            }
+        }
+
+        Window {
+            width: this.innerWidth
+            height: this.innerHeight
+
+            InputItem {
+                top: 10
+                left: 10
+                width: this.parent.width - this.left*2
+                height: this.parent.height - this.top*2
+                tabDelegate: Tab;
+                count: 20
+
+                onload: ^{
+                    for (var i = 0; i < this.count; ++i) {
+                        var child = this.createtabDelegate();
+                        child.modelData = i;
+                        this.addChild(child);
+                        child.initializeBindings();
+                    }
+                }^
+            }
+        }
+
+        </script>
+
+        <script>
+
+            function init() {
+                Quick.run();
+
+                window.document.body.ontouchmove = function (event) {
+                    event.preventDefault();
+                }
+            }
+
+        </script>
+
+    </head>
+
+    <body onload="init();" style="margin: 0; -ms-touch-action: none;">
+    </body>
+</html>
+

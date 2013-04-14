@@ -62,14 +62,14 @@
             onload: this._setupListeners();
         }
 
-        Button @ Item {
+        Button @ InputItem {
             label: "Demo"
             src: ""
 
             backgroundColor: ^{
-                if (this.input.mousePressed) {
+                if (this.mousePressed) {
                     return config.downBackgroundColor
-                } else if (this.input.containsMouse) {
+                } else if (this.containsMouse) {
                     return config.hightlightBackgroundColor
                 } else {
                     return config.normalBackgroundColor
@@ -145,14 +145,11 @@
                 color: config.normalTextColor
             }
 
-            InputArea {
-                id: input
-                onmouseover: this.parent.hoverAnimation.restart()
-                onactivated: ^{
-                    this.parent.animation.restart();
-                    window.document.getElementById("demoArea").src = this.parent.src;
-                }^
-            }
+            onmouseover: this.hoverAnimation.restart()
+            onactivated: ^{
+                this.animation.restart();
+                window.document.getElementById("demoArea").src = this.src;
+            }^
         }
 
         </script>
@@ -194,6 +191,11 @@
                 Button {
                     label: "Widgets"
                     src: "widgets.htm"
+                }
+
+                Button {
+                    label: "Finger tracking"
+                    src: "tracking.html"
                 }
 
                 Button {
