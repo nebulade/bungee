@@ -16,18 +16,6 @@ if (!Quick) {
     var Quick = {};
 }
 
- // animation frame shim
-window.requestAnimFrame = (function () {
-    return window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        function (callback) {
-            window.setTimeout(callback, 1000 / 60);
-        };
-}());
-
 // create main singleton object
 if (!Quick.Engine) {
     Quick.Engine = (function () {
@@ -83,7 +71,7 @@ if (!Quick.Engine) {
         // TODO should be part of the dom renderer?
         var rendering = false;
         var fps = {};
-        fps.d = new Date();
+        fps.d = Date.now();
         fps.l = 0;
 
         function advance() {
@@ -91,7 +79,7 @@ if (!Quick.Engine) {
                 return;
             }
 
-            window.requestAnimFrame(advance);
+            window.setTimeout(advance, 1000 / 60);
 
             for (var i in _dirtyElements) {
                 _dirtyElements[i].render();
@@ -99,9 +87,9 @@ if (!Quick.Engine) {
             _dirtyElements = {};
 
             if (Quick.verbose) {
-                if ((new Date() - fps.d) >= 2000) {
+                if ((Date.now() - fps.d) >= 2000) {
                     console.log("FPS: " + fps.l / 2.0);
-                    fps.d = new Date();
+                    fps.d = Date.now();
                     fps.l = 0;
                 } else {
                     ++(fps.l);
@@ -119,6 +107,11 @@ if (!Quick.Engine) {
         };
 
         ret.dirty = function (element, property) {
+            // ignore properties prefixed with _
+            if (property[0] === '_') {
+                return;
+            }
+
             element._dirtyProperties[property] = true;
             if (!_dirtyElements[element._internalIndex]) {
                 _dirtyElements[element._internalIndex] = element;
@@ -370,6 +363,7 @@ Quick.Element.prototype.addProperty = function (name, value) {
             },
             set: function (val, silent) {
                 // console.log("setter: ", that.id, name, val);
+
                 if (valueStore === val)
                     return;
 

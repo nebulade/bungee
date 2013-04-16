@@ -373,22 +373,17 @@ Quick.RendererDOM.prototype.renderElement = function (element) {
     }
 
     for (name in element._dirtyProperties) {
-        // ignore properties prefixed with _
-        if (name[0] === '_') {
-            continue;
-        }
-
-        if (name === '-text') {
-            element.element.innerHTML = element[name];
-        } else if (name === 'placeholder') {
-            element.element.placeholder = element[name];
-        } else if (name === 'className' && element[name] !== '') {
+        if (name === 'className' && element[name] !== '') {
             element.element.className = element[name];
         } else if (name === 'scale') {
             var s = element.scale.toFixed(10);
             var tmp = "scale(" + s + ", " + s + ")";
             element.element.style['-webkit-transform'] = tmp;
             element.element.style['transform'] = tmp;
+        } else if (name === '-text') {
+            element.element.innerHTML = element[name];
+        } else if (name === 'placeholder') {
+            element.element.placeholder = element[name];
         } else {
             element.element.style[name] = element[name];
         }
