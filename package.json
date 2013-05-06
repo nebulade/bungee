@@ -24,7 +24,7 @@
         "node": ">=0.6"
     },
     "scripts": {
-        "test": "cd test; ../node_modules/mocha/bin/mocha -R spec;"
+        "test": "cd test; ../node_modules/mocha/bin/mocha -R nyan;"
     },
     "dependencies": {
         "optimist": "*"
