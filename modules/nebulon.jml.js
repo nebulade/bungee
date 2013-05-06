@@ -10,8 +10,10 @@ window.Quick.nebulon = function () {
         addChild: function(child) {
             this[child.id] = child;
             for (var i in this.children) {
-                this.children[i][child.id] = child;
-                child[this.children[i].id] = this.children[i];
+                if (this._children.hasOwnProperty(i)) {
+                    this.children[i][child.id] = child;
+                    child[this.children[i].id] = this.children[i];
+                }
             }
             e.children.push(child);
             Quick.Engine.addElement(child);

@@ -114,9 +114,13 @@ var compiler = (function () {
         addIndentation(2);
         output += "for (var i in this.children) {\n";
         addIndentation(2);
-        output += "    this.children[i][child.id] = child;\n";
+        output += "    if (this.children.hasOwnProperty(i)) {\n";
         addIndentation(2);
-        output += "    child[this.children[i].id] = this.children[i];\n";
+        output += "        this.children[i][child.id] = child;\n";
+        addIndentation(2);
+        output += "        child[this.children[i].id] = this.children[i];\n";
+        addIndentation(2);
+        output += "    }\n";
         addIndentation(2);
         output += "}\n";
         addIndentation(2);
