@@ -10,7 +10,7 @@ window.Quick.nebulon = function () {
         addChild: function(child) {
             this[child.id] = child;
             for (var i in this.children) {
-                if (this._children.hasOwnProperty(i)) {
+                if (this.children.hasOwnProperty(i)) {
                     this.children[i][child.id] = child;
                     child[this.children[i].id] = this.children[i];
                 }

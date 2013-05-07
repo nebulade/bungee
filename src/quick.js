@@ -150,6 +150,7 @@ Quick.Element = function (id, parent, typeHint) {
     this._connections = {};
     this._children = {};
     this._bound = {};
+    this._initializeBindingsStep = false;
 
     if (this.parent) {
         this.parent.addChild(this);
@@ -284,7 +285,8 @@ Quick.Element.prototype.addEventHandler = function (event, handler) {
     }
 
     this.addChanged(signal, function () {
-        handler.apply(that);
+        if (!that._initializeBindingsStep)
+            handler.apply(that);
     });
 };
 
@@ -385,6 +387,9 @@ Quick.Element.prototype.addProperty = function (name, value) {
 // should only be called once
 Quick.Element.prototype.initializeBindings = function () {
     var name, i;
+
+    this._initializeBindingsStep = true;
+
     for (name in this._properties) {
         if (this._properties.hasOwnProperty(name)) {
             var value = this._properties[name];
@@ -411,6 +416,8 @@ Quick.Element.prototype.initializeBindings = function () {
         }
     }
 
+    this._initializeBindingsStep = false;
+
     // this calls the onload slot, if defined
     this.emit("load");
 };
@@ -420,7 +427,7 @@ Quick.Element.prototype.emit = function (signal) {
         var slots = this._connections[signal];
         for (var slot in slots) {
             if (slots.hasOwnProperty(slot)) {
-                slots[slot]();
+                slots[slot].apply();
             }
         }
     }
