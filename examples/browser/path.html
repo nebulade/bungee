@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <title> QuickJS </title>
+
+        <script type="text/javascript" src="../../quick_full.min.js"></script>
+
+        <script>
+
+            function init() {
+                Quick.run();
+
+                for (var i = 0; i < 10; ++i) {
+                    window.app.buildDelegate(i);
+                }
+
+                layout();
+            }
+
+            var path = [
+                { percent: 0, left: 0, top: 100, opacity: 0 },
+                { percent: 0.5, left: window.innerWidth/2, top: 100, opacity: 1 },
+                { percent: 1, left: window.innerWidth, top: 100, opacity: 0 },
+            ];
+
+            function interpolate(index, count, path, property) {
+                var percent = index/count;
+                var a = 0;
+                var b = path.length-1;
+
+                console.log("percent", percent);
+
+                for (var i = 0; i < path.length; ++i) {
+                    if (path[i].percent < percent) {
+                        a = i;
+                    } else {
+                        b = i;
+                        break;
+                    }
+                }
+
+                console.log("AB", a, path[a][property], "---", b, path[b][property]);
+                var percentInSection = (percent - path[a].percent) / (path[b].percent-path[a].percent);
+                console.log("In path", percentInSection)
+
+                var ret  = 0;
+                if (percentInSection)
+                    ret = path[a][property] + (path[b][property] - path[a][property])/percentInSection;
+                console.log("Return", ret);
+
+                return ret;
+            }
+
+            function layout() {
+                var kids = app.children();
+                var index = 0;
+
+                for (var i in kids) {
+                    if (kids.hasOwnProperty(i)) {
+                        kids[i].left = interpolate(index, 10, path, 'left')-kids[i].width/2;
+                        kids[i].top = interpolate(index, 10, path, 'top')-kids[i].height/2;
+                        kids[i].opacity = interpolate(index, 10, path, 'opacity');
+                        index++;
+                    }
+                }
+            }
+
+        </script>
+
+        <script type="text/jml">
+
+        MyDelegate @ InputItem {
+            width: 100
+            height: 100
+            backgroundColor: this.mousePressed ? "purple" : "#3C7DC1"
+            overflow: "hidden"
+
+            Image {
+                id: delegateImage
+                src: "person.png"
+                width: 64
+                height: 64
+                left: 20
+                top: this.parent.height/2 - this.height/2
+            }
+        }
+
+        InputItem {
+            id: view
+            width: window.innerWidth
+            height: window.innerHeight
+            delegate: MyDelegate;
+
+            function buildDelegate(j): ^{
+                var child = this.createdelegate();
+                child.modelData = j;
+                this.addChild(child);
+                child.initializeBindings();
+            }^
+
+            onload: window.app = this;
+        }
+
+        </script>
+
+    </head>
+
+    <body onload="init();">
+    </body>
+</html>
+
