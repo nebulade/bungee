@@ -1,0 +1,124 @@
+<html>
+    <head>
+        <title> QuickJS </title>
+
+        <script type="text/javascript" src="../../quick_full.js"></script>
+
+        <script>
+
+        var model = [];
+
+        for (var i = 0; i < 1; ++i)
+            model.push("Seifenkiste" + i);
+
+        </script>
+
+        <script type="text/jml">
+
+        MyDelegate @ InputItem {
+            top: 0
+            left: 10
+            width: 700
+            height: 70
+            backgroundColor: this.mousePressed ? "purple" : "#3C7DC1"
+            scale: this.opacity
+            overflow: "hidden"
+            onload: this.anim2.restart();
+
+            Animation {
+                id: anim2
+                easing: "ease-in-out"
+                duration: 1000
+
+                Step {
+                    percentage: 0
+                    height: 0
+                }
+
+                Step {
+                    percentage: 80
+                    height: this.parent.parent.height*1.2
+                }
+
+                Step {
+                    percentage: 100
+                    height: this.parent.parent.height
+                }
+            }
+
+            Text {
+                id: delegateText
+                text: this.parent.modelData
+                color: "white"
+                fontSize: 24
+                left: 10
+                top: this.parent.height/2 - this.textHeight/2
+            }
+
+            InputItem {
+                left: this.parent.width - this.label.textWidth - 10
+                top: 10
+                width: this.label.textWidth
+                height: this.label.textHeight
+                onactivated: this.parent.parent.addDelegate(Math.random())
+
+                Text {
+                    id: label
+                    text: "ADD"
+                    color: "white"
+                }
+            }
+
+            InputItem {
+                left: this.parent.width - this.label.textWidth - 10
+                top: this.parent.height - this.label.textHeight - 10
+                width: this.label.textWidth
+                height: this.label.textHeight
+                onactivated: console.log("DEL")
+
+                Text {
+                    id: label
+                    text: "DEL"
+                    color: "white"
+                }
+            }
+        }
+
+        InputItem {
+            id: listView
+            overflow: "scroll"
+            width: window.innerWidth
+            height: window.innerHeight
+            delegate: MyDelegate;
+            model: window.model;
+
+            Item {
+                height: 10000000
+            }
+
+            function addDelegate(data): ^{
+                var child = this.createdelegate();
+                child.modelData = data;
+                this.addChild(child);
+                child.initializeBindings();
+            }^
+
+            function removeDelegate(data): ^{
+
+            }^
+
+            onload: ^{
+                for (var i = 0; i < this.model.length; ++i){
+                    this.addDelegate(this.model[i]);
+                }
+            }^
+        }
+
+        </script>
+
+    </head>
+
+    <body onload="Quick.run();">
+    </body>
+</html>
+
