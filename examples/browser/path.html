@@ -6,31 +6,41 @@
 
         <script>
 
+            var count = 50;
+
             function init() {
                 Quick.run();
 
-                for (var i = 0; i < 10; ++i) {
+                for (var i = 0; i < count; ++i) {
                     window.app.buildDelegate(i);
                 }
 
                 layout();
             }
 
-            var path = [
+            var path1 = [
                 { percent: 0, left: 0, top: 100, opacity: 0 },
-                { percent: 0.5, left: window.innerWidth/2, top: 100, opacity: 1 },
-                { percent: 1, left: window.innerWidth, top: 100, opacity: 0 },
+                { percent: 0.5, left: 200, top: 200, opacity: 1 },
+                { percent: 0.8, left: 400, top: 50, opacity: 0 },
+                { percent: 1, left: 1000, top: 150, opacity: 0.5 }
             ];
 
-            function interpolate(index, count, path, property) {
-                var percent = index/count;
+            var path2 = [
+                { percent: 0, left: 200, top: 0, opacity: 0 },
+                { percent: 0.25, left: 0, top: 200, opacity: 1 },
+                { percent: 0.5, left: 200, top: 400, opacity: 0 },
+                { percent: 0.75, left: 400, top: 200, opacity: 1 },
+                { percent: 1, left: 200, top: 0, opacity: 0 }
+            ];
+
+            var path = path1;
+
+            function interpolate(percent, path, property) {
                 var a = 0;
                 var b = path.length-1;
 
-                console.log("percent", percent);
-
                 for (var i = 0; i < path.length; ++i) {
-                    if (path[i].percent < percent) {
+                    if (path[i].percent <= percent) {
                         a = i;
                     } else {
                         b = i;
@@ -38,17 +48,18 @@
                     }
                 }
 
-                console.log("AB", a, path[a][property], "---", b, path[b][property]);
                 var percentInSection = (percent - path[a].percent) / (path[b].percent-path[a].percent);
-                console.log("In path", percentInSection)
-
                 var ret  = 0;
+
                 if (percentInSection)
-                    ret = path[a][property] + (path[b][property] - path[a][property])/percentInSection;
-                console.log("Return", ret);
+                    ret = (path[b][property] - path[a][property])*percentInSection;
+                ret += path[a][property];
 
                 return ret;
             }
+
+
+            var active = 0;
 
             function layout() {
                 var kids = app.children();
@@ -56,31 +67,35 @@
 
                 for (var i in kids) {
                     if (kids.hasOwnProperty(i)) {
-                        kids[i].left = interpolate(index, 10, path, 'left')-kids[i].width/2;
-                        kids[i].top = interpolate(index, 10, path, 'top')-kids[i].height/2;
-                        kids[i].opacity = interpolate(index, 10, path, 'opacity');
+                        var percent = (0.5 + (index-active)/count) % 1;
+                        kids[i].left = interpolate(percent, path, 'left')-kids[i].width/2;
+                        kids[i].top = interpolate(percent, path, 'top')-kids[i].height/2;
+                        kids[i].opacity = interpolate(percent, path, 'opacity');
                         index++;
                     }
                 }
             }
+
+            window.setInterval(function () {
+                active++;
+                if (active >= count)
+                    active = 0;
+                layout();
+            }, 500);
 
         </script>
 
         <script type="text/jml">
 
         MyDelegate @ InputItem {
-            width: 100
-            height: 100
+            width: 30
+            height: 30
             backgroundColor: this.mousePressed ? "purple" : "#3C7DC1"
-            overflow: "hidden"
+            opacity: 0.5
 
-            Image {
-                id: delegateImage
-                src: "person.png"
-                width: 64
-                height: 64
-                left: 20
-                top: this.parent.height/2 - this.height/2
+            Behavior {
+                left: 250;
+                top: 250;
             }
         }
 
@@ -98,6 +113,15 @@
             }^
 
             onload: window.app = this;
+            onactivated: ^{
+                window.active++;
+                if (window.path === window.path1)
+                    window.path = window.path2;
+                else
+                    window.path = window.path1;
+
+                window.layout();
+            }^
         }
 
         </script>
