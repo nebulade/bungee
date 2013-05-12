@@ -4,47 +4,17 @@
 
         <script type="text/javascript" src="../../quick_full.js"></script>
 
-        <script>
-
-        var model = [];
-
-        for (var i = 0; i < 1; ++i)
-            model.push("Seifenkiste" + i);
-
-        </script>
-
         <script type="text/jml">
 
         MyDelegate @ InputItem {
             top: 0
             left: 10
-            width: 700
+            width: this.parent.width - 30
             height: 70
             backgroundColor: this.mousePressed ? "purple" : "#3C7DC1"
             scale: this.opacity
             overflow: "hidden"
-            onload: this.anim2.restart();
-
-            Animation {
-                id: anim2
-                easing: "ease-in-out"
-                duration: 1000
-
-                Step {
-                    percentage: 0
-                    height: 0
-                }
-
-                Step {
-                    percentage: 80
-                    height: this.parent.parent.height*1.2
-                }
-
-                Step {
-                    percentage: 100
-                    height: this.parent.parent.height
-                }
-            }
+            visibility: "hidden"
 
             Text {
                 id: delegateText
@@ -60,7 +30,10 @@
                 top: 10
                 width: this.label.textWidth
                 height: this.label.textHeight
-                onactivated: this.parent.parent.addDelegate(Math.random())
+                onactivated: ^{
+                    var data = this.parent.modelData + " " + Math.floor(Math.random()*100);
+                    this.parent.parent.insertDelegate(this.parent, data);
+                }^
 
                 Text {
                     id: label
@@ -74,7 +47,7 @@
                 top: this.parent.height - this.label.textHeight - 10
                 width: this.label.textWidth
                 height: this.label.textHeight
-                onactivated: console.log("DEL")
+                onactivated: this.parent.parent.removeDelegate(this.parent);
 
                 Text {
                     id: label
@@ -90,21 +63,69 @@
             width: window.innerWidth
             height: window.innerHeight
             delegate: MyDelegate;
-            model: window.model;
+            spacing: 10
+            animationDuration: 250
+            model: ['Seifenkiste', 'Eisstock', 'Zwiesel', 'Traktor'];
+            _delegates: [];
 
-            Item {
-                height: 10000000
-            }
-
-            function addDelegate(data): ^{
+            function buildDelegate(data): ^{
                 var child = this.createdelegate();
+
+                var anim = new Quick.Behavior('topAnimation');
+                anim.addProperty('top', 0);
+                child.addChild(anim);
+
                 child.modelData = data;
                 this.addChild(child);
                 child.initializeBindings();
+
+                return child;
+            }^
+
+            function addDelegate(data): ^{
+                var child = this.buildDelegate(data);
+                this._delegates.push(child);
+                this.layout();
+            }^
+
+            function insertDelegate(pre, data): ^{
+                var child = this.buildDelegate(data);
+                for (var i = 0; i < this._delegates.length; ++i) {
+                    if (this._delegates[i] === pre) {
+                        this._delegates.splice(i+1, 0, child);
+                        break;
+                    }
+                }
+                this.layout();
             }^
 
             function removeDelegate(data): ^{
+                for (var i = 0; i < this._delegates.length; ++i) {
+                    if (this._delegates[i] === data) {
+                        var child = this._delegates[i];
+                        this.removeChild(child);
+                        this._delegates.splice(i, 1);
+                    }
+                }
+                this.layout();
+            }^
 
+            function layout(): ^{
+                var that = this;
+                var top = 0;
+
+                for (var i = 0; i < this._delegates.length; ++i) {
+                    var d = this._delegates[i];
+                    d.top = top;
+                    d.visibility = "visible";
+                    if (!d.topAnimation.top) {
+                        // window.setTimeout(function () {
+                            // var delegate = d;
+                            d.topAnimation.top = that.animationDuration;
+                        // }, 1000);
+                    }
+                    top += d.height + this.spacing;
+                }
             }^
 
             onload: ^{

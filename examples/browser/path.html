@@ -81,7 +81,7 @@
                 if (active >= count)
                     active = 0;
                 layout();
-            }, 500);
+            }, 200);
 
         </script>
 
@@ -94,8 +94,9 @@
             opacity: 0.5
 
             Behavior {
-                left: 250;
-                top: 250;
+                left: "250ms linear";
+                top: "250ms linear";
+                opacity: "250ms linear";
             }
         }
 
