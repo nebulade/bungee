@@ -12,9 +12,15 @@
             width: this.parent.width - 30
             height: 70
             backgroundColor: this.mousePressed ? "purple" : "#3C7DC1"
-            scale: this.opacity
             overflow: "hidden"
             visibility: "hidden"
+            opacity: 0
+
+            Behavior {
+                top: "250ms"
+                height: "250ms"
+                opacity: "500ms"
+            }
 
             Text {
                 id: delegateText
@@ -63,22 +69,16 @@
             width: window.innerWidth
             height: window.innerHeight
             delegate: MyDelegate;
+            deleteDelay: 1000;
             spacing: 10
-            animationDuration: 250
             model: ['Seifenkiste', 'Eisstock', 'Zwiesel', 'Traktor'];
             _delegates: [];
 
             function buildDelegate(data): ^{
                 var child = this.createdelegate();
-
-                var anim = new Quick.Behavior('topAnimation');
-                anim.addProperty('top', 0);
-                child.addChild(anim);
-
                 child.modelData = data;
                 this.addChild(child);
                 child.initializeBindings();
-
                 return child;
             }^
 
@@ -102,9 +102,17 @@
             function removeDelegate(data): ^{
                 for (var i = 0; i < this._delegates.length; ++i) {
                     if (this._delegates[i] === data) {
-                        var child = this._delegates[i];
-                        this.removeChild(child);
+                        var that = this;
+
+                        data.opacity = 0;
+                        data.height = 0;
+
                         this._delegates.splice(i, 1);
+                        window.setTimeout(function () {
+                            that.removeChild(data);
+                        }, this.deleteDelay);
+
+                        break;
                     }
                 }
                 this.layout();
@@ -117,13 +125,8 @@
                 for (var i = 0; i < this._delegates.length; ++i) {
                     var d = this._delegates[i];
                     d.top = top;
+                    d.opacity = 1;
                     d.visibility = "visible";
-                    if (!d.topAnimation.top) {
-                        // window.setTimeout(function () {
-                            // var delegate = d;
-                            d.topAnimation.top = that.animationDuration;
-                        // }, 1000);
-                    }
                     top += d.height + this.spacing;
                 }
             }^

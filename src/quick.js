@@ -410,6 +410,9 @@ Quick.Element.prototype.initializeBindings = function () {
         }
     }
 
+    // force property being set on the elements
+    this.render();
+
     for (i in this._children) {
         if (this._children.hasOwnProperty(i)) {
             this._children[i].initializeBindings();
