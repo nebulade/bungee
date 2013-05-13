@@ -27,16 +27,13 @@
             borderWidth: 10
             layoutDirection: "horizontal"
 
-            function _layout(direction): ^{
-                if (direction === this.layoutDirection)
-                    return;
-
+            function _layout(): ^{
                 var kids = this.children();
                 var sibling = undefined;
 
                 for (var i in kids) {
                     if (kids.hasOwnProperty(i)) {
-                        if (direction === "vertical") {
+                        if (this.layoutDirection === "vertical") {
                             kids[i].top = sibling ? (this.spacing + sibling.top + sibling.height) : 0;
                             kids[i].left = 0;
                         } else {
@@ -52,6 +49,8 @@
                 var kids = this.children();
                 var that = this;
 
+                this._layout();
+
                 for (var i in kids) {
                     if (kids.hasOwnProperty(i)) {
                         kids[i].addChanged('width', function () { that._layout() });
@@ -60,8 +59,7 @@
                 }
             }^
 
-            childrenWidthChanged: this._layout('horizontal')
-            childrenHeightChanged: this._layout('vertical')
+            onlayoutDirection: this._layout();
             onload: this._setupListeners();
         }
 
