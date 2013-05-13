@@ -1597,18 +1597,12 @@ if (!Quick.Engine) {
         };
 
         // TODO should be part of the dom renderer?
-        var rendering = false;
+        var renderInterval;
         var fps = {};
         fps.d = Date.now();
         fps.l = 0;
 
         function advance() {
-            if (!rendering) {
-                return;
-            }
-
-            window.setTimeout(advance, 1000 / 60);
-
             for (var i in _dirtyElements) {
                 _dirtyElements[i].render();
             }
@@ -1626,12 +1620,12 @@ if (!Quick.Engine) {
         }
 
         ret.start = function () {
-            rendering = true;
+            renderInterval = window.setInterval(advance, 1000/60.0);
             advance();
         };
 
         ret.stop = function () {
-            rendering = false;
+            window.clearInterval(renderInterval);
         };
 
         ret.dirty = function (element, property) {
