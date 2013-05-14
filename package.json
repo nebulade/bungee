@@ -1,6 +1,6 @@
 {
     "name": "quick",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "description": "QuickJS is a declarative language engine to run inside a browser.",
     "keywords": [
         "qml",
@@ -16,7 +16,7 @@
         "type": "git",
         "url": "git://github.com/nebulon1234/quickjs.git"
     },
-    "main": "./quick.js",
+    "main": "./index.js",
     "bin": {
         "quickjs": "bin/quickjs"
     },

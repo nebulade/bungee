@@ -3,7 +3,7 @@
 var assert = require('assert');
 var should = require('should');
 
-var quick = require('../quick');
+var quick = require('../index');
 
 describe('Quick API has', function () {
     it ('tokenizer', function () {

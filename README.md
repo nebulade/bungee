@@ -14,7 +14,7 @@ adjustments to fit the HTML5 space.
 Installation
 ------------
 
-The 'build.sh' script in the project root, will generate the 'quick_full.js' library
+The 'build.sh' script in the project root, will generate the 'quick.js' library
 together with a minified version of it.
 
 There is also a nodejs module, which contains the offline compiler scripts.

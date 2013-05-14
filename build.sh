@@ -1,9 +1,8 @@
 #!/bin/sh
 
-OUT="quick_full.js"
-OUT_MINIFIED="quick_full.min.js"
-INPUT="quick_tokenizer quick_compiler quick_dom quick_animation quick_helper
-quick"
+OUT="quick.js"
+OUT_MINIFIED="quick.min.js"
+INPUT="tokenizer compiler dom animation helper engine"
 MINIFIER=uglifyjs
 MINIFIER_OPTIONS=""
 MODULES_FOLDER="./modules/"

@@ -5,8 +5,8 @@ var fs = require('fs');
 module.exports = (function () {
     var ret = {};
 
-    ret.tokenizer = require('./src/quick_tokenizer.js');
-    ret.compiler = require('./src/quick_compiler.js');
+    ret.tokenizer = require('./src/tokenizer.js');
+    ret.compiler = require('./src/compiler.js');
 
     ret.compileFile = function(file, options, callback) {
         fs.readFile(file, 'utf8', function (error, data) {
