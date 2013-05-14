@@ -4,18 +4,29 @@ quickjs
 Description
 -----------
 
-A declarative language heavily inspired by Qt's QML language.
-QuickJS aims to bring a similar ease of use to the HTML world.
+quickjs is a web application framework, including a declarative language,
+offline compiler to render JavaScript and an engine to run the generated code.
 
-Status
-------
+The declarative language is heavily influenced by QtQuick's QML language, with
+adjustments to fit the HTML5 space.
 
-The project is in very early development. There is no documentation
-and no guide, yet, but the examples might give you some indication on how
-it looks like and how it works :-)
 
-Join me!
+Installation
+------------
+
+The 'build.sh' script in the project root, will generate the 'quick_full.js' library
+together with a minified version of it.
+
+There is also a nodejs module, which contains the offline compiler scripts.
+$> npm install quick
+
+Examples
 --------
 
-Any help is greatly appreciated! Nicer examples, bugfixes, code,
-ideas, discussions, similar projects which make this obsolete, ...
+There are several examples, on how to use quickjs in a browser and node environment,
+located in the examples subfolder.
+
+Documentation
+-------------
+
+Ahm...well...source code?
