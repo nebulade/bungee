@@ -173,6 +173,10 @@ Quick.Image = function (id, parent) {
     elem.addProperty("textAlign", "center");
     elem.addProperty("src", "image.png");
     elem.addProperty("backgroundImage", function () {
+        if (!this.src) {
+            return "";
+        }
+
         if (this.src.indexOf("url('") === 0) {
             return this.src;
         }
