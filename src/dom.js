@@ -227,6 +227,8 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
 
     function handleTouchStartEvents(event) {
         that.currentMouseElement = this;
+        that.currentScrollElementTopStart = that.currentScrollElement.scrollTop;
+        that.currentScrollElementLeftStart = that.currentScrollElement.scrollLeft;
         object.mousePressed = true;
         object.emit('mousedown');
     }
@@ -292,15 +294,25 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
     }
 
     function handleScrollEvents(event) {
+        if (that.currentScrollElement !== object) {
+            that.currentScrollElement = object;
+            that.currentScrollElementTopStart = event.target.scrollTop;
+            that.currentScrollElementLeftStart = event.target.scrollLeft;
+        }
+
+        if (Math.abs(that.currentScrollElementTopStart - event.target.scrollTop) > 20 || Math.abs(that.currentScrollElementLeftStart - event.target.scrollLeft) > 20 ) {
+            that.currentMouseElement = undefined;
+        }
+
         object.scrollTop = event.target.scrollTop;
         object.scrollLeft = event.target.scrollLeft;
         object.srollWidth = event.target.scrollWidth;
         object.scrollHeight = event.target.scrollHeight;
     }
 
-    if (typeHint === "InputItem") {
-        elem.addEventListener("scroll", handleScrollEvents, false);
+    elem.addEventListener("scroll", handleScrollEvents, false);
 
+    if (typeHint === "InputItem") {
         if ('ontouchstart' in document.documentElement) {
             if (window.navigator.msPointerEnabled) {
                 elem.addEventListener("MSPointerDown", handleTouchStartEvents, false);
