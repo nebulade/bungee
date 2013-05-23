@@ -9,8 +9,8 @@ Button @ InputItem {
     width: this.l.textWidth < 140 ? 100 : (this.l.textWidth + 40)
     height: this.l.textHeight < 70 ? 50 : (this.l.textHeight + 20)
     label: ""
+    fontSize: "32px"
     cursor: "default"
-    hoverEnabled: true
     backgroundColor: ^{
         if (this.mousePressed) {
             return "#006B9F";
@@ -20,7 +20,6 @@ Button @ InputItem {
             return "#3C7DC1";
         }
     }^
-    fontSize: "32px"
 
     Label {
         id: l
