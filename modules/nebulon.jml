@@ -5,7 +5,7 @@ Label @ Text {
     fontFamily: "Liberation Sans"
 }
 
-Button @ Item {
+Button @ InputItem {
     width: this.l.textWidth < 140 ? 100 : (this.l.textWidth + 40)
     height: this.l.textHeight < 70 ? 50 : (this.l.textHeight + 20)
     label: ""
@@ -134,4 +134,68 @@ VerticalLayout @ Layout {
 
 HorizontalLayout @ Layout {
     orientation: "horizontal"
+}
+
+View @ Item {
+    height: this.parent.height
+    width: this.parent.width
+    overflow: "scroll"
+    -webkit-overflow-scrolling: "touch"
+    delegate: Item;
+    delegates: []
+
+    function clear(): ^{
+        this.removeChildren();
+        this.delegates = [];
+    }^
+
+    function addDelegate(data): ^{
+        var delegate = this.createdelegate();
+        this.delegates.push(delegate);
+        delegate.modelData = data;
+        this.addChild(delegate);
+        delegate.initializeBindings();
+    }^
+
+    function layout(): ^{
+        console.warn("Please implement layout() function.");
+    }^
+}
+
+ListView @ View {
+    delegateSize: this.width
+
+    function layout(): ^{
+        var top = 0;
+
+        for (var i = 0; i < this.delegates.length; ++i) {
+            var d = this.delegates[i];
+            d.top = top;
+            top += d.height;
+        }
+    }^
+}
+
+GridView @ View {
+    delegateSize: 100
+    delegatesPerLine: ^{ Math.ceil(this.width / this.delegateSize) }^
+
+    function layout(): ^{
+        var left = 0;
+        var top = 0;
+
+        for (var i = 0; i < this.delegates.length; ++i) {
+            var d = this.delegates[i];
+
+            d.left = left;
+            d.top = top;
+
+            if ((i+1) % this.delegatesPerLine) {
+                left += d.width;
+            } else {
+                top += d.height;
+                left = 0;
+            }
+        }
+    }^
 }
