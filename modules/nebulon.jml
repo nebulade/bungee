@@ -154,6 +154,7 @@ View @ Item {
         delegate.modelData = data;
         this.addChild(delegate);
         delegate.initializeBindings();
+        return delegate;
     }^
 
     function layout(): ^{
