@@ -346,9 +346,7 @@ Quick.Element.prototype.addProperty = function (name, value) {
     // register property
     this._properties[name] = value;
 
-    if (this.hasOwnProperty(name)) {
-        this[name] = value;
-    } else {
+    if (!this.hasOwnProperty(name)) {
         Object.defineProperty(this, name, {
             get: function (silent) {
                 // console.log("getter: ", that.id, name);
