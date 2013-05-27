@@ -50,8 +50,7 @@ Quick.compileScriptTagElement = function(script) {
                     eval(result);
                 }
             } catch (e) {
-                console.error("QuickJS error in generated JavaScript: " + e);
-                console.error(e);
+                console.error("QuickJS error in generated JavaScript: ", e);
             }
         }
     });
