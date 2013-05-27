@@ -183,17 +183,21 @@ Quick.Element.prototype.removeChildren = function () {
 
 Quick.Element.prototype.addChild = function (child) {
     // adds child id to the namespace
-    this[child.id] = child;
+    if (child.id)
+        this[child.id] = child;
 
     // adds the parents id to the child
-    child[this.id] = this;
+    if (this.id)
+        child[this.id] = this;
 
     // add child to siblings scope and vice versa
-    var i;
-    for (i in this._children) {
+    for (var i in this._children) {
         if (this._children.hasOwnProperty(i)) {
-            this._children[i][child.id] = child;
-            child[this._children[i].id] = this._children[i];
+            if (child.id)
+                this._children[i][child.id] = child;
+
+            if (this._children[i].id)
+                child[this._children[i].id] = this._children[i];
         }
     }
 
@@ -343,7 +347,7 @@ Quick.Element.prototype.addProperty = function (name, value) {
     this._properties[name] = value;
 
     if (this.hasOwnProperty(name)) {
-        this.name = value;
+        this[name] = value;
     } else {
         Object.defineProperty(this, name, {
             get: function (silent) {
@@ -379,7 +383,7 @@ Quick.Element.prototype.addProperty = function (name, value) {
 
 // initial set of all properties and binding evaluation
 // should only be called once
-Quick.Element.prototype.initializeBindings = function () {
+Quick.Element.prototype.initializeBindings = function (options) {
     var name, i;
 
     this._initializeBindingsStep = true;
@@ -405,11 +409,13 @@ Quick.Element.prototype.initializeBindings = function () {
     }
 
     // force property being set on the elements
-    this.render();
+    if (!options || !options.deferRender) {
+        this.render();
+    }
 
     for (i in this._children) {
         if (this._children.hasOwnProperty(i)) {
-            this._children[i].initializeBindings();
+            this._children[i].initializeBindings(options);
         }
     }
 
