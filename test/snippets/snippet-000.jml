@@ -1,0 +1,19 @@
+Item {
+    something: ^{
+        var foo;
+        foo = 1;
+        foo += 1337;
+        return foo;
+    }^
+
+    foobar: ^{ return "boo"; }^
+    baz: ^{
+        return "boo";
+
+
+    }^
+
+    anotherThing: {^{
+
+    }^
+}
