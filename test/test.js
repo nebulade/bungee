@@ -236,7 +236,7 @@ describe('Compiler', function () {
         });
     });
     describe('Compile code', function () {
-        it('with properties beginning with a number', function () {
+        it('with properties beginning with a number', function (done) {
             var tmp = "";
 
             tmp += "Element {\n";
@@ -250,9 +250,11 @@ describe('Compiler', function () {
                 error.code.should.be.equal(7);
                 error.line.should.be.equal(2);
                 should.not.exist(result);
+
+                done();
             });
         });
-        it('with property id', function () {
+        it('with property id', function (done) {
             var tmp = "";
 
             tmp += "Element {\n";
@@ -271,9 +273,11 @@ describe('Compiler', function () {
                 result.elements.should.have.length(1);
                 should.exist(result.elements[0]);
                 result.elements[0].id.should.be.equal('myelement');
+
+                done();
             });
         });
-        it('with a delegate property', function () {
+        it('with a delegate property', function (done) {
             var tmp = "";
 
             tmp += "Element {\n";
@@ -300,6 +304,8 @@ describe('Compiler', function () {
                 should.exist(result.elements[0].delegates[0]);
                 result.elements[0].delegates[0].name.should.be.equal('delegate');
                 result.elements[0].delegates[0].value.should.be.equal('Element');
+
+                done();
             });
         });
         xit('with two delegate properties', function () {
@@ -334,6 +340,19 @@ describe('Compiler', function () {
                 should.exist(result.elements[0].delegates[1]);
                 result.elements[0].delegates[1].name.should.be.equal('delegate2');
                 result.elements[0].delegates[1].value.should.be.equal('Element2');
+            });
+        });
+    });
+    describe('Compiler error', function () {
+        it('line number with inline javascript blocks', function (done) {
+            quick.compileFile("snippets/snippet-000.jml", {}, function (error, result) {
+                should.exist(error);
+                should.not.exists(result);
+
+                error.code.should.be.equal(5);
+                error.line.should.be.equal(16);
+
+                done();
             });
         });
     });

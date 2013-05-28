@@ -80,6 +80,10 @@ var tokenizer = (function () {
                 break;
             }
 
+            if (c === '\n') {
+                ++line;
+            }
+
             block += c;
 
             advance();
