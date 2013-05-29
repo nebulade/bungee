@@ -226,7 +226,7 @@ describe('Tokenizer', function () {
 describe('Compiler', function () {
     describe('Compile large jml file', function () {
         it('64000+ lines', function (done) {
-            quick.compileFile("large.jml", {}, function (error, result) {
+            quick.compileFile("snippets/snippet-001.jml", {}, function (error, result) {
                 if (error) {
                     throw(error);
                 }
