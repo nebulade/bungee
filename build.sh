@@ -1,15 +1,15 @@
 #!/bin/sh
 
-OUT="quick.js"
-OUT_MINIFIED="quick.min.js"
+OUT="bungee.js"
+OUT_MINIFIED="bungee.min.js"
 INPUT="tokenizer compiler dom animation helper engine"
 MINIFIER=uglifyjs
 MINIFIER_OPTIONS=""
 MODULES_FOLDER="./modules/"
-QUICKJS=$PWD/bin/quickjs
-QUICKJS_OPTIONS="-s"
+BUNGEEJS=$PWD/bin/bungee
+BUNGEEJS_OPTIONS="-s"
 
-#### batching all quickjs files into one
+#### batching all bungee.js files into one
 echo "Create batched $OUT file."
 echo " -> Removing old combined $OUT file..."
 rm -f $OUT $OUT_MINIFIED
@@ -33,7 +33,7 @@ echo "Generate JavaScript files for modules in $MODULES_FOLDER."
 for file in `find $MODULES_FOLDER -name "*.jml"`; do
     echo " -> Process $file..."
     echo "  -> Generate JavaScript from JML..."
-    $QUICKJS $QUICKJS_OPTIONS $file $file.js
+    $BUNGEEJS $BUNGEEJS_OPTIONS $file $file.js
     echo "  -> Minify $file.js to $file.min.js"
     $MINIFIER $MINIFIER_OPTIONS $file.js -o $file.min.js
 done

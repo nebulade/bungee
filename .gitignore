@@ -1,5 +1,5 @@
 node_modules/
-quick.js
-quick.min.js
+bungee.js
+bungee.min.js
 *.jml.js
 test/npm-debug.log

@@ -5,7 +5,7 @@
 
 "use strict";
 
-var quick = require('../');
+var bungee = require('../');
 var util = require('util');
 var fs = require('fs');
 var path = require('path');
@@ -18,7 +18,7 @@ var argv = optimist.usage('Usage: $0 [input] [output]')
     .alias('s', ['silent', 'quiet'])
     .describe('s', 'Suppress console output.')
     .alias('m', 'module')
-    .describe('m', 'Module name under which this file will be available in Quick.')
+    .describe('m', 'Module name under which this file will be available in Bungee.')
     .string('m')
     .argv;
 
@@ -40,9 +40,9 @@ if (argv.m) {
     options.module = path.basename(input, '.jml');
 }
 
-log && console.log(" Script will be available under Quick.Modules." + options.module);
+log && console.log(" Script will be available under Bungee.Modules." + options.module);
 
-quick.compileFile(input, options, function (error, result) {
+bungee.compileFile(input, options, function (error, result) {
     if (error) {
         console.error("");
         console.error("Error: " + input + ":" + error.line);

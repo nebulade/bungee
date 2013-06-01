@@ -3,23 +3,23 @@
 var assert = require('assert');
 var should = require('should');
 
-var quick = require('../index');
+var bungee = require('../index');
 
-describe('Quick API has', function () {
+describe('Bungee API has', function () {
     it ('tokenizer', function () {
-        should.exist(quick.tokenizer);
+        should.exist(bungee.tokenizer);
     });
 
     it ('tokenizer parse', function () {
-        should.exist(quick.tokenizer.parse);
+        should.exist(bungee.tokenizer.parse);
     });
 
     it ('compile data', function () {
-        should.exist(quick.compile);
+        should.exist(bungee.compile);
     });
 
     it ('compile file', function () {
-        should.exist(quick.compileFile);
+        should.exist(bungee.compileFile);
     });
 });
 
@@ -30,7 +30,7 @@ describe('Tokenizer', function () {
 
             tmp += "// Foobar\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             tokens.should.have.length(0);
         });
         // Not yet supported
@@ -42,7 +42,7 @@ describe('Tokenizer', function () {
             tmp += " Another line\n";
             tmp += "End line of comment */\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             tokens.should.have.length(0);
         });
     });
@@ -66,7 +66,7 @@ describe('Tokenizer', function () {
             tmp += "Element {\n";
             tmp += "}\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -78,7 +78,7 @@ describe('Tokenizer', function () {
 
             tmp += "Element {}";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -92,7 +92,7 @@ describe('Tokenizer', function () {
             tmp += "left: 100;\n";
             tmp += "}\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -111,7 +111,7 @@ describe('Tokenizer', function () {
             tmp += "width: 50;\n";
             tmp += "}\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -136,7 +136,7 @@ describe('Tokenizer', function () {
             tmp += "c: noQuote;\n";
             tmp += "}\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -159,7 +159,7 @@ describe('Tokenizer', function () {
             tmp += "myProperty: 2;\n";
             tmp += "}\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -176,7 +176,7 @@ describe('Tokenizer', function () {
             tmp += "prop2erty3: 2;\n";
             tmp += "}\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -193,7 +193,7 @@ describe('Tokenizer', function () {
             tmp += "1property: 1;\n";
             tmp += "}\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -210,7 +210,7 @@ describe('Tokenizer', function () {
             tmp += "_prop: 2;\n";
             tmp += "}\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -226,7 +226,7 @@ describe('Tokenizer', function () {
 describe('Compiler', function () {
     describe('Compile large jml file', function () {
         it('64000+ lines', function (done) {
-            quick.compileFile("snippets/snippet-001.jml", {}, function (error, result) {
+            bungee.compileFile("snippets/snippet-001.jml", {}, function (error, result) {
                 if (error) {
                     throw(error);
                 }
@@ -243,9 +243,9 @@ describe('Compiler', function () {
             tmp += "1property: 1;\n";
             tmp += "}\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             should.exist(tokens);
-            quick.compiler.createObjectTree(tokens, {}, function (error, result) {
+            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
                 should.exist(error);
                 error.code.should.be.equal(7);
                 error.line.should.be.equal(2);
@@ -261,9 +261,9 @@ describe('Compiler', function () {
             tmp += "id: myelement;\n";
             tmp += "}\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             should.exist(tokens);
-            quick.compiler.createObjectTree(tokens, {}, function (error, result) {
+            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
                 should.not.exist(error);
                 should.exist(result);
 
@@ -285,9 +285,9 @@ describe('Compiler', function () {
             tmp += "delegate: Element\n";
             tmp += "}\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             should.exist(tokens);
-            quick.compiler.createObjectTree(tokens, {}, function (error, result) {
+            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
                 should.not.exist(error);
                 should.exist(result);
 
@@ -317,9 +317,9 @@ describe('Compiler', function () {
             tmp += "delegate2: Element2\n";
             tmp += "}\n";
 
-            var tokens = quick.tokenizer.parse(tmp);
+            var tokens = bungee.tokenizer.parse(tmp);
             should.exist(tokens);
-            quick.compiler.createObjectTree(tokens, {}, function (error, result) {
+            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
                 should.not.exist(error);
                 should.exist(result);
 
@@ -345,7 +345,7 @@ describe('Compiler', function () {
     });
     describe('Compiler error', function () {
         it('line number with inline javascript blocks', function (done) {
-            quick.compileFile("snippets/snippet-000.jml", {}, function (error, result) {
+            bungee.compileFile("snippets/snippet-000.jml", {}, function (error, result) {
                 should.exist(error);
                 should.not.exists(result);
 

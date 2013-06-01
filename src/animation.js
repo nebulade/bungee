@@ -3,33 +3,33 @@
 
 "use strict";
 
-if (!Quick) {
-    var Quick = {};
+if (!Bungee) {
+    var Bungee = {};
 }
 
-Quick._animationIndex = 0;
-Quick._debugAnimation = false;
+Bungee._animationIndex = 0;
+Bungee._debugAnimation = false;
 
 /*
  **************************************************
  * Basic Animation
  **************************************************
  */
-Quick.Step = function (id, parent) {
-    var elem = new Quick.Element(id, parent, "object");
+Bungee.Step = function (id, parent) {
+    var elem = new Bungee.Element(id, parent, "object");
 
     elem.addProperty("percentage", 0);
 
     return elem;
 };
 
-Quick.Animation = function (id, parent) {
-    var elem = new Quick.Element(id, parent, "object");
-    var index = Quick._animationIndex++;
+Bungee.Animation = function (id, parent) {
+    var elem = new Bungee.Element(id, parent, "object");
+    var index = Bungee._animationIndex++;
     var dirty = true;
     var hasRules = false;
-    var animationName = "quickAnimation" + index;
-    var keyFramesName = "quickAnimationKeyFrames" + index;
+    var animationName = "bungeeAnimation" + index;
+    var keyFramesName = "bungeeAnimationKeyFrames" + index;
 
     elem.addProperty("target", function () { return this.parent; });
     elem.addProperty("duration", 250);
@@ -39,16 +39,16 @@ Quick.Animation = function (id, parent) {
     elem.addProperty("easing", "ease");
 
     function animationStart(event) {
-        Quick._debugAnimation && console.log("start", event);
+        Bungee._debugAnimation && console.log("start", event);
         elem.emit("started");
     }
 
     function animationIteration(event) {
-        Quick._debugAnimation && console.log("iteration", event);
+        Bungee._debugAnimation && console.log("iteration", event);
     }
 
     function animationEnd(event) {
-        Quick._debugAnimation && console.log("end", event);
+        Bungee._debugAnimation && console.log("end", event);
         elem.stop();
         elem.emit("finished");
     }
@@ -59,9 +59,9 @@ Quick.Animation = function (id, parent) {
         var rule3 = "";
         var rule4 = "";
 
-        if (!Quick._style) {
-            Quick._style = document.createElement('style');
-            document.getElementsByTagName('head')[0].appendChild(Quick._style);
+        if (!Bungee._style) {
+            Bungee._style = document.createElement('style');
+            document.getElementsByTagName('head')[0].appendChild(Bungee._style);
         }
 
         if (hasRules) {
@@ -69,17 +69,17 @@ Quick.Animation = function (id, parent) {
             var i;
 
             // remove key frames rule
-            for (i = 0; i < Quick._style.sheet.cssRules.length; ++i) {
-                if (Quick._style.sheet.cssRules[i].name === keyFramesName) {
-                    Quick._style.sheet.deleteRule(i);
+            for (i = 0; i < Bungee._style.sheet.cssRules.length; ++i) {
+                if (Bungee._style.sheet.cssRules[i].name === keyFramesName) {
+                    Bungee._style.sheet.deleteRule(i);
                     break;
                 }
             }
 
             // remove animation rule
-            for (i = 0; i < Quick._style.sheet.cssRules.length; ++i) {
-                if (Quick._style.sheet.cssRules[i].selectorText === tmpName) {
-                    Quick._style.sheet.deleteRule(i);
+            for (i = 0; i < Bungee._style.sheet.cssRules.length; ++i) {
+                if (Bungee._style.sheet.cssRules[i].selectorText === tmpName) {
+                    Bungee._style.sheet.deleteRule(i);
                     break;
                 }
             }
@@ -127,24 +127,24 @@ Quick.Animation = function (id, parent) {
         rule2 += "}\n";
         rule3 += "}\n";
 
-        Quick._debugAnimation && console.log("Quick Animation rules:\n", rule2, rule3, rule1);
+        Bungee._debugAnimation && console.log("Bungee Animation rules:\n", rule2, rule3, rule1);
 
         try {
-            Quick._style.sheet.insertRule(rule3, Quick._style.sheet.rules.length);
+            Bungee._style.sheet.insertRule(rule3, Bungee._style.sheet.rules.length);
         } catch (e) {
-            Quick._debugAnimation && console.error("Quick Animation rule", rule3, "could not be inserted.", e);
+            Bungee._debugAnimation && console.error("Bungee Animation rule", rule3, "could not be inserted.", e);
         }
 
         try {
-            Quick._style.sheet.insertRule(rule2, Quick._style.sheet.rules.length);
+            Bungee._style.sheet.insertRule(rule2, Bungee._style.sheet.rules.length);
         } catch (e) {
-            Quick._debugAnimation && console.error("Quick Animation rule", rule2, "could not be inserted.", e);
+            Bungee._debugAnimation && console.error("Bungee Animation rule", rule2, "could not be inserted.", e);
         }
 
         try {
-            Quick._style.sheet.insertRule(rule1, Quick._style.sheet.rules.length);
+            Bungee._style.sheet.insertRule(rule1, Bungee._style.sheet.rules.length);
         } catch (e) {
-            Quick._debugAnimation && console.error("Quick Animation rule", rule1, "could not be inserted.", e);
+            Bungee._debugAnimation && console.error("Bungee Animation rule", rule1, "could not be inserted.", e);
         }
 
         hasRules = true;
@@ -189,25 +189,25 @@ Quick.Animation = function (id, parent) {
 };
 
 
-Quick.Behavior = function (id, parent) {
-    var elem = new Quick.Element(id, parent, "object");
-    var index = Quick._animationIndex++;
+Bungee.Behavior = function (id, parent) {
+    var elem = new Bungee.Element(id, parent, "object");
+    var index = Bungee._animationIndex++;
     var hasRules = false;
-    var animationName = "quickAnimation" + index;
+    var animationName = "bungeeAnimation" + index;
 
     elem.addProperty("target", function () { return this.parent; });
 
     function animationStart(event) {
-        Quick._debugAnimation && console.log("start", event);
+        Bungee._debugAnimation && console.log("start", event);
         elem.emit("started");
     }
 
     function animationIteration(event) {
-        Quick._debugAnimation && console.log("iteration", event);
+        Bungee._debugAnimation && console.log("iteration", event);
     }
 
     function animationEnd(event) {
-        Quick._debugAnimation && console.log("end", event);
+        Bungee._debugAnimation && console.log("end", event);
         elem.stop();
         elem.emit("finished");
     }
@@ -217,9 +217,9 @@ Quick.Behavior = function (id, parent) {
         var rulepart = "";
         var gotProperties = false;
 
-        if (!Quick._style) {
-            Quick._style = document.createElement('style');
-            document.getElementsByTagName('head')[0].appendChild(Quick._style);
+        if (!Bungee._style) {
+            Bungee._style = document.createElement('style');
+            document.getElementsByTagName('head')[0].appendChild(Bungee._style);
         }
 
         if (hasRules) {
@@ -227,9 +227,9 @@ Quick.Behavior = function (id, parent) {
             var i;
 
             // remove animation rule
-            for (i = 0; i < Quick._style.sheet.cssRules.length; ++i) {
-                if (Quick._style.sheet.cssRules[i].selectorText === tmpName) {
-                    Quick._style.sheet.deleteRule(i);
+            for (i = 0; i < Bungee._style.sheet.cssRules.length; ++i) {
+                if (Bungee._style.sheet.cssRules[i].selectorText === tmpName) {
+                    Bungee._style.sheet.deleteRule(i);
                     break;
                 }
             }
@@ -260,12 +260,12 @@ Quick.Behavior = function (id, parent) {
 
         // only actually insert rules if there is no property undefined
         if (gotProperties && rule.indexOf('undefined') === -1) {
-            Quick._debugAnimation && console.log("Quick Behavior rule", rule);
+            Bungee._debugAnimation && console.log("Bungee Behavior rule", rule);
 
             try {
-                Quick._style.sheet.insertRule(rule, Quick._style.sheet.rules.length);
+                Bungee._style.sheet.insertRule(rule, Bungee._style.sheet.rules.length);
             } catch (e) {
-                Quick._debugAnimation && console.error("Quick Animation rule", rule, "could not be inserted.", e);
+                Bungee._debugAnimation && console.error("Bungee Animation rule", rule, "could not be inserted.", e);
             }
             hasRules = true;
         }

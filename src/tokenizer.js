@@ -7,8 +7,8 @@
  * Tokenizer
  **************************************************
  */
-if (!Quick) {
-    var Quick = {};
+if (!Bungee) {
+    var Bungee = {};
 }
 
 var tokenizer = (function () {
@@ -16,7 +16,7 @@ var tokenizer = (function () {
     var ret = {};
 
     function log (msg) {
-        if (Quick.verbose) {
+        if (Bungee.verbose) {
             console.log(msg);
         }
     }
@@ -189,7 +189,7 @@ var tokenizer = (function () {
             }
         }
 
-        if (Quick.verbose) {
+        if (Bungee.verbose) {
             ret.dumpTokens();
         }
 
@@ -212,6 +212,6 @@ var tokenizer = (function () {
 if (typeof window === 'undefined') {
     module.exports = tokenizer;
 } else {
-    window.Quick.Tokenizer = tokenizer;
+    window.Bungee.Tokenizer = tokenizer;
 }
 

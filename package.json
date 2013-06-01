@@ -1,12 +1,13 @@
 {
-    "name": "quick",
-    "version": "0.0.6",
-    "description": "QuickJS is a declarative language engine to run inside a browser. The node module contains the offline compiler.",
+    "name": "bungee",
+    "version": "0.0.1",
+    "description": "Bungee is a declarative language engine to run inside a browser. The node module contains the offline compiler.",
     "keywords": [
         "qml",
         "jml",
         "quick",
-        "declarative"
+        "declarative",
+        "bungee.js"
     ],
     "author": {
         "name": "Johannes Zellner",
@@ -14,11 +15,11 @@
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/nebulon1234/quickjs.git"
+        "url": "git://github.com/nebulon1234/bungee.git"
     },
     "main": "./index.js",
     "bin": {
-        "quickjs": "bin/quickjs"
+        "bungee": "bin/bungee"
     },
     "engines": {
         "node": ">=0.6"

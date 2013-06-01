@@ -12,13 +12,13 @@
  *
  */
 
-if (!Quick) {
-    var Quick = {};
+if (!Bungee) {
+    var Bungee = {};
 }
 
 // create main singleton object
-if (!Quick.Engine) {
-    Quick.Engine = (function () {
+if (!Bungee.Engine) {
+    Bungee.Engine = (function () {
         var ret = {};
         var getterCalled = {};
         var _dirtyElements = {};
@@ -29,13 +29,13 @@ if (!Quick.Engine) {
 
         function log(msg, error) {
             if (ret.verbose || error) {
-                console.log("[Quick.Engine] " + msg);
+                console.log("[Bungee.Engine] " + msg);
             }
         }
 
         // try to create a renderer backend, currently on DOM supported
         try {
-            var renderer = new Quick.RendererDOM();
+            var renderer = new Bungee.RendererDOM();
             ret.createElement = renderer.createElement;
             ret.addElement = renderer.addElement;
             ret.addElements = renderer.addElements;
@@ -80,7 +80,7 @@ if (!Quick.Engine) {
             }
             _dirtyElements = {};
 
-            if (Quick.verbose) {
+            if (Bungee.verbose) {
                 if ((Date.now() - fps.d) >= 2000) {
                     console.log("FPS: " + fps.l / 2.0);
                     fps.d = Date.now();
@@ -126,19 +126,19 @@ if (!Quick.Engine) {
  * by using render hooks.
  *
  */
-Quick.Element = function (id, parent, typeHint) {
+Bungee.Element = function (id, parent, typeHint) {
     this.id = id;
     this.typeHint = typeHint;
     this.parent = parent;
 
     if (typeHint !== "object") {
-        this.element = Quick.Engine.createElement(typeHint, this);
+        this.element = Bungee.Engine.createElement(typeHint, this);
     } else {
         this.element = null;
     }
 
     // internal use only
-    this._internalIndex = Quick.Engine._elementIndex++;
+    this._internalIndex = Bungee.Engine._elementIndex++;
     this._dirtyProperties = {};
     this._properties = {};
     this._connections = {};
@@ -151,28 +151,28 @@ Quick.Element = function (id, parent, typeHint) {
     }
 };
 
-Quick.Element.prototype.children = function () {
-    if (Quick.Engine.magicBindingState) {
-        Quick.Engine.addCalledGetter(this, 'children');
+Bungee.Element.prototype.children = function () {
+    if (Bungee.Engine.magicBindingState) {
+        Bungee.Engine.addCalledGetter(this, 'children');
     }
 
     return this._children;
 };
 
 // TODO both removes need to break the bindings for the children as well
-Quick.Element.prototype.removeChild = function(child) {
-    Quick.Engine.removeElement(child, this);
+Bungee.Element.prototype.removeChild = function(child) {
+    Bungee.Engine.removeElement(child, this);
     delete this._children[child._internalIndex];
 
     this.emit("children");
 };
 
-Quick.Element.prototype.removeChildren = function () {
+Bungee.Element.prototype.removeChildren = function () {
     var i;
     for (i in this._children) {
         if (this._children.hasOwnProperty(i)) {
             // TODO do we leak things here? elements are still referenced so maybe a delete?
-            Quick.Engine.removeElement(this._children[i], this);
+            Bungee.Engine.removeElement(this._children[i], this);
         }
     }
 
@@ -181,7 +181,7 @@ Quick.Element.prototype.removeChildren = function () {
     this.emit("children");
 };
 
-Quick.Element.prototype.addChild = function (child) {
+Bungee.Element.prototype.addChild = function (child) {
     // adds child id to the namespace
     if (child.id)
         this[child.id] = child;
@@ -205,17 +205,17 @@ Quick.Element.prototype.addChild = function (child) {
     this._children[child._internalIndex] = child;
 
     child.parent = this;
-    Quick.Engine.addElement(child, this);
+    Bungee.Engine.addElement(child, this);
     this.emit("children");
 
     return child;
 };
 
-Quick.Element.prototype.render = function () {
-    Quick.Engine.renderElement(this);
+Bungee.Element.prototype.render = function () {
+    Bungee.Engine.renderElement(this);
 };
 
-Quick.Element.prototype.addChanged = function (signal, callback) {
+Bungee.Element.prototype.addChanged = function (signal, callback) {
     if (!this._connections[signal]) {
         this._connections[signal] = [];
     }
@@ -224,7 +224,7 @@ Quick.Element.prototype.addChanged = function (signal, callback) {
     // console.log("connections for " + signal + " " + this._connections[signal].length);
 };
 
-Quick.Element.prototype.removeChanged = function (obj, signal) {
+Bungee.Element.prototype.removeChanged = function (obj, signal) {
     var signalConnections = this._connections[signal];
     // check if there are any connections for this signal
     if (!signalConnections) {
@@ -236,15 +236,15 @@ Quick.Element.prototype.removeChanged = function (obj, signal) {
     }
 };
 
-Quick.Element.prototype.addBinding = function (name, value) {
+Bungee.Element.prototype.addBinding = function (name, value) {
     var that = this;
     var hasBinding = false;
 
     // FIXME does not catch changing conditions in expression
     //  x: mouseArea.clicked ? a.y() : b:z();
-    Quick.Engine.enterMagicBindingState();
+    Bungee.Engine.enterMagicBindingState();
     var val = value.apply(this);
-    var getters = Quick.Engine.exitMagicBindingState();
+    var getters = Bungee.Engine.exitMagicBindingState();
 
     this.breakBindings(name);
 
@@ -270,7 +270,7 @@ Quick.Element.prototype.addBinding = function (name, value) {
     return { hasBindings: hasBinding, value: val };
 };
 
-Quick.Element.prototype.addEventHandler = function (event, handler) {
+Bungee.Element.prototype.addEventHandler = function (event, handler) {
     var that = this;
     var signal = event;
 
@@ -289,7 +289,7 @@ Quick.Element.prototype.addEventHandler = function (event, handler) {
 };
 
 // Breaks all bindings assigned to this property
-Quick.Element.prototype.breakBindings = function (name) {
+Bungee.Element.prototype.breakBindings = function (name) {
     // break all previous bindings
     if (this._bound[name]) {
         for (var i = 0; i < this._bound[name].length; ++i) {
@@ -301,7 +301,7 @@ Quick.Element.prototype.breakBindings = function (name) {
 
 // This allows to set the property without emit the change
 // Does not break the binding!
-Quick.Element.prototype.setSilent = function (name, value) {
+Bungee.Element.prototype.setSilent = function (name, value) {
     var setter = this.__lookupSetter__(name);
     if (typeof setter === 'function') {
         setter.call(this, value, true);
@@ -309,7 +309,7 @@ Quick.Element.prototype.setSilent = function (name, value) {
 };
 
 // This allows to get the property without notify the get
-Quick.Element.prototype.getSilent = function (name) {
+Bungee.Element.prototype.getSilent = function (name) {
     var getter = this.__lookupGetter__(name);
     if (typeof getter === 'function') {
         return getter.call(this, true);
@@ -317,7 +317,7 @@ Quick.Element.prototype.getSilent = function (name) {
 };
 
 // This breaks all previous bindings and adds a new binding
-Quick.Element.prototype.set = function (name, value) {
+Bungee.Element.prototype.set = function (name, value) {
     this.breakBindings(name);
 
     if (typeof value === 'function') {
@@ -332,14 +332,14 @@ Quick.Element.prototype.set = function (name, value) {
     }
 };
 
-Quick.Element.prototype.addFunction = function (name, value) {
+Bungee.Element.prototype.addFunction = function (name, value) {
     this[name] = value;
 };
 
 var defPropCount = 0;
 var notdefPropCount = 0;
 
-Quick.Element.prototype.addProperty = function (name, value) {
+Bungee.Element.prototype.addProperty = function (name, value) {
     var that = this;
     var valueStore;
 
@@ -351,8 +351,8 @@ Quick.Element.prototype.addProperty = function (name, value) {
             get: function (silent) {
                 // console.log("getter: ", that.id, name);
 
-                if (!silent && Quick.Engine.magicBindingState)
-                    Quick.Engine.addCalledGetter(that, name);
+                if (!silent && Bungee.Engine.magicBindingState)
+                    Bungee.Engine.addCalledGetter(that, name);
 
                 if (typeof valueStore === 'function')
                     return valueStore.apply(that);
@@ -373,7 +373,7 @@ Quick.Element.prototype.addProperty = function (name, value) {
                     that.emit('changed');
                 }
 
-                Quick.Engine.dirty(that, name);
+                Bungee.Engine.dirty(that, name);
             }
         });
     }
@@ -381,7 +381,7 @@ Quick.Element.prototype.addProperty = function (name, value) {
 
 // initial set of all properties and binding evaluation
 // should only be called once
-Quick.Element.prototype.initializeBindings = function (options) {
+Bungee.Element.prototype.initializeBindings = function (options) {
     var name, i;
 
     this._initializeBindingsStep = true;
@@ -423,7 +423,7 @@ Quick.Element.prototype.initializeBindings = function (options) {
     this.emit("load");
 };
 
-Quick.Element.prototype.emit = function (signal) {
+Bungee.Element.prototype.emit = function (signal) {
     if (signal in this._connections) {
         var slots = this._connections[signal];
         for (var slot in slots) {

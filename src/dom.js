@@ -3,8 +3,8 @@
 
 "use strict";
 
-if (!Quick) {
-    var Quick = {};
+if (!Bungee) {
+    var Bungee = {};
 }
 
 /*
@@ -12,8 +12,8 @@ if (!Quick) {
  * Predefined basic elements
  **************************************************
  */
-Quick.Item = function (id, parent, typeHint) {
-    var elem = new Quick.Element(id, parent, typeHint ? typeHint : "item");
+Bungee.Item = function (id, parent, typeHint) {
+    var elem = new Bungee.Element(id, parent, typeHint ? typeHint : "item");
 
     elem.addProperty("className", "");
     elem.addProperty("width", 100);
@@ -62,8 +62,8 @@ Quick.Item = function (id, parent, typeHint) {
     return elem;
 };
 
-Quick.InputItem = function (id, parent) {
-    var elem = new Quick.Item(id, parent, "InputItem");
+Bungee.InputItem = function (id, parent) {
+    var elem = new Bungee.Item(id, parent, "InputItem");
 
     // default to fill parent
     elem.addProperty("width", function () { return this.parent ? this.parent.width : 100; });
@@ -89,8 +89,8 @@ Quick.InputItem = function (id, parent) {
 
 // FIXME global leak
 var tmpTextElement;
-Quick.Text = function (id, parent) {
-    var elem = new Quick.Item(id, parent);
+Bungee.Text = function (id, parent) {
+    var elem = new Bungee.Item(id, parent);
 
     elem.addProperty("mouseEnabled", false);
     elem.addProperty("textWidth", 0);
@@ -139,8 +139,8 @@ Quick.Text = function (id, parent) {
     return elem;
 };
 
-Quick.Window = function (id, parent) {
-    var elem = new Quick.Element(id, parent);
+Bungee.Window = function (id, parent) {
+    var elem = new Bungee.Element(id, parent);
     elem.addProperty("innerWidth", window.innerWidth);
     elem.addProperty("innerHeight", window.innerHeight);
 
@@ -155,8 +155,8 @@ Quick.Window = function (id, parent) {
     return elem;
 };
 
-Quick.Rectangle = function (id, parent) {
-    var elem = new Quick.Item(id, parent);
+Bungee.Rectangle = function (id, parent) {
+    var elem = new Bungee.Item(id, parent);
 
     elem.addProperty("backgroundColor", "white");
     elem.addProperty("borderColor", "black");
@@ -167,8 +167,8 @@ Quick.Rectangle = function (id, parent) {
     return elem;
 };
 
-Quick.BackgroundImage = function (id, parent) {
-    var elem = new Quick.Item(id, parent);
+Bungee.BackgroundImage = function (id, parent) {
+    var elem = new Bungee.Item(id, parent);
 
     elem.addProperty("src", "");
     elem.addProperty("backgroundImage", function () {
@@ -188,8 +188,8 @@ Quick.BackgroundImage = function (id, parent) {
     return elem;
 };
 
-Quick.Image = function (id, parent) {
-    var elem = new Quick.Item(id, parent, "image");
+Bungee.Image = function (id, parent) {
+    var elem = new Bungee.Item(id, parent, "image");
 
     elem.addProperty("src", "");
     elem.addProperty("-image-src", function () {
@@ -199,8 +199,8 @@ Quick.Image = function (id, parent) {
     return elem;
 };
 
-Quick.Input = function (id, parent) {
-    var elem = new Quick.Item(id, parent, "input");
+Bungee.Input = function (id, parent) {
+    var elem = new Bungee.Item(id, parent, "input");
 
     elem.addProperty("-webkit-user-select", "auto");
     elem.addProperty("userSelect", "auto");
@@ -217,11 +217,11 @@ Quick.Input = function (id, parent) {
  * DOM renderer
  **************************************************
  */
-Quick.RendererDOM = function () {
+Bungee.RendererDOM = function () {
     this.currentMouseElement = undefined;
 };
 
-Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
+Bungee.RendererDOM.prototype.createElement = function (typeHint, object) {
     var elem;
     var that = this;
 
@@ -349,7 +349,7 @@ Quick.RendererDOM.prototype.createElement = function (typeHint, object) {
     return elem;
 };
 
-Quick.RendererDOM.prototype.addElement = function (element, parent) {
+Bungee.RendererDOM.prototype.addElement = function (element, parent) {
     // in case we have no visual element, just return
     if (!element.element) {
         return;
@@ -362,7 +362,7 @@ Quick.RendererDOM.prototype.addElement = function (element, parent) {
     }
 };
 
-Quick.RendererDOM.prototype.removeElement = function (element, parent) {
+Bungee.RendererDOM.prototype.removeElement = function (element, parent) {
     // in case we have no visual element, just return
     if (!element.element) {
         return;
@@ -375,7 +375,7 @@ Quick.RendererDOM.prototype.removeElement = function (element, parent) {
     }
 };
 
-Quick.RendererDOM.prototype.addElements = function (elements, parent) {
+Bungee.RendererDOM.prototype.addElements = function (elements, parent) {
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < elements.length; ++i) {
@@ -393,7 +393,7 @@ Quick.RendererDOM.prototype.addElements = function (elements, parent) {
     }
 };
 
-Quick.RendererDOM.prototype.renderElement = function (element) {
+Bungee.RendererDOM.prototype.renderElement = function (element) {
     // console.log("renderElement: " + element.id + " properties: " + Object.keys(element.properties).length);
     var name;
 

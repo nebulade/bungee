@@ -8,8 +8,8 @@
  **************************************************
  */
 
-if (!Quick) {
-    var Quick = {};
+if (!Bungee) {
+    var Bungee = {};
 }
 
 var compiler = (function () {
@@ -18,7 +18,7 @@ var compiler = (function () {
 
     // TODO sort out this kindof global variable mess
     var ELEM_PREFIX = "e";      // just a define
-    var ELEM_NS = "Quick.";      // main namespace
+    var ELEM_NS = "Bungee.";      // main namespace
     var output;                 // output buffer used by all render functions
     var index;                  // index used for tracking the indentation
 
@@ -57,7 +57,7 @@ var compiler = (function () {
     }
 
     function log(msg) {
-        if (Quick.verbose) {
+        if (Bungee.verbose) {
             console.log(msg);
         }
     }
@@ -83,17 +83,17 @@ var compiler = (function () {
      * Only called once
      */
     function renderBegin(options) {
-        if (Quick.debug) {
+        if (Bungee.debug) {
             addIndentation(1);
             output += "debugger;\n";
         }
 
-        output += "if (!window.Quick) {\n";
-        output += "    window.Quick = {};\n";
+        output += "if (!window.Bungee) {\n";
+        output += "    window.Bungee = {};\n";
         output += "}\n\n";
 
         if (options.module) {
-            output += "window.Quick." + options.module + " = function () {\n";
+            output += "window.Bungee." + options.module + " = function () {\n";
         } else {
             output += "(function() {\n";
         }
@@ -126,7 +126,7 @@ var compiler = (function () {
         addIndentation(2);
         output += ELEM_PREFIX + ".children.push(child);\n";
         addIndentation(2);
-        output += "Quick.Engine.addElement(child);\n";
+        output += "Bungee.Engine.addElement(child);\n";
         addIndentation(2);
         output += "return child;\n";
         addIndentation(1);
@@ -563,5 +563,5 @@ var compiler = (function () {
 if (typeof window === 'undefined') {
     module.exports = compiler;
 } else {
-    window.Quick.Compiler = compiler;
+    window.Bungee.Compiler = compiler;
 }
