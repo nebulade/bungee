@@ -14,11 +14,32 @@ adjustments to fit the HTML5 space.
 Installation
 ------------
 
-The 'build.sh' script in the project root, will generate the 'bungee.js' library
-together with a minified version of it.
+To generate the 'bungee.js' library together with a minified version of it, type
 
-There is also a nodejs module, which contains the offline compiler scripts.
-$> npm install bungee
+```
+make
+```
+
+To pre-compile the example modules using offline compiler, type
+
+```
+make modules
+```
+
+Alternative offline compiler can be installed as a node module. In this case to
+compile your own modules from .jml to JavaScript, type
+
+```
+npm install bungee
+cd node_modules/bungee/bin
+./bungee -s <file.jml> <file.js>
+```
+
+To remove all generated files, type
+
+```
+make clean
+```
 
 Examples
 --------
