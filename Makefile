@@ -1,7 +1,7 @@
 
 MODULES_FOLDER    = modules
 
-BUNGEE_SOURCES    = $(wildcard src/*.js)
+BUNGEE_SOURCES    = $(filter-out src/loader.js, $(wildcard src/*.js))
 BUNGEE            = bungee.js
 BUNGEE_MINIFIED   = bungee.min.js
 
@@ -21,11 +21,18 @@ BUNGEE_MINIFIED   = $(BUNGEE)
 MODULES_MINIFIED  = $(MODULES)
 endif
 
+.PHONY: clean $(BUNGEE)
+
 # Without this make considers non-minified module files temporary and deletes
 # them because of the chained implicit rules below.
 .SECONDARY: $(MODULES)
 
-all: $(BUNGEE_MINIFIED)
+build: $(BUNGEE_MINIFIED)
+
+source: src/loader.js
+	@echo "*** Create $(BUNGEE) which loads other library parts at runtime."
+	cp src/loader.js $(BUNGEE)
+	cp src/loader.js $(BUNGEE_MINIFIED)
 
 modules: $(MODULES_MINIFIED)
 
