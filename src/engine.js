@@ -236,21 +236,35 @@ Bungee.Element.prototype.removeChanged = function (obj, signal) {
     }
 };
 
-Bungee.Element.prototype.addBinding = function (name, value) {
+Bungee.Element.prototype.addBinding = function (name, value, property) {
     var that = this;
     var hasBinding = false;
+    var val, getters;
+    var bindingFunction;
 
     // FIXME does not catch changing conditions in expression
     //  x: mouseArea.clicked ? a.y() : b:z();
     Bungee.Engine.enterMagicBindingState();
-    var val = value.apply(this);
-    var getters = Bungee.Engine.exitMagicBindingState();
+
+    if (typeof value === 'function') {
+        val = value.apply(this);
+
+        bindingFunction = function() {
+            that[name] = value.apply(that);
+        };
+    } else if (typeof value === 'object' && typeof property !== 'undefined') {
+        val = value[property];
+
+        bindingFunction = function() {
+            that[name] = value[property];
+        };
+    } else {
+        val = value;
+    }
+    getters = Bungee.Engine.exitMagicBindingState();
 
     this.breakBindings(name);
 
-    var bindingFunction = function() {
-        that[name] = value.apply(that);
-    };
 
     // store found bindings
     for (var getter in getters) {
@@ -432,4 +446,14 @@ Bungee.Element.prototype.emit = function (signal) {
             }
         }
     }
+};
+
+/*
+ **************************************************
+ * Basic non visual Elements
+ **************************************************
+ */
+Bungee.Collection = function (id, parent) {
+    var elem = new Bungee.Element(id, parent, "object");
+    return elem;
 };

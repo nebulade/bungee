@@ -1,0 +1,109 @@
+<html>
+    <head>
+        <title> Bungee </title>
+
+        <script type="text/javascript" src="../../bungee.js"></script>
+
+        <script type="text/jml" module="ModelExample">
+
+        TextDisplay @ Text {
+            width: 100
+            height: 30
+            color: "black"
+        }
+
+        Collection {
+            id: myModel
+
+            property1: "foobar"
+            property2: "banana"
+            property3: "elevated"
+        }
+
+        Window {
+            id: root
+            width: this.innerWidth
+            height: this.innerHeight
+
+            Item {
+                id: display
+                width: 200
+                height: 500
+
+                TextDisplay {
+                    top: 0
+                    text: this.parent.parent.myModel.property1
+                }
+
+                TextDisplay {
+                    top: 35
+                    text: this.parent.parent.myModel.property2
+                }
+
+                TextDisplay {
+                    top: 70
+                    text: this.parent.parent.myModel.property3
+                }
+            }
+
+            Item {
+                id: display2
+                left: 300
+                width: 200
+                height: 500
+
+                TextDisplay {
+                    id: a
+                    top: 0
+                    text: ""
+                }
+
+                TextDisplay {
+                    id: b
+                    top: 35
+                    text: ""
+                }
+            }
+
+        }
+
+        </script>
+
+    </head>
+
+    <body>
+
+        <script>
+
+            Bungee.useQueryFlags();
+            Bungee.compileScriptTags();
+            window.app = {};
+            window.app.ui = Bungee.ModelExample();
+            Bungee.Engine.start();
+
+            var anotherModel = new Bungee.Collection();
+            anotherModel.addProperty("a", 1337);
+            anotherModel.addProperty("b", 42);
+            anotherModel.initializeBindings();
+
+            // Binds anotherModel.a to display2.a.text
+            window.app.ui.root.display2.a.addBinding("text", anotherModel, "a");
+            // Just sets the value of display2.b.text no bindings are created
+            window.app.ui.root.display2.b.text = anotherModel.b;
+
+            setInterval(function () {
+                // all those are bound directly => update
+                window.app.ui.myModel.property1 = Math.random();
+                window.app.ui.myModel.property2 = Math.random();
+                window.app.ui.myModel.property3 = Math.random();
+
+                // because of the created binding => update
+                anotherModel.a = Math.random();
+                // there was no binding established, only the value set => no update
+                anotherModel.b = Math.random();
+            }, 10);
+
+        </script>
+
+    </body>
+</html>
