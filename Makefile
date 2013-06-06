@@ -15,6 +15,12 @@ MINIFIER_OPTIONS  =
 BUNGEEJS_COMPILER = bin/bungee
 BUNGEEJS_OPTIONS  = -s
 
+ifeq ($(shell which $(MINIFIER)),)
+$(warning '$(MINIFIER)' not found. Skipping JavaScript minification.)
+BUNGEE_MINIFIED   = $(BUNGEE)
+MODULES_MINIFIED  = $(MODULES)
+endif
+
 # Without this make considers non-minified module files temporary and deletes
 # them because of the chained implicit rules below.
 .SECONDARY: $(MODULES)
