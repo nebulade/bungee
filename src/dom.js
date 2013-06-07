@@ -234,6 +234,11 @@ Bungee.RendererDOM.prototype.createElement = function (typeHint, object) {
         elem.style.position = 'absolute';
     }
 
+    elem.style.left = '0px';
+    elem.style.top = '0px';
+    elem.style.webkitTransformOrigin = '50%';
+    elem.style.transformOrigin = '50%';
+
     // set id attribute
     if (object.id) {
         elem.id = object.id;
@@ -402,14 +407,25 @@ Bungee.RendererDOM.prototype.renderElement = function (element) {
         return;
     }
 
+    // is set, if there are position, scale or rotation changes
+    if (element._matrixDirty) {
+        var s = element.scale ? element.scale : 1;
+        var x = element.left;
+        var y = element.top;
+        var r = element.rotation ? element.rotation : 0;
+
+        var tmp = "translate(" + x + "px, " + y + "px) scale(" + s + ") rotate(" + r + "deg)";
+
+        element.element.style.webkitTransform = tmp;
+        element.element.style.transform = tmp;
+
+        element._matrixDirty = false;
+    }
+
+    // update all other properties if any of them are marked dirty
     for (name in element._dirtyProperties) {
         if (name === 'className' && element[name] !== '') {
             element.element.className = element[name];
-        } else if (name === 'scale') {
-            var s = element.scale.toFixed(10);
-            var tmp = "scale(" + s + ", " + s + ")";
-            element.element.style['-webkit-transform'] = tmp;
-            element.element.style['transform'] = tmp;
         } else if (name === '-text') {
             element.element.innerHTML = element[name];
         } else if (name === '-image-src') {

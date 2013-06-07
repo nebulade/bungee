@@ -1,0 +1,133 @@
+<html>
+    <head>
+        <title> Bungee </title>
+
+        <script type="text/javascript" src="../../bungee.js"></script>
+        <script type="text/javascript" src="physics.min.js"></script>
+
+        <script type="text/jml" module="PhysicsExample">
+
+        PhysicsItem @ Item {
+            particle: new Particle(1);
+            ontop: this.particle.moveTo(new Vector(this.left, this.top));
+            onleft: this.particle.moveTo(new Vector(this.left, this.top));
+        }
+
+        PhysicsItem {
+            id: a
+            top: 10
+            left: 10
+            backgroundColor: "purple"
+            particle: new Particle(10);
+        }
+
+        PhysicsItem {
+            id: b
+            top: 100
+            left: 300
+            backgroundColor: "blue"
+        }
+
+        PhysicsItem {
+            id: c
+            top: 500
+            left: 100
+            backgroundColor: "green"
+            particle: new Particle(2);
+        }
+
+        InputItem {
+            width: window.innerWidth
+            height: window.innerHeight
+
+            onmousemove: ^{
+                if (this.mousePressed) {
+                    this.a.left = this.mouseAbsX - this.a.width/2;
+                    this.a.top = this.mouseAbsY - this.a.height/2;
+                }
+            }^
+        }
+
+        </script>
+
+        <style>
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <script>
+
+            Bungee.useQueryFlags();
+            Bungee.compileScriptTags();
+            window.app = {};
+            window.app.ui = Bungee.PhysicsExample();
+            Bungee.Engine.start();
+
+            var engine = new Physics();
+            engine.integrator = new Verlet();
+
+            var bounds  = new EdgeBounce(new Vector(0,0), new Vector(window.innerWidth, window.innerHeight));
+            var gravity = new ConstantForce(new Vector(0, 500));
+            engine.behaviours.push(bounds, gravity);
+
+            var a = window.app.ui.a;
+            var b = window.app.ui.b;
+            var c = window.app.ui.c;
+
+            engine.particles.push(a.particle);
+            engine.particles.push(b.particle);
+            engine.particles.push(c.particle);
+
+            a.particle.radius = 50;
+            b.particle.radius = 50;
+            c.particle.radius = 50;
+
+            a.particle.moveTo(new Vector(a.left, a.top));
+            b.particle.moveTo(new Vector(b.left, b.top));
+            c.particle.moveTo(new Vector(c.left, c.top));
+
+            engine.springs.push(new Spring(a.particle, b.particle, 400, 0.02));
+            engine.springs.push(new Spring(c.particle, a.particle, 400, 0.02));
+
+            var collision = new Collision();
+            collision.pool.push(a.particle, b.particle, c.particle);
+
+            a.particle.behaviours.push(collision);
+            b.particle.behaviours.push(collision);
+            c.particle.behaviours.push(collision);
+
+            engine.viscosity = 0.1;
+
+            window.setInterval(function () {
+                engine.step();
+
+                var tmp = a.particle.pos;
+                a.setSilent("left", tmp.x);
+                a.setSilent("top", tmp.y);
+
+                tmp = b.particle.pos;
+                b.setSilent("left", tmp.x);
+                b.setSilent("top", tmp.y);
+
+                tmp = c.particle.pos;
+                c.setSilent("left", tmp.x);
+                c.setSilent("top", tmp.y);
+            }, 1000/60);
+
+            window.app.engine = engine;
+
+        </script>
+
+    </body>
+</html>

@@ -106,9 +106,14 @@ if (!Bungee.Engine) {
                 return;
             }
 
-            element._dirtyProperties[property] = true;
             if (!_dirtyElements[element._internalIndex]) {
                 _dirtyElements[element._internalIndex] = element;
+            }
+
+            if (property === 'left' || property === 'top' || property === 'scale' || property === 'rotate') {
+                element._matrixDirty = true;
+            } else {
+                element._dirtyProperties[property] = true;
             }
         };
 
@@ -140,6 +145,7 @@ Bungee.Element = function (id, parent, typeHint) {
     // internal use only
     this._internalIndex = Bungee.Engine._elementIndex++;
     this._dirtyProperties = {};
+    this._matrixDirty = false;
     this._properties = {};
     this._connections = {};
     this._children = {};
@@ -457,3 +463,4 @@ Bungee.Collection = function (id, parent) {
     var elem = new Bungee.Element(id, parent, "object");
     return elem;
 };
+
