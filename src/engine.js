@@ -23,13 +23,18 @@ if (!Bungee.Engine) {
         var getterCalled = {};
         var _dirtyElements = {};
 
-        ret.magicBindingState = false;
         ret.verbose = false;
         ret._elementIndex = 0;
 
         function log(msg, error) {
             if (ret.verbose || error) {
                 console.log("[Bungee.Engine] " + msg);
+            }
+        }
+
+        function maybeReportGetterCalled(silent, name) {
+            if (!silent) {
+                Bungee.Engine.addCalledGetter(this, name);
             }
         }
 
@@ -54,15 +59,21 @@ if (!Bungee.Engine) {
         ret.enterMagicBindingState = function () {
             log("enterMagicBindingState");
             getterCalled = {};
-            ret.magicBindingState = true;
+            ret.maybeReportGetterCalled = maybeReportGetterCalled;
         };
 
         // end binding detection
         ret.exitMagicBindingState = function () {
             log("exitMagicBindingState\n\n");
-            ret.magicBindingState = false;
+            ret.maybeReportGetterCalled = function () {};
             return getterCalled;
         };
+
+        /**
+         * Dynamically replaced function responsible for instrumenting bindings
+         * during the binding evaluation stage.
+         */
+        ret.maybeReportGetterCalled = function () {};
 
         ret.addCalledGetter = function (element, property) {
             getterCalled[element.id + "." + property] = { element: element, property: property };
@@ -152,9 +163,7 @@ Bungee.Element = function (id, parent, typeHint) {
 };
 
 Bungee.Element.prototype.children = function () {
-    if (Bungee.Engine.magicBindingState) {
-        Bungee.Engine.addCalledGetter(this, 'children');
-    }
+    Bungee.Engine.maybeReportGetterCalled.call(this, false, 'children');
 
     return this._children;
 };
@@ -365,8 +374,7 @@ Bungee.Element.prototype.addProperty = function (name, value) {
             get: function (silent) {
                 // console.log("getter: ", that.id, name);
 
-                if (!silent && Bungee.Engine.magicBindingState)
-                    Bungee.Engine.addCalledGetter(that, name);
+                Bungee.Engine.maybeReportGetterCalled.call(that, silent, name);
 
                 if (typeof valueStore === 'function')
                     return valueStore.apply(that);
