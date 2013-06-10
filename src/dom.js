@@ -141,8 +141,12 @@ Bungee.Text = function (id, parent) {
 
 Bungee.Window = function (id, parent) {
     var elem = new Bungee.Element(id, parent);
+
     elem.addProperty("innerWidth", window.innerWidth);
     elem.addProperty("innerHeight", window.innerHeight);
+
+    elem.addProperty("width", function () { return this.innerWidth; });
+    elem.addProperty("height", function () { return this.innerHeight; });
 
     elem.addEventHandler("load", function () {
         var that = this;
@@ -231,8 +235,10 @@ Bungee.RendererDOM.prototype.createElement = function (typeHint, object) {
         elem = document.createElement('img');
     } else {
         elem = document.createElement('div');
-        elem.style.position = 'absolute';
     }
+
+    // initialize basic css attributes
+    elem.style.position = 'absolute';
 
     // set id attribute
     if (object.id) {

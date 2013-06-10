@@ -31,7 +31,12 @@ var tokenizer = (function () {
         var token = "";
 
         while (c) {
-            if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
+            if (c === '\n') {
+                i -= 1;
+                break;
+            }
+
+            if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c === '_' || c === '-')
                 token += c;
             else
                 break;
@@ -47,7 +52,7 @@ var tokenizer = (function () {
         var expression = "";
 
         while (c) {
-            if (c === '\n' || c === ';') {
+            if (c === '\n') {
                 i -= 1;
                 break;
             }
@@ -122,7 +127,7 @@ var tokenizer = (function () {
                 continue;
             }
 
-            if (c === '\n' || c === ';') {
+            if (c === '\n') {
                 comment = false;
                 colonOnLine = false;
 

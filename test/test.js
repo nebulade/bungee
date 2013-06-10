@@ -33,6 +33,7 @@ describe('Tokenizer', function () {
             var tokens = bungee.tokenizer.parse(tmp);
             tokens.should.have.length(0);
         });
+
         // Not yet supported
         xit('multi line comment', function () {
             var tmp = "";
@@ -73,6 +74,7 @@ describe('Tokenizer', function () {
                 ['SCOPE_END', undefined]
             ]);
         });
+
         it('empty element one line', function () {
             var tmp = "";
 
@@ -85,11 +87,12 @@ describe('Tokenizer', function () {
                 ['SCOPE_END', undefined]
             ]);
         });
+
         it('with one property', function () {
             var tmp = "";
 
             tmp += "Element {\n";
-            tmp += "left: 100;\n";
+            tmp += "left: 100\n";
             tmp += "}\n";
 
             var tokens = bungee.tokenizer.parse(tmp);
@@ -102,13 +105,14 @@ describe('Tokenizer', function () {
                 ['SCOPE_END', undefined]
             ]);
         });
+
         it('with multiple integer properties', function () {
             var tmp = "";
 
             tmp += "Element {\n";
-            tmp += "left: 100;\n";
-            tmp += "top: -1337;\n";
-            tmp += "width: 50;\n";
+            tmp += "left: 100\n";
+            tmp += "top: -1337\n";
+            tmp += "width: 50\n";
             tmp += "}\n";
 
             var tokens = bungee.tokenizer.parse(tmp);
@@ -127,13 +131,14 @@ describe('Tokenizer', function () {
                 ['SCOPE_END', undefined]
             ]);
         });
+
         it('with multiple string properties', function () {
             var tmp = "";
 
             tmp += "Element {\n";
-            tmp += "a: 'foobar';\n";
-            tmp += "b: \"baz\";\n";
-            tmp += "c: noQuote;\n";
+            tmp += "a: 'foobar'\n";
+            tmp += "b: \"baz\"\n";
+            tmp += "c: noQuote\n";
             tmp += "}\n";
 
             var tokens = bungee.tokenizer.parse(tmp);
@@ -152,11 +157,12 @@ describe('Tokenizer', function () {
                 ['SCOPE_END', undefined]
             ]);
         });
+
         it('with camel case property', function () {
             var tmp = "";
 
             tmp += "Element {\n";
-            tmp += "myProperty: 2;\n";
+            tmp += "myProperty: 2\n";
             tmp += "}\n";
 
             var tokens = bungee.tokenizer.parse(tmp);
@@ -169,11 +175,12 @@ describe('Tokenizer', function () {
                 ['SCOPE_END', undefined]
             ]);
         });
+
         it('with properties containing a number', function () {
             var tmp = "";
 
             tmp += "Element {\n";
-            tmp += "prop2erty3: 2;\n";
+            tmp += "prop2erty3: 2\n";
             tmp += "}\n";
 
             var tokens = bungee.tokenizer.parse(tmp);
@@ -186,11 +193,12 @@ describe('Tokenizer', function () {
                 ['SCOPE_END', undefined]
             ]);
         });
+
         it('with properties beginning with a number (should fail in compilation)', function () {
             var tmp = "";
 
             tmp += "Element {\n";
-            tmp += "1property: 1;\n";
+            tmp += "1property: 1\n";
             tmp += "}\n";
 
             var tokens = bungee.tokenizer.parse(tmp);
@@ -203,11 +211,12 @@ describe('Tokenizer', function () {
                 ['SCOPE_END', undefined]
             ]);
         });
+
         it('with property prefixed with _', function () {
             var tmp = "";
 
             tmp += "Element {\n";
-            tmp += "_prop: 2;\n";
+            tmp += "_prop: 2\n";
             tmp += "}\n";
 
             var tokens = bungee.tokenizer.parse(tmp);
@@ -217,6 +226,62 @@ describe('Tokenizer', function () {
                 ['EXPRESSION', '_prop'],
                 ['COLON', undefined],
                 ['EXPRESSION', '2'],
+                ['SCOPE_END', undefined]
+            ]);
+        });
+
+        it('with element name containing a number', function () {
+            var tmp = "";
+
+            tmp += "Element2 {\n";
+            tmp += "}\n";
+
+            var tokens = bungee.tokenizer.parse(tmp);
+            verifyTokens(tokens, [
+                ['ELEMENT', 'Element2'],
+                ['SCOPE_START', undefined],
+                ['SCOPE_END', undefined]
+            ]);
+        });
+
+        it('with element name containing a _', function () {
+            var tmp = "";
+
+            tmp += "Element_Item {\n";
+            tmp += "}\n";
+
+            var tokens = bungee.tokenizer.parse(tmp);
+            verifyTokens(tokens, [
+                ['ELEMENT', 'Element_Item'],
+                ['SCOPE_START', undefined],
+                ['SCOPE_END', undefined]
+            ]);
+        });
+
+        it('with element name containing a -', function () {
+            var tmp = "";
+
+            tmp += "Element-Item {\n";
+            tmp += "}\n";
+
+            var tokens = bungee.tokenizer.parse(tmp);
+            verifyTokens(tokens, [
+                ['ELEMENT', 'Element-Item'],
+                ['SCOPE_START', undefined],
+                ['SCOPE_END', undefined]
+            ]);
+        });
+
+        it('with element name containing multiple numbers, - and _', function () {
+            var tmp = "";
+
+            tmp += "El12-ement-Item {\n";
+            tmp += "}\n";
+
+            var tokens = bungee.tokenizer.parse(tmp);
+            verifyTokens(tokens, [
+                ['ELEMENT', 'El12-ement-Item'],
+                ['SCOPE_START', undefined],
                 ['SCOPE_END', undefined]
             ]);
         });
@@ -235,7 +300,43 @@ describe('Compiler', function () {
             });
         });
     });
+
     describe('Compile code', function () {
+        it('with string value', function (done) {
+            var tmp = "";
+
+            tmp += "Element {\n";
+            tmp += "property: \"alert('something');\"\n";
+            tmp += "}\n";
+
+            var tokens = bungee.tokenizer.parse(tmp);
+            should.exist(tokens);
+            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
+                should.not.exist(error);
+                should.exist(result);
+
+                done();
+            });
+        });
+
+        it('with delegate value', function (done) {
+            var tmp = "";
+
+            tmp += "Element {\n";
+            tmp += "property: Item\n";
+            tmp += "foobar: 1337\n";
+            tmp += "}\n";
+
+            var tokens = bungee.tokenizer.parse(tmp);
+            should.exist(tokens);
+            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
+                should.not.exist(error);
+                should.exist(result);
+
+                done();
+            });
+        });
+
         it('with properties beginning with a number', function (done) {
             var tmp = "";
 
@@ -254,11 +355,12 @@ describe('Compiler', function () {
                 done();
             });
         });
+
         it('with property id', function (done) {
             var tmp = "";
 
             tmp += "Element {\n";
-            tmp += "id: myelement;\n";
+            tmp += "id: myelement\n";
             tmp += "}\n";
 
             var tokens = bungee.tokenizer.parse(tmp);
@@ -277,44 +379,14 @@ describe('Compiler', function () {
                 done();
             });
         });
-        it('with a delegate property', function (done) {
+
+        it('with two delegate properties', function () {
             var tmp = "";
 
             tmp += "Element {\n";
-            tmp += "id: myelement;\n";
+            tmp += "id: myelement\n";
             tmp += "delegate: Element\n";
-            tmp += "}\n";
-
-            var tokens = bungee.tokenizer.parse(tmp);
-            should.exist(tokens);
-            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
-                should.not.exist(error);
-                should.exist(result);
-
-                // root element has no id
-                should.not.exist(result.id);
-                should.exist(result.elements);
-                result.elements.should.have.length(1);
-                should.exist(result.elements[0]);
-                result.elements[0].id.should.be.equal('myelement');
-
-                should.exist(result.elements[0].delegates);
-                result.elements[0].delegates.should.have.length(1);
-
-                should.exist(result.elements[0].delegates[0]);
-                result.elements[0].delegates[0].name.should.be.equal('delegate');
-                result.elements[0].delegates[0].value.should.be.equal('Element');
-
-                done();
-            });
-        });
-        xit('with two delegate properties', function () {
-            var tmp = "";
-
-            tmp += "Element {\n";
-            tmp += "id: myelement;\n";
-            tmp += "delegate: Element\n";
-            tmp += "delegate2: Element2\n";
+            tmp += "delegate2: Item\n";
             tmp += "}\n";
 
             var tokens = bungee.tokenizer.parse(tmp);
@@ -339,10 +411,11 @@ describe('Compiler', function () {
 
                 should.exist(result.elements[0].delegates[1]);
                 result.elements[0].delegates[1].name.should.be.equal('delegate2');
-                result.elements[0].delegates[1].value.should.be.equal('Element2');
+                result.elements[0].delegates[1].value.should.be.equal('Item');
             });
         });
     });
+
     describe('Compiler error', function () {
         it('line number with inline javascript blocks', function (done) {
             bungee.compileFile("snippets/snippet-000.jml", {}, function (error, result) {
