@@ -25,7 +25,7 @@ if (!Bungee) {
 Bungee.debug = false;
 Bungee.verbose = false;
 
-Bungee.run = function () {
+Bungee.jump = function () {
     Bungee.useQueryFlags();
     Bungee.compileScriptTags();
     Bungee.Engine.start();

@@ -17,9 +17,9 @@
  * Simple JavaScript loader.
  **************************************************
  *
- * Note that there is race between the loader and <body onload="Bungee.run();">
- * Loader probably should call Bungee.run(). Then built version could have load.js
- * which just does body onload=Bungee.run() in javascript.
+ * Note that there is race between the loader and <body onload="Bungee.jump();">
+ * Loader probably should call Bungee.jump(). Then built version could have load.js
+ * which just does body onload=Bungee.jump() in javascript.
  *
  * But at least with file:// urls, race is not an issue.
  *
