@@ -2,6 +2,8 @@
     <head>
         <title> Bungee </title>
 
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, target-densitydpi=device-dpi" />
+
         <script type="text/javascript" src="../../bungee.js"></script>
         <script type="text/javascript" src="physics.min.js"></script>
 
@@ -13,46 +15,55 @@
             onleft: this.particle.moveTo(new Vector(this.left, this.top));
         }
 
-        PhysicsItem {
-            id: a
-            top: 10
-            left: 10
-            backgroundColor: "purple"
-            particle: new Particle(10);
+        Window {
+            id: window
+
+            width: this.innerWidth
+            height: this.innerHeight
+            overflow: "hidden"
+
+            PhysicsItem {
+                id: a
+                top: 10
+                left: 10
+                backgroundColor: "purple"
+                particle: new Particle(10);
+            }
+
+            PhysicsItem {
+                id: b
+                top: 100
+                left: 300
+                backgroundColor: "blue"
+            }
+
+            PhysicsItem {
+                id: c
+                top: 500
+                left: 100
+                backgroundColor: "green"
+                particle: new Particle(2);
+            }
+
+            InputItem {
+                width: this.parent.width
+                height: this.parent.height
+
+                onmousemove: ^{
+                    if (this.mousePressed) {
+                        this.a.left = this.mouseAbsX - this.a.width/2;
+                        this.a.top = this.mouseAbsY - this.a.height/2;
+                    }
+                }^
+            }
         }
 
-        PhysicsItem {
-            id: b
-            top: 100
-            left: 300
-            backgroundColor: "blue"
-        }
-
-        PhysicsItem {
-            id: c
-            top: 500
-            left: 100
-            backgroundColor: "green"
-            particle: new Particle(2);
-        }
-
-        InputItem {
-            width: window.innerWidth
-            height: window.innerHeight
-
-            onmousemove: ^{
-                if (this.mousePressed) {
-                    this.a.left = this.mouseAbsX - this.a.width/2;
-                    this.a.top = this.mouseAbsY - this.a.height/2;
-                }
-            }^
-        }
 
         </script>
 
         <style>
 
-        html, body {
+        body {
             margin: 0;
             padding: 0;
             width: 100%;
@@ -77,13 +88,13 @@
             var engine = new Physics();
             engine.integrator = new Verlet();
 
-            var bounds  = new EdgeBounce(new Vector(0,0), new Vector(window.innerWidth, window.innerHeight));
+            var bounds  = new EdgeBounce(new Vector(-50,-50), new Vector(window.app.ui.window.innerWidth-50, window.app.ui.window.innerHeight-50));
             var gravity = new ConstantForce(new Vector(0, 500));
             engine.behaviours.push(bounds, gravity);
 
-            var a = window.app.ui.a;
-            var b = window.app.ui.b;
-            var c = window.app.ui.c;
+            var a = window.app.ui.window.a;
+            var b = window.app.ui.window.b;
+            var c = window.app.ui.window.c;
 
             engine.particles.push(a.particle);
             engine.particles.push(b.particle);
