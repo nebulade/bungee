@@ -1,5 +1,17 @@
 #!/usr/bin/env node
 
+/*
+ **************************************************
+ *  Bungee.js
+ *
+ *  (c) 2012-2013 Johannes Zellner
+ *
+ *  Bungee may be freely distributed under the MIT license.
+ *  For all details and documentation:
+ *  http://bungeejs.org
+ **************************************************
+ */
+
 /*jshint globalstrict: true*/
 /*jshint node: true*/
 
@@ -30,7 +42,7 @@ if (argv._.length <= 1 || argv.h) {
 var input = argv._[0];
 var output = argv._[1];
 var log = !argv.s;
-var options = {}
+var options = {};
 
 log && console.log("Compile '" + input + "' to '" + output + "' ...");
 

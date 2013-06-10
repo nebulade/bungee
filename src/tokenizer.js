@@ -1,4 +1,14 @@
-// Copyright (c) 2012 Johannes Zellner webmaster@nebulon.de - All Rights Reserved
+/*
+ **************************************************
+ *  Bungee.js
+ *
+ *  (c) 2012-2013 Johannes Zellner
+ *
+ *  Bungee may be freely distributed under the MIT license.
+ *  For all details and documentation:
+ *  http://bungeejs.org
+ **************************************************
+*/
 
 "use strict";
 
@@ -7,6 +17,7 @@
  * Tokenizer
  **************************************************
  */
+
 if (!Bungee) {
     var Bungee = {};
 }

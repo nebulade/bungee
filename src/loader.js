@@ -1,11 +1,29 @@
-//Simple JavaScript loader.
-//
-//Note that there is race between the loader and <body onload="Bungee.run();">
-//Loader probably should call Bungee.run(). Then built version could have load.js
-//which just does body onload=Bungee.run() in javascript.
-//
-//But at least with file:// urls, race is not an issue.
-//
+/*
+ **************************************************
+ *  Bungee.js
+ *
+ *  (c) 2013 Ilkka Oksanen
+ *
+ *  Bungee may be freely distributed under the MIT license.
+ *  For all details and documentation:
+ *  http://bungeejs.org
+ **************************************************
+ */
+
+"use strict";
+
+/*
+ **************************************************
+ * Simple JavaScript loader.
+ **************************************************
+ *
+ * Note that there is race between the loader and <body onload="Bungee.run();">
+ * Loader probably should call Bungee.run(). Then built version could have load.js
+ * which just does body onload=Bungee.run() in javascript.
+ *
+ * But at least with file:// urls, race is not an issue.
+ *
+ */
 
 (function() {
     var files = ['tokenizer', 'compiler', 'dom', 'animation', 'helper',
