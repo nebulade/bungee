@@ -1,0 +1,128 @@
+<html>
+    <head>
+        <title> Bungee </title>
+
+        <link rel="stylesheet" href="normalize.css">
+
+        <script type="text/javascript" src="../../bungee.js"></script>
+
+        <script type="text/jml">
+
+        MyDelegate @ InputItem {
+            top: 0 + (this.modelData * (this.height + 2))
+            left: 10
+            width: 700
+            height: 70
+            backgroundColor: this.mousePressed ? "purple" : "#3C7DC1"
+            scale: this.opacity
+            overflow: "hidden"
+            // onload: this.anim2.restart()
+
+            // Animation {
+            //     id: anim2
+            //     easing: "ease-in-out"
+            //     duration: 1000
+
+            //     Step {
+            //         percentage: 0
+            //         width: 0
+            //     }
+
+            //     Step {
+            //         percentage: 80
+            //         width: this.parent.parent.width*1.2
+            //     }
+
+            //     Step {
+            //         percentage: 100
+            //         width: this.parent.parent.width
+            //     }
+            // }
+
+            // Animation {
+            //     id: anim
+            //     easing: "ease-in-out"
+            //     duration: 1000
+
+            //     Step {
+            //         percentage: 0
+            //         opacity: 1
+            //     }
+
+            //     Step {
+            //         percentage: 70
+            //         opacity: 0
+            //     }
+
+            //     Step {
+            //         percentage: 100
+            //         opacity: 1
+            //     }
+            // }
+
+            // Image {
+            //     id: delegateImage
+            //     src: "person.png"
+            //     width: 64
+            //     height: 64
+            //     left: 20
+            //     top: this.parent.height/2 - this.height/2
+            // }
+
+            Text {
+                id: delegateText
+                text: "Delegate " + this.parent.modelData + " and a bit more..."
+                color: "white"
+                fontSize: 24
+                // left: this.delegateImage.left + this.delegateImage.width + 10
+                top: this.parent.height/2 - this.height/2
+            }
+
+            // onmouseover: this.anim.restart()
+        }
+
+        InputItem {
+            id: listView
+            overflow: "scroll"
+            scrollTopchanged: this.updateDelegates()
+            width: window.innerWidth
+            height: window.innerHeight
+            delegate: MyDelegate
+            model: 5
+            i: 0
+
+            Item {
+                height: 10000000
+            }
+
+            function buildDelegate(j): ^{
+                var child = this.createdelegate();
+                child.modelData = j;
+                this.addChild(child);
+                child.initializeBindings();
+            }^
+
+            function updateDelegates(): ^{
+                if (this.stillUpdating) {
+                    return;
+                }
+
+                this.stillUpdating = true;
+                // console.log("update", this.scrollTop, this.height, this.i, (this.scrollTop+this.height) / 72)
+                while ((this.scrollTop + this.height) / 7200 > this.i) {
+                    console.log("create the delegates", this.i)
+                    this.buildDelegate(this.i);
+                    ++this.i;
+                }
+                this.stillUpdating = false;
+            }^
+        }
+
+        </script>
+
+    </head>
+
+    <body onload="Bungee.run();">
+    </body>
+</html>
+

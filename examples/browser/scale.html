@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title> Bungee </title>
+
+        <link rel="stylesheet" href="normalize.css">
+
+        <script type="text/javascript" src="../../bungee.js"></script>
+
+        <script type="text/jml">
+
+        Window {
+            InputItem {
+                width: this.parent.width
+                height: this.parent.height
+
+                Image {
+                    top: 100
+                    left: this.parent.width/2 - this.width/2
+                    width: 128;
+                    height: 128;
+                    src: "weather-clouds.png";
+                    scale: this.parent.mouseAbsX ? (this.parent.mouseAbsX / (this.parent.width / 2)) : 1
+                }
+
+                Image {
+                    top: 300;
+                    left: this.parent.width/2 - this.width/2;
+                    width: 128;
+                    height: 128;
+                    src: "weather-few-clouds-night.png";
+                    scale: this.parent.mouseAbsY ? (this.parent.mouseAbsY / (this.parent.width / 2)) : 1
+                }
+            }
+        }
+
+        </script>
+
+    </head>
+
+    <body onload="Bungee.run();">
+    </body>
+</html>
+

@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title> Bungee </title>
+
+        <link rel="stylesheet" href="normalize.css">
+
+        <script type="text/javascript" src="../../bungee.js"></script>
+
+        <script type="text/jml">
+
+        Window {
+            InputItem {
+                id: draggable
+                width: 400;
+                height: 200;
+                left: 100
+                top: 100;
+                backgroundColor: this.mousePressed ? "#ff00ff" : "#770077";
+
+                onmousemove: ^{
+                    if (this.mousePressed) {
+                        this.left = this.mouseAbsX - this.mouseRelStartX;
+                        this.top = this.mouseAbsY - this.mouseRelStartY;
+                    }
+                }^
+            }
+        }
+
+        </script>
+
+    </head>
+
+    <body onload="Bungee.run();">
+    </body>
+</html>
+
