@@ -166,6 +166,7 @@ Bungee.Element = function (id, parent, typeHint) {
     this._connections = {};
     this._children = {};
     this._bound = {};
+    this._isInitialized = false;
     this._initializeBindingsStep = false;
 
     if (this.parent) {
@@ -413,10 +414,16 @@ Bungee.Element.prototype.addProperty = function (name, value) {
 };
 
 // initial set of all properties and binding evaluation
-// should only be called once
+// can only be called once
 Bungee.Element.prototype.initializeBindings = function (options) {
     var name, i;
 
+    // prevent from multiple initializations
+    if (this._isInitialized) {
+        return;
+    }
+
+    this._isInitialized = true;
     this._initializeBindingsStep = true;
 
     for (name in this._properties) {
