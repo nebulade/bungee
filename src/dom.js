@@ -262,8 +262,10 @@ Bungee.RendererDOM.prototype.createElement = function (typeHint, object) {
 
     function handleTouchStartEvents(event) {
         that.currentMouseElement = this;
-        that.currentScrollElementTopStart = that.currentScrollElement.scrollTop;
-        that.currentScrollElementLeftStart = that.currentScrollElement.scrollLeft;
+        if (that.currentScrollElement) {
+            that.currentScrollElementTopStart = that.currentScrollElement.scrollTop;
+            that.currentScrollElementLeftStart = that.currentScrollElement.scrollLeft;
+        }
         object.mousePressed = true;
         object.emit('mousedown');
     }
