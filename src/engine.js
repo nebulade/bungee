@@ -97,8 +97,11 @@ if (!Bungee.Engine) {
         fps.l = 0;
 
         function advance() {
-            for (var i in _dirtyElements) {
-                _dirtyElements[i].render();
+            // cache keys and length as we wont modify the array (see jsperf)
+            var keys = Object.keys(_dirtyElements);
+            var keys_length = keys.length;
+            for (var i = 0; i < keys_length; ++i) {
+                _dirtyElements[keys[i]].render();
             }
             _dirtyElements = {};
 
@@ -241,7 +244,7 @@ Bungee.Element.prototype.addChanged = function (signal, callback) {
         this._connections[signal] = [];
     }
 
-    this._connections[signal][this._connections[signal].length] = callback;
+    this._connections[signal].push(callback);
     // console.log("connections for " + signal + " " + this._connections[signal].length);
 };
 
@@ -252,9 +255,9 @@ Bungee.Element.prototype.removeChanged = function (obj, signal) {
         return;
     }
 
-    for (var i = 0; i < signalConnections.length; ++i) {
-        // TODO do implementation
-    }
+    // TODO do implementation
+    // for (var i = 0; i < signalConnections.length; ++i) {
+    // }
 };
 
 Bungee.Element.prototype.addBinding = function (name, value, property) {
@@ -466,10 +469,8 @@ Bungee.Element.prototype.initializeBindings = function (options) {
 Bungee.Element.prototype.emit = function (signal) {
     if (signal in this._connections) {
         var slots = this._connections[signal];
-        for (var slot in slots) {
-            if (slots.hasOwnProperty(slot)) {
-                slots[slot].apply();
-            }
+        for (var i = 0; i < slots.length; ++i) {
+            slots[i].apply();
         }
     }
 };
