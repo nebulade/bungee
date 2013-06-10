@@ -9,25 +9,25 @@
         <script type="text/jml">
 
         MyButton @ InputItem {
-            width: 50;
-            height: 50;
+            width: 50
+            height: 50
             label: "0"
-            color: "white";
-            cursor: "pointer";
-            borderWidth: 0;
-            scale: this.containsMouse ? 1.2 : 1;
+            color: "white"
+            cursor: "pointer"
+            borderWidth: 0
+            scale: this.containsMouse ? 1.2 : 1
             backgroundColor: ^{
                 this.mousePressed;
                 return this.containsMouse ? (this.mousePressed ? "purple" : "gray") : "black";
             }^
 
             Text {
-                id: text;
-                fontSize: 24;
+                id: text
+                fontSize: 24
                 left: (this.parent.width / 2.0) - (this.textWidth / 2.0)
                 top: (this.parent.height / 2.0) - (this.textHeight / 2.0)
-                textColor: "white";
-                text: this.parent.label;
+                textColor: "white"
+                text: this.parent.label
             }
 
             onactivated: ^{
@@ -38,110 +38,110 @@
             }^;
         }
 
-        Item {
+        Window {
             id: root
-            left: window.innerWidth / 2.0 - this.width / 2.0;
-            top: window.innerHeight / 2.0 - this.height / 2.0;
-            width: 200;
-            height: 300;
-            backgroundColor: "lightgray";
+            left: this.innerWidth / 2.0 - this.width / 2.0
+            top: this.innerHeight / 2.0 - this.height / 2.0
+            width: 200
+            height: 300
+            backgroundColor: "lightgray"
             label: "0"
 
             Item {
-                id: display;
-                left: this.parent.width / 2.0 - this.width / 2.0;
-                top: 20;
+                id: display
+                left: this.parent.width / 2.0 - this.width / 2.0
+                top: 20
                 overflow: "hidden"
                 backgroundColor: "darkgray"
-                width: this.inputBlock.width;
+                width: this.inputBlock.width
                 height: this.myText.height
 
                 Text {
                     id: myText
-                    fontSize: 24;
-                    textColor: "white";
-                    text: this.parent.parent.label;
+                    fontSize: 24
+                    textColor: "white"
+                    text: this.parent.parent.label
                     left: this.parent.width - this.width
                     top: 0
                 }
             }
 
             Item {
-                id: inputBlock;
-                left: this.parent.width / 2.0 - this.width / 2.0;
-                top: this.display.top + this.display.height + 10;
-                width: (3 * 50) + (2 * this.buttonSpacing);
-                height: this.width;
-                buttonSpacing: 4;
+                id: inputBlock
+                left: this.parent.width / 2.0 - this.width / 2.0
+                top: this.display.top + this.display.height + 10
+                width: (3 * 50) + (2 * this.buttonSpacing)
+                height: this.width
+                buttonSpacing: 4
 
                 MyButton {
                     id: button1
-                    label: "1";
-                    left: 0;
-                    top: 0;
+                    label: "1"
+                    left: 0
+                    top: 0
                 }
 
                 MyButton {
                     id: button2
-                    label: "2";
-                    left: this.button1.left + this.button1.width + this.inputBlock.buttonSpacing;
-                    top: 0;
+                    label: "2"
+                    left: this.button1.left + this.button1.width + this.inputBlock.buttonSpacing
+                    top: 0
                 }
 
                 MyButton {
                     id: button3
-                    label: "3";
-                    left: this.button2.left + this.button2.width + this.inputBlock.buttonSpacing;
-                    top: 0;
+                    label: "3"
+                    left: this.button2.left + this.button2.width + this.inputBlock.buttonSpacing
+                    top: 0
                 }
 
                 MyButton {
                     id: button4
-                    label: "4";
-                    left: 0;
-                    top: this.button1.top + this.button1.height + this.inputBlock.buttonSpacing;
+                    label: "4"
+                    left: 0
+                    top: this.button1.top + this.button1.height + this.inputBlock.buttonSpacing
                 }
 
                 MyButton {
                     id: button5
-                    label: "5";
-                    left: this.button1.left + this.button1.width + this.inputBlock.buttonSpacing;
-                    top: this.button1.top + this.button1.height + this.inputBlock.buttonSpacing;
+                    label: "5"
+                    left: this.button1.left + this.button1.width + this.inputBlock.buttonSpacing
+                    top: this.button1.top + this.button1.height + this.inputBlock.buttonSpacing
                 }
 
                 MyButton {
                     id: button6
-                    label: "6";
-                    left: this.button2.left + this.button2.width + this.inputBlock.buttonSpacing;
-                    top: this.button1.top + this.button1.height + this.inputBlock.buttonSpacing;
+                    label: "6"
+                    left: this.button2.left + this.button2.width + this.inputBlock.buttonSpacing
+                    top: this.button1.top + this.button1.height + this.inputBlock.buttonSpacing
                 }
 
                 MyButton {
                     id: button7
-                    label: "7";
-                    left: 0;
-                    top: this.button4.top + this.button4.height + this.inputBlock.buttonSpacing;
+                    label: "7"
+                    left: 0
+                    top: this.button4.top + this.button4.height + this.inputBlock.buttonSpacing
                 }
 
                 MyButton {
                     id: button8
-                    label: "8";
-                    left: this.button1.left + this.button1.width + this.inputBlock.buttonSpacing;
-                    top: this.button4.top + this.button4.height + this.inputBlock.buttonSpacing;
+                    label: "8"
+                    left: this.button1.left + this.button1.width + this.inputBlock.buttonSpacing
+                    top: this.button4.top + this.button4.height + this.inputBlock.buttonSpacing
                 }
 
                 MyButton {
                     id: button9
-                    label: "9";
-                    left: this.button2.left + this.button2.width + this.inputBlock.buttonSpacing;
-                    top: this.button4.top + this.button4.height + this.inputBlock.buttonSpacing;
+                    label: "9"
+                    left: this.button2.left + this.button2.width + this.inputBlock.buttonSpacing
+                    top: this.button4.top + this.button4.height + this.inputBlock.buttonSpacing
                 }
 
                 MyButton {
                     id: button0
-                    label: "0";
-                    left: this.button1.left + this.button1.width + this.inputBlock.buttonSpacing;
-                    top: this.button7.top + this.button7.height + this.inputBlock.buttonSpacing;
+                    label: "0"
+                    left: this.button1.left + this.button1.width + this.inputBlock.buttonSpacing
+                    top: this.button7.top + this.button7.height + this.inputBlock.buttonSpacing
                 }
             }
         }
