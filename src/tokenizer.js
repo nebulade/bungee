@@ -55,6 +55,11 @@ var tokenizer = (function () {
             advance();
         }
 
+        // strip trailing ';'
+        if (token[token.length-1] === ';') {
+            token = token.substring(0, token.length-1);
+        }
+
         return token;
     }
 
@@ -79,6 +84,11 @@ var tokenizer = (function () {
                 expression += c;
 
             advance();
+        }
+
+        // strip trailing ';'
+        if (expression[expression.length-1] === ';') {
+            expression = expression.substring(0, expression.length-1);
         }
 
         return expression;

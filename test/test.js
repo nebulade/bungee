@@ -158,6 +158,36 @@ describe('Tokenizer', function () {
             ]);
         });
 
+        it('with multiple properties, stripped of the trailing semicolon', function () {
+            var tmp = "";
+
+            tmp += "Element {\n";
+            tmp += "id: foo;\n";
+            tmp += "a: 'foobar';\n";
+            tmp += "b: \"baz\"\n";
+            tmp += "c: noQuote;\n";
+            tmp += "}\n";
+
+            var tokens = bungee.tokenizer.parse(tmp);
+            verifyTokens(tokens, [
+                ['ELEMENT', 'Element'],
+                ['SCOPE_START', undefined],
+                ['EXPRESSION', 'id'],
+                ['COLON', undefined],
+                ['EXPRESSION', 'foo'],
+                ['EXPRESSION', 'a'],
+                ['COLON', undefined],
+                ['EXPRESSION', '\'foobar\''],
+                ['EXPRESSION', 'b'],
+                ['COLON', undefined],
+                ['EXPRESSION', '"baz"'],
+                ['EXPRESSION', 'c'],
+                ['COLON', undefined],
+                ['EXPRESSION', 'noQuote'],
+                ['SCOPE_END', undefined]
+            ]);
+        });
+
         it('with camel case property', function () {
             var tmp = "";
 
@@ -285,6 +315,24 @@ describe('Tokenizer', function () {
                 ['SCOPE_END', undefined]
             ]);
         });
+
+        it('with property containing javascript value', function () {
+            var tmp = "";
+
+            tmp += "Element {\n";
+            tmp += "property: window.does.not.exist.alert('something'); var blah = \"meh\";\n";
+            tmp += "}\n";
+
+            var tokens = bungee.tokenizer.parse(tmp);
+            verifyTokens(tokens, [
+                ['ELEMENT', 'Element'],
+                ['SCOPE_START', undefined],
+                ['EXPRESSION', 'property'],
+                ['COLON', undefined],
+                ['EXPRESSION', "window.does.not.exist.alert('something'); var blah = \"meh\""],
+                ['SCOPE_END', undefined]
+            ]);
+        });
     });
 });
 
@@ -380,12 +428,36 @@ describe('Compiler', function () {
             });
         });
 
+        it('with property id and trailing ";"', function (done) {
+            var tmp = "";
+
+            tmp += "Element {\n";
+            tmp += "id: myelement;\n";
+            tmp += "}\n";
+
+            var tokens = bungee.tokenizer.parse(tmp);
+            should.exist(tokens);
+            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
+                should.not.exist(error);
+                should.exist(result);
+
+                // root element has no id
+                should.not.exist(result.id);
+                should.exist(result.elements);
+                result.elements.should.have.length(1);
+                should.exist(result.elements[0]);
+                result.elements[0].id.should.be.equal('myelement');
+
+                done();
+            });
+        });
+
         it('with two delegate properties', function () {
             var tmp = "";
 
             tmp += "Element {\n";
             tmp += "id: myelement\n";
-            tmp += "delegate: Element\n";
+            tmp += "delegate: Element;\n";
             tmp += "delegate2: Item\n";
             tmp += "}\n";
 
