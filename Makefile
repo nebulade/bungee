@@ -30,23 +30,25 @@ endif
 build: $(BUNGEE_MINIFIED)
 
 source: src/loader.js
-	@echo "*** Create $(BUNGEE) which loads other library parts at runtime."
-	cp src/loader.js $(BUNGEE)
-	cp src/loader.js $(BUNGEE_MINIFIED)
+	@echo "==> Create $(BUNGEE) which loads other library parts at runtime."
+	@cp src/loader.js $(BUNGEE)
+	@cp src/loader.js $(BUNGEE_MINIFIED)
 
 modules: $(MODULES_MINIFIED)
 
 clean:
-	rm -f $(BUNGEE) $(BUNGEE_MINIFIED) $(MODULES) $(MODULES_MINIFIED)
+	@rm -f $(BUNGEE) $(BUNGEE_MINIFIED) $(MODULES) $(MODULES_MINIFIED)
 
 $(BUNGEE): $(BUNGEE_SOURCES)
-	@echo "*** Create batched $(BUNGEE) file."
-	cat $(BUNGEE_SOURCES) >> $(BUNGEE)
+	@echo "==> Remove old batched $(BUNGEE) file."
+	@rm -f $(BUNGEE)
+	@echo "==> Create batched $(BUNGEE) file."
+	@cat $(BUNGEE_SOURCES) >> $(BUNGEE)
 
 %.js : %.jml
-	@echo "*** Generate JavaScript from JML ($< -> $@)"
-	$(BUNGEEJS_COMPILER) $(BUNGEEJS_OPTIONS) $< $@
+	@echo "==> Generate JavaScript from JML ($< -> $@)"
+	@$(BUNGEEJS_COMPILER) $(BUNGEEJS_OPTIONS) $< $@
 
 %.min.js : %.js
-	@echo "*** Minify JavaScript file ($< -> $@)"
-	$(MINIFIER) $(MINIFIER_OPTIONS) $< -o $@
+	@echo "==> Minify JavaScript file ($< -> $@)"
+	@$(MINIFIER) $(MINIFIER_OPTIONS) $< -o $@
