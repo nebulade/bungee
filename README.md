@@ -31,6 +31,8 @@ Bungee.js is not a full blown application development framework, it provides mai
   * [DOM Elements](#api-dom)
   * [Helper](#api-helper)
 
+* **[Examples](#examples)**
+
 
 Introduction
 ------------
@@ -46,23 +48,19 @@ __npm__:
   npm install bungee
 ```
 
-__bower__:
-
-Coming soon ...
-
-To generate the 'bungee.js' library together with a minified version of it, type
+The `npm` package contains modules, the compiler and all the sources. Until there is a stable release, this is the preferred way to generate the `bungee.js` library together with a minified version:
 
 ```
 make
 ```
 
-To pre-compile the example modules, type
+To pre-compile the additional modules:
 
 ```
 make modules
 ```
 
-To remove all generated files, type
+To remove all generated files:
 
 ```
 make clean
@@ -98,7 +96,47 @@ The first script tag includes the bungee.js library, followed by a script of typ
 
 ### Precompile
 
-Although embedding the scripts add some more dynamic use cases, it also has major downsides. The compilation step is really only needed in case the source changes. In addition to that, since the compiler renders `jml` into Javascript, the generated Javascript code then can be minified offline. 
+Although embedding the scripts add some more dynamic use cases, it also has major downsides. The compilation step is really only needed in case the source changes. In addition to that, since the compiler renders `jml` into Javascript, the generated Javascript code then can be minified offline.
+
+``` sh
+cd node_modules/bungee/bin
+./bungee foo.jml foo.jml.js
+```
+
+If you want to have the compiled module namespaced, so all root elements are accessable via `moduleName.elementId`, pass a `-m Foo` option. To use the module, include it as any other Javascript file in your HTML alongside the main `bungee.js` library.
+
+```
+<script type="text/javascript" src="bungee.js"></script>
+<script type="text/javascript" src="foo.jml.js"></script>
+
+...
+
+<script>
+    Bungee.useQueryFlags();
+    var ui = Bungee.Foo();
+    Bungee.Engine.start();
+</script>
+```
+
+The language jump
+-----------------
+
+### Basic Concepts
+### Creating Objects
+### Adding Properties
+### Bindings
+### Custom Types
+### Delegates
+
+Javascript API
+--------------
+  
+### Engine
+### Tokenizer
+### Compiler
+### DOM Elements
+### Helper
+
 
 Examples
 --------
