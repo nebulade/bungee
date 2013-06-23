@@ -11,25 +11,25 @@ It is heavily inspired by QtQuick and comes with a
 Bungee.js is not a full blown application development framework, it provides mainly an environment to create the user interface elements. It breaks with the common html/css layouting of objects and relies on the description how elements should appear on the screen by defining constraints and dynamic bindings.
 
 * **[Introduction](#introduction)**
-  * [Installation](#introduction-installation)
-  * [Purple World](#introduction-purpleworld)
-  * [Embedded](#introduction-embedded)
-  * [Precompile](#introduction-precompile)
+  * [Installation](#installation)
+  * [Purple World](#purple-world)
+  * [Embedded](#embedded)
+  * [Precompile](#precompile)
 
-* **[The language jump](#jump)**
-  * [Basic Concepts](#jump-basicconcepts)
-  * [Creating Objects](#jump-creatingobjects)
-  * [Adding Properties](#jump-addingproperties)
-  * [Bindings](#jump-bindings)
-  * [Custom Types](#jump-customtypes)
-  * [Delegates](#jump-delegates)
+* **[The language jump](#the-language-jump)**
+  * [Basic Concepts](#basic-concepts)
+  * [Creating Objects](#creating-objects)
+  * [Adding Properties](#adding-properties)
+  * [Bindings](#bindings)
+  * [Custom Types](#custom-types)
+  * [Delegates](#delegates)
 
-* **[Javascript API](#api)**
-  * [Engine](#api-engine)
-  * [Tokenizer](#api-tokenizer)
-  * [Compiler](#api-compiler)
-  * [DOM Elements](#api-dom)
-  * [Helper](#api-helper)
+* **[Javascript API](#javascript-api)**
+  * [Engine](#engine)
+  * [Tokenizer](#tokenizer)
+  * [Compiler](#compiler)
+  * [DOM Elements](#dom-elements)
+  * [Helper](#helper)
 
 * **[Examples](#examples)**
 
