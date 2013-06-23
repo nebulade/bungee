@@ -122,15 +122,37 @@ The language jump
 -----------------
 
 ### Basic Concepts
-### Creating Objects
+The Jump syntax is very similar to CSS and indeed maybe even more like SASS.
+The code consists of an element definition followed by a block of key-value pairs.
+Those key-value pairs are the main construct of the language and have different functionality,
+depending on the __key__:
+
+* ``foobar``
+  Keys, which match a CSS attribute name, will be handled as such. This means that the right
+  hand side expression will be assigned to the instantiated element in the fasion of ``obj.style["width"]``.
+  Keys, not matching a CSS attribute, are also valid and can be used as custom properties.
+* ``onfoobar``
+  All keys starting with ``on`` are event handlers for other attributes.
+  As a right hand side expression, they take a Javascript code block,
+  which will be executed everytime the property, the part after the ``on``,
+  in this case ``foobar``, changes. This is useful to react on property changes
+  and perform actions, which are hard to express in a declarative way.
+* ``foobar(baz)``
+  Keys with a function like signature, will create callable functions on the elements.
+  Unlike regular properties, those won't be reevaluated everytime a binding inside the function body fires.
+  The function argument specification is only convenience and will be simply passed down to the
+  compiled Javascript code by the compiler.
+
+### Creating Elements
+
 ### Adding Properties
 ### Bindings
-### Custom Types
+### Custom Elements
 ### Delegates
 
 Javascript API
 --------------
-  
+
 ### Engine
 ### Tokenizer
 ### Compiler
