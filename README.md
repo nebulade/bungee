@@ -122,6 +122,21 @@ The language jump
 -----------------
 
 ### Basic Concepts
+
+```
+MyElement @ Element {
+  property: value-expression;
+}
+
+Element {
+  id: identifier;
+  onproperty: codeline;
+  function(argument): ^{
+    codeblock
+  }^
+}
+```
+
 The Jump syntax is very similar to CSS and indeed maybe even more like SASS.
 The code consists of an element definition followed by a block of key-value pairs.
 Those key-value pairs are the main construct of the language and have different functionality,
