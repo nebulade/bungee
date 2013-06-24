@@ -89,26 +89,26 @@ Embedding works like having Javascript embedded, only the `type` attribute diffe
 ```
 <script type="text/javascript" src="bungee.js"></script>
 ...
-<script type="text/jml">
+<script type="text/jump">
     Item {
     }
 </script>
 ...
 <body onload="Bungee.jump();">
 ```
-The first script tag includes the bungee.js library, followed by a script of type `text/jml` and finally
-to kick off the compilation as well as the declarative engine, `Bungee.jump()` needs to be called.
+The first script tag includes the bungee.js library, followed by a script of type `text/jump` or `text/jmp`
+and finally to kick off the compilation as well as the declarative engine, `Bungee.jump()` needs to be called.
 In this case in the `onload` handler.
 
 ### Precompile
 
 Although embedding the scripts add some more dynamic use cases, it also has major downsides.
 The compilation step is really only needed in case the source changes. In addition to that,
-since the compiler renders `jml` into Javascript, the generated Javascript code then can be minified offline.
+since the compiler renders `jump` into Javascript, the generated Javascript code then can be minified offline.
 
 ``` sh
 cd node_modules/bungee/bin
-./bungee foo.jml foo.jml.js
+./bungee foo.jmp foo.jmp.js
 ```
 
 If you want to have the compiled module namespaced, so all root elements are accessable via
@@ -117,7 +117,7 @@ file in your HTML alongside the main `bungee.js` library.
 
 ```
 <script type="text/javascript" src="bungee.js"></script>
-<script type="text/javascript" src="foo.jml.js"></script>
+<script type="text/javascript" src="foo.jmp.js"></script>
 
 ...
 

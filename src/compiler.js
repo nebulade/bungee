@@ -181,7 +181,7 @@ var compiler = (function () {
 
     /*
      * Renders the start of a new Element instance
-     * Called for each element instantiation in jml
+     * Called for each element instantiation in jump
      */
     function renderBeginElement(type, id) {
         addIndentation();
@@ -198,7 +198,7 @@ var compiler = (function () {
 
     /*
      * Renders the end of a new Element instance
-     * Called for each element instantiation in jml
+     * Called for each element instantiation in jump
      */
     function renderEndElement() {
         addIndentation();
@@ -211,7 +211,7 @@ var compiler = (function () {
 
     /*
      * Renders the start of a new Type definition
-     * Called for each type in jml
+     * Called for each type in jump
      */
     function renderBeginType(type, inheritedType) {
         addIndentation();
@@ -226,7 +226,7 @@ var compiler = (function () {
 
     /*
      * Renders the end of a new Type definition
-     * Called for each type in jml
+     * Called for each type in jump
      */
     function renderEndType() {
         addIndentation();

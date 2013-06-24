@@ -5,8 +5,8 @@ BUNGEE_SOURCES    = $(filter-out src/loader.js, $(wildcard src/*.js))
 BUNGEE            = bungee.js
 BUNGEE_MINIFIED   = bungee.min.js
 
-MODULES_SOURCES   = $(wildcard $(MODULES_FOLDER)/*.jml)
-MODULES           = $(MODULES_SOURCES:%.jml=%.js)
+MODULES_SOURCES   = $(wildcard $(MODULES_FOLDER)/*.jmp)
+MODULES           = $(MODULES_SOURCES:%.jmp=%.js)
 MODULES_MINIFIED  = $(MODULES:%.js=%.min.js)
 
 MINIFIER          = uglifyjs
@@ -45,8 +45,8 @@ $(BUNGEE): $(BUNGEE_SOURCES)
 	@echo "==> Create batched $(BUNGEE) file."
 	@cat $(BUNGEE_SOURCES) >> $(BUNGEE)
 
-%.js : %.jml
-	@echo "==> Generate JavaScript from JML ($< -> $@)"
+%.js : %.jmp
+	@echo "==> Generate JavaScript from JUMP ($< -> $@)"
 	@$(BUNGEEJS_COMPILER) $(BUNGEEJS_OPTIONS) $< $@
 
 %.min.js : %.js

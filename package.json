@@ -5,9 +5,12 @@
     "keywords": [
         "qml",
         "jml",
+        "jmp",
+        "jump",
         "quick",
         "declarative",
-        "bungee.js"
+        "bungee.js",
+        "bungee"
     ],
     "author": {
         "name": "Johannes Zellner",

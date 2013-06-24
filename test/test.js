@@ -337,9 +337,9 @@ describe('Tokenizer', function () {
 });
 
 describe('Compiler', function () {
-    describe('Compile large jml file', function () {
+    describe('Compile large jump file', function () {
         it('64000+ lines', function (done) {
-            bungee.compileFile("snippets/snippet-001.jml", {}, function (error, result) {
+            bungee.compileFile("snippets/snippet-001.jmp", {}, function (error, result) {
                 if (error) {
                     throw(error);
                 }
@@ -490,7 +490,7 @@ describe('Compiler', function () {
 
     describe('Compiler error', function () {
         it('line number with inline javascript blocks', function (done) {
-            bungee.compileFile("snippets/snippet-000.jml", {}, function (error, result) {
+            bungee.compileFile("snippets/snippet-000.jmp", {}, function (error, result) {
                 should.exist(error);
                 should.not.exists(result);
 

@@ -65,12 +65,10 @@ Bungee.compileScriptTagElement = function(script) {
     });
 };
 
-Bungee.compileScriptTags = function(scriptType) {
-    var type = scriptType ? scriptType : "text/jml";
-
+Bungee.compileScriptTags = function(dom) {
     for (var i = 0; i < window.document.scripts.length; ++i) {
         var script = window.document.scripts[i];
-        if (script.type === type) {
+        if (script.type === "text/jmp" || script.type === "text/jump") {
             Bungee.compileScriptTagElement(script);
         }
     }

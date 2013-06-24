@@ -1,5 +1,6 @@
 node_modules/
 bungee.js
 bungee.min.js
-*.jml.js
+*.jmp.js
+*.jump.js
 test/npm-debug.log
