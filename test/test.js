@@ -1,5 +1,8 @@
 "use strict";
 
+/* global it:false */
+/* global describe:false */
+
 var assert = require('assert');
 var should = require('should');
 
@@ -337,7 +340,7 @@ describe('Tokenizer', function () {
 });
 
 describe('Compiler', function () {
-    describe('Compile large jump file', function () {
+    describe('compile large jump file', function () {
         it('64000+ lines', function (done) {
             bungee.compileFile("snippets/snippet-001.jmp", {}, function (error, result) {
                 if (error) {
@@ -349,7 +352,7 @@ describe('Compiler', function () {
         });
     });
 
-    describe('Compile code', function () {
+    describe('compile code', function () {
         it('with string value', function (done) {
             var tmp = "";
 
@@ -486,16 +489,37 @@ describe('Compiler', function () {
                 result.elements[0].delegates[1].value.should.be.equal('Item');
             });
         });
+
+        it('with code block', function (done) {
+            bungee.compileFile("snippets/snippet-002.jmp", {}, function (error, result) {
+                if (error) {
+                    throw(error);
+                }
+
+                done();
+            });
+        });
+
+        it('with object', function (done) {
+            bungee.compileFile("snippets/snippet-003.jmp", {}, function (error, result) {
+                if (error) {
+                    throw(error);
+                }
+
+                done();
+            });
+        });
     });
 
-    describe('Compiler error', function () {
+    describe('error', function () {
         it('line number with inline javascript blocks', function (done) {
             bungee.compileFile("snippets/snippet-000.jmp", {}, function (error, result) {
+                console.log(error);
+                console.log(result);
                 should.exist(error);
                 should.not.exists(result);
 
-                error.code.should.be.equal(5);
-                error.line.should.be.equal(16);
+                error.code.should.be.equal(8);
 
                 done();
             });

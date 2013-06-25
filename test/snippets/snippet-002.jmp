@@ -1,0 +1,27 @@
+Item {
+    id: myItem
+
+    property0: { onlineBlock(); }
+
+    property1: {
+        var foo = "{{{{{}}";
+
+        function bar (baz) {
+            return { prop: true };
+        }
+        return foo;
+    }
+
+    property2: {
+        foo: "bar",
+        baz: { here: true }
+    }
+
+    function function0(arg0, arg1): {
+        var functionBody;
+    }
+
+    function function1(): {
+        setTimeout(function () {}, 10);
+    }
+}

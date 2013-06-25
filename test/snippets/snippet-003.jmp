@@ -1,0 +1,8 @@
+Item {
+    id: myItem
+
+    something: {
+        foo: "bar",
+        baz: { foo: "bar" }
+    }
+}

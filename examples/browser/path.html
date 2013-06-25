@@ -108,15 +108,15 @@
             height: window.innerHeight
             delegate: MyDelegate;
 
-            function buildDelegate(j): ^{
+            function buildDelegate(j): {
                 var child = this.createdelegate();
                 child.modelData = j;
                 this.addChild(child);
                 child.initializeBindings();
-            }^
+            }
 
             onload: window.app = this;
-            onactivated: ^{
+            onactivated: {
                 window.active++;
                 if (window.path === window.path1)
                     window.path = window.path2;
@@ -124,7 +124,7 @@
                     window.path = window.path1;
 
                 window.layout();
-            }^
+            }
         }
 
         </script>

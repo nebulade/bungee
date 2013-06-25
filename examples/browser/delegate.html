@@ -95,14 +95,14 @@
                 height: 10000000
             }
 
-            function buildDelegate(j): ^{
+            function buildDelegate(j): {
                 var child = this.createdelegate();
                 child.modelData = j;
                 this.addChild(child);
                 child.initializeBindings();
-            }^
+            }
 
-            function updateDelegates(): ^{
+            function updateDelegates(): {
                 if (this.stillUpdating) {
                     return;
                 }
@@ -115,7 +115,7 @@
                     ++this.i;
                 }
                 this.stillUpdating = false;
-            }^
+            }
         }
 
         </script>

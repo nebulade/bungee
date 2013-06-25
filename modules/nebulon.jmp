@@ -11,7 +11,7 @@ Button @ InputItem {
     label: ""
     fontSize: "32px"
     cursor: "default"
-    backgroundColor: ^{
+    backgroundColor: {
         if (this.mousePressed) {
             return "#006B9F";
         } else if (this.containsMouse) {
@@ -19,7 +19,7 @@ Button @ InputItem {
         } else {
             return "#3C7DC1";
         }
-    }^
+    }
 
     Label {
         id: l
@@ -37,7 +37,7 @@ Deck @ Item {
     height: this.parent.height
     overflow: "hidden"
 
-    function showCard(card): ^{
+    function showCard(card): {
         if (this.activeCard === card) {
             return;
         }
@@ -48,9 +48,9 @@ Deck @ Item {
 
         this.activeCard = card;
         this.activeCard.top = 0;
-    }^
+    }
 
-    onload: ^{
+    onload: {
         var kids = this.children();
 
         for (var i in kids) {
@@ -66,7 +66,7 @@ Deck @ Item {
                 }
             }
         }
-    }^
+    }
 }
 
 Card @ Item {
@@ -86,7 +86,7 @@ Layout @ Item {
     spacing: 10
     orientation: "vertical"
 
-    function _layout(): ^{
+    function _layout(): {
         var kids = this.children();
         var sibling = undefined;
 
@@ -109,9 +109,9 @@ Layout @ Item {
                 sibling = kids[i];
             }
         }
-    }^
+    }
 
-    function _setupListeners(): ^{
+    function _setupListeners(): {
         var kids = this.children();
         var that = this;
 
@@ -121,7 +121,7 @@ Layout @ Item {
                 kids[i].addChanged('height', function () { that._layout() });
             }
         }
-    }^
+    }
 
     orientationChanged: this._layout();
     onload: this._setupListeners();
@@ -143,12 +143,12 @@ View @ Item {
     delegate: Item;
     delegates: []
 
-    function clear(): ^{
+    function clear(): {
         this.removeChildren();
         this.delegates = [];
-    }^
+    }
 
-    function addDelegate(data): ^{
+    function addDelegate(data): {
         var delegate = this.createdelegate();
         delegate.modelData = data;
         delegate.modelIndex = this.delegates.length;
@@ -156,17 +156,17 @@ View @ Item {
         this.addChild(delegate);
         delegate.initializeBindings();
         return delegate;
-    }^
+    }
 
-    function layout(): ^{
+    function layout(): {
         console.warn("Please implement layout() function.");
-    }^
+    }
 }
 
 ListView @ View {
     delegateSize: this.width
 
-    function layout(): ^{
+    function layout(): {
         var top = 0;
 
         for (var i = 0; i < this.delegates.length; ++i) {
@@ -174,14 +174,14 @@ ListView @ View {
             d.top = top;
             top += d.height;
         }
-    }^
+    }
 }
 
 GridView @ View {
     delegateSize: 100
-    delegatesPerLine: ^{ Math.ceil(this.width / this.delegateSize) }^
+    delegatesPerLine: { Math.ceil(this.width / this.delegateSize) }
 
-    function layout(): ^{
+    function layout(): {
         var left = 0;
         var top = 0;
 
@@ -198,5 +198,5 @@ GridView @ View {
                 left = 0;
             }
         }
-    }^
+    }
 }

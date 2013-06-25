@@ -38,10 +38,10 @@
                 top: 10
                 width: this.label.textWidth
                 height: this.label.textHeight
-                onactivated: ^{
+                onactivated: {
                     var data = this.parent.modelData + " " + Math.floor(Math.random()*100);
                     this.parent.parent.insertDelegate(this.parent, data);
-                }^
+                }
 
                 Text {
                     id: label
@@ -76,21 +76,21 @@
             model: ['Seifenkiste', 'Eisstock', 'Zwiesel', 'Traktor'];
             _delegates: [];
 
-            function buildDelegate(data): ^{
+            function buildDelegate(data): {
                 var child = this.createdelegate();
                 child.modelData = data;
                 this.addChild(child);
                 child.initializeBindings();
                 return child;
-            }^
+            }
 
-            function addDelegate(data): ^{
+            function addDelegate(data): {
                 var child = this.buildDelegate(data);
                 this._delegates.push(child);
                 this.layout();
-            }^
+            }
 
-            function insertDelegate(pre, data): ^{
+            function insertDelegate(pre, data): {
                 var child = this.buildDelegate(data);
                 for (var i = 0; i < this._delegates.length; ++i) {
                     if (this._delegates[i] === pre) {
@@ -99,9 +99,9 @@
                     }
                 }
                 this.layout();
-            }^
+            }
 
-            function removeDelegate(data): ^{
+            function removeDelegate(data): {
                 for (var i = 0; i < this._delegates.length; ++i) {
                     if (this._delegates[i] === data) {
                         var that = this;
@@ -118,9 +118,9 @@
                     }
                 }
                 this.layout();
-            }^
+            }
 
-            function layout(): ^{
+            function layout(): {
                 var that = this;
                 var top = 0;
 
@@ -131,13 +131,13 @@
                     d.visibility = "visible";
                     top += d.height + this.spacing;
                 }
-            }^
+            }
 
-            onload: ^{
+            onload: {
                 for (var i = 0; i < this.model.length; ++i){
                     this.addDelegate(this.model[i]);
                 }
-            }^
+            }
         }
 
         </script>

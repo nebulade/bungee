@@ -27,7 +27,7 @@
             borderWidth: 10
             layoutDirection: "horizontal"
 
-            function _layout(): ^{
+            function _layout(): {
                 var kids = this.children();
                 var sibling = undefined;
 
@@ -43,9 +43,9 @@
                         sibling = kids[i];
                     }
                 }
-            }^
+            }
 
-            function _setupListeners(): ^{
+            function _setupListeners(): {
                 var kids = this.children();
                 var that = this;
 
@@ -57,7 +57,7 @@
                         kids[i].addChanged('height', function () { that._layout() });
                     }
                 }
-            }^
+            }
 
             onlayoutDirection: this._layout();
             onload: this._setupListeners();
@@ -67,7 +67,7 @@
             label: "Click me"
 
             hoverEnabled: true
-            backgroundColor: ^{
+            backgroundColor: {
                 if (this.mousePressed) {
                     return config.downBackgroundColor
                 } else if (this.containsMouse) {
@@ -75,7 +75,7 @@
                 } else {
                     return config.normalBackgroundColor
                 }
-            }^
+            }
             width: this.textLabel.textWidth + 100
             height: this.textLabel.textHeight + 10
             cursor: "default"
@@ -100,13 +100,13 @@
         IconButton @ InputItem {
             icon: ""
             hoverEnabled: true
-            backgroundColor: ^{
+            backgroundColor: {
                 if (this.containsMouse) {
                     return config.hightlightBackgroundColor
                 } else {
                     return config.normalBackgroundColor
                 }
-            }^
+            }
             width: 100
             height: 50
 
@@ -146,9 +146,9 @@
                 top: this.parent.height / 2 - this.height / 2
             }
 
-            onactivated: ^{
+            onactivated: {
                 this.animation.restart();
-            }^
+            }
         }
 
         </script>
@@ -162,12 +162,12 @@
 
                 Button {
                     label: "Silent Setters"
-                    onactivated: ^{
+                    onactivated: {
                         // setSilent() sets the value but does not emit the change nor breaks the binding
                         this.setSilent("height", this.height === 50 ? 100 : 50);
                         // set() sets the value breaks the binding and adds a new binding
                         this.set("width", this.width === 200 ? 300 : 200);
-                    }^
+                    }
                 }
 
                 IconButton {

@@ -39,14 +39,14 @@
                 tabDelegate: Tab;
                 count: 20
 
-                onload: ^{
+                onload: {
                     for (var i = 0; i < this.count; ++i) {
                         var child = this.createtabDelegate();
                         child.modelData = i;
                         this.addChild(child);
                         child.initializeBindings();
                     }
-                }^
+                }
             }
         }
 

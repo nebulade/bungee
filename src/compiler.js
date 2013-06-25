@@ -40,7 +40,8 @@ var compiler = (function () {
         NO_TYPENAME:            4,
         NO_EXPRESSION:          5,
         NO_COLON:               6,
-        INVALID_PROPERTY_NAME:  7
+        INVALID_PROPERTY_NAME:  7,
+        UNEXPECTED_END:         8
     };
 
     // make error codes public
@@ -55,6 +56,7 @@ var compiler = (function () {
     errorMessages[errorCodes.NO_COLON] =                "Property must be followed by a ':'.";
     errorMessages[errorCodes.NO_EXPRESSION] =           "No right-hand-side expression or element found.";
     errorMessages[errorCodes.INVALID_PROPERTY_NAME] =   "Invalid property name found.";
+    errorMessages[errorCodes.UNEXPECTED_END] =          "Unexpected end of input.";
 
     function error(code, token) {
         var ret = {};
@@ -541,6 +543,11 @@ var compiler = (function () {
                     return;
                 }
             }
+        }
+
+        if (objectTree !== objectTreeRoot) {
+            callback(error(errorCodes.UNEXPECTED_END, null), null);
+            return;
         }
 
         callback(null, objectTreeRoot);

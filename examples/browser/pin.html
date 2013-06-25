@@ -16,10 +16,10 @@
             cursor: "pointer"
             borderWidth: 0
             scale: this.containsMouse ? 1.2 : 1
-            backgroundColor: ^{
+            backgroundColor: {
                 this.mousePressed;
                 return this.containsMouse ? (this.mousePressed ? "purple" : "gray") : "black";
-            }^
+            }
 
             Text {
                 id: text
@@ -30,12 +30,12 @@
                 text: this.parent.label
             }
 
-            onactivated: ^{
+            onactivated: {
                 if(this.parent.parent.label === '0')
                     this.parent.parent.label = this.label
                 else
                     this.parent.parent.label = this.parent.parent.label + this.label
-            }^;
+            };
         }
 
         Window {

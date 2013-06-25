@@ -14,6 +14,7 @@ on the description how elements should appear on the screen by defining constrai
 
 * **[Introduction](#introduction)**
   * [Installation](#installation)
+  * [Run Tests](#run-tests)
   * [Purple World](#purple-world)
   * [Embedded](#embedded)
   * [Precompile](#precompile)
@@ -67,6 +68,14 @@ To remove all generated files:
 
 ```
 make clean
+```
+
+### Run Tests
+
+Currently there are only tokenizer and compiler tests.
+
+```
+npm test
 ```
 
 ### Purple World
@@ -142,9 +151,9 @@ MyElement @ Element {
 Element {
   id: identifier;
   onproperty: codeline;
-  function(argument): ^{
+  function(argument): {
     codeblock
-  }^
+  }
 }
 ```
 
@@ -194,9 +203,9 @@ Element {
   borderStyle: "dotted";
   borderWidth: 10;
 
-  weAreDone(msg): ^{
+  weAreDone(msg): {
     console.log(msg);
-  }^
+  }
 
   onload: this.weAreDone("element created!");
 }

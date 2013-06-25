@@ -17,12 +17,12 @@
                 top: 100;
                 backgroundColor: this.mousePressed ? "#ff00ff" : "#770077";
 
-                onmousemove: ^{
+                onmousemove: {
                     if (this.mousePressed) {
                         this.left = this.mouseAbsX - this.mouseRelStartX;
                         this.top = this.mouseAbsY - this.mouseRelStartY;
                     }
-                }^
+                }
             }
         }
 
