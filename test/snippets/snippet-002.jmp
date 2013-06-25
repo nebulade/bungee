@@ -1,0 +1,15 @@
+Item {
+    id: myItem
+
+    something: {
+        var foo = "{{{{{}}";
+
+        function bar (baz) {
+            return { prop: true};
+        }
+
+        foo = this.myItem.width;
+        foo += 1337;
+        return foo;
+    }
+}

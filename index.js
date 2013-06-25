@@ -32,6 +32,7 @@ module.exports = (function () {
 
     ret.compile = function(source, options, callback) {
         var tokens = ret.tokenizer.parse(source);
+        console.log("$$$$", tokens);
         ret.compiler.compileAndRender(tokens, options, function (error, result) {
             callback(error, result);
         });

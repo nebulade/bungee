@@ -95,24 +95,51 @@ var tokenizer = (function () {
     }
 
     function parseInlineBlock () {
-        var block = "";
-
-        advance();
+        var block = '';
+        var script;
 
         while (c) {
-            // TODO guard i+1
-            if (c === '}' && exp[i+1] === '^') {
+            block += c;
+
+            if (c === '}') {
+                try {
+                    // console.log("=== parse ", block);
+                    script = Bungee.esprima.parse(block, { tolerant: true});
+                    console.log("==== success block", block);
+                    break;
+                } catch (e) {
+                    console.log("block parsing failed", e);
+                    // block statement parsing failed, force esprima to check for object notation
+                    var tmp = "var a = " + block;
+                    try {
+                        script = Bungee.esprima.parse(tmp, { tolerant: true});
+                        console.log("==== success object", block);
+                        break;
+                    } catch (e) {
+                        console.log("object parsing failed", e);
+                    }
+                }
                 advance();
-                break;
             }
 
             if (c === '\n') {
                 ++line;
             }
 
-            block += c;
-
             advance();
+        }
+
+        // if we have a block statement, this means we need to trim the
+        // prepending and trailing curly brackets
+        if (script && script.body && script.body[0] && script.body[0].type === "BlockStatement") {
+            // TODO this looks a bit messy and error prone
+            block = block.trim();
+            if (block[0] === '{') {
+                block = block.slice(1);
+            }
+            if (block[block.length-1] === '}') {
+                block = block.slice(0, block.length-1);
+            }
         }
 
         return block;
@@ -181,19 +208,18 @@ var tokenizer = (function () {
                 continue;
             }
 
-            if (c === '{') {
+            if (c === '{' && tokens[tokens.length-1].TOKEN === "ELEMENT") {
                 addToken("SCOPE_START");
+                continue;
+            }
+
+            if (c === '{') {
+                addToken("EXPRESSION", parseInlineBlock());
                 continue;
             }
 
             if (c === '}') {
                 addToken("SCOPE_END");
-                continue;
-            }
-
-            if (c === '^' && exp[i+1] === '{') {
-                advance();
-                addToken("EXPRESSION", parseInlineBlock());
                 continue;
             }
 
@@ -236,6 +262,7 @@ var tokenizer = (function () {
 
 // TODO is this the proper check?
 if (typeof window === 'undefined') {
+    Bungee.esprima = require("esprima");
     module.exports = tokenizer;
 } else {
     window.Bungee.Tokenizer = tokenizer;
