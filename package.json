@@ -33,7 +33,8 @@
         "test": "cd test; ../node_modules/mocha/bin/mocha -R spec;"
     },
     "dependencies": {
-        "optimist": "*"
+        "optimist": "*",
+        "esprima": "*"
     },
     "devDependencies": {
         "mocha": "*",
