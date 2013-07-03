@@ -258,6 +258,30 @@ Element {
 
 ### Delegates
 
+```
+MyDelegate @ Element {
+  width: this.parent.width;
+  height: 50;
+  backgroundColor: "blue";
+}
+
+Element {
+  width: 800;
+  height: 700;
+  foobar: MyDelegate;
+
+  onload: {
+    for (var i = 0; i < 10; ++i) {
+      var child = this.createfoobar();
+      child.modelData = i;
+      this.addChild(child);
+      child.initializeBindings();
+    }
+  }
+}
+```
+
+
 Javascript API
 --------------
 
