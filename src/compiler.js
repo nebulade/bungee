@@ -105,7 +105,7 @@ var compiler = (function () {
         output += "}\n\n";
 
         if (options.module) {
-            output += "window.Bungee." + options.module + " = function () {\n";
+            output += "window.Bungee.Modules." + options.module + " = function () {\n";
         } else {
             output += "(function() {\n";
         }
