@@ -29,6 +29,7 @@ var compiler = (function () {
     // TODO sort out this kindof global variable mess
     var ELEM_PREFIX = "e";      // just a define
     var ELEM_NS = "Bungee.";      // main namespace
+    var ENGINE_VAR = 'BungeeEngine';
     var output;                 // output buffer used by all render functions
     var index;                  // index used for tracking the indentation
 
@@ -100,12 +101,12 @@ var compiler = (function () {
             output += "debugger;\n";
         }
 
-        output += "if (!window.Bungee) {\n";
-        output += "    window.Bungee = {};\n";
-        output += "}\n\n";
+        // output += "if (!window.Bungee) {\n";
+        // output += "    window.Bungee = {};\n";
+        // output += "}\n\n";
 
         if (options.module) {
-            output += "window.Bungee.Modules." + options.module + " = function () {\n";
+            output += "module.exports = function (Bungee, " + ENGINE_VAR + ") {\n";
         } else {
             output += "(function() {\n";
         }
@@ -138,7 +139,7 @@ var compiler = (function () {
         addIndentation(2);
         output += ELEM_PREFIX + ".children.push(child);\n";
         addIndentation(2);
-        output += "Bungee.Engine.addElement(child);\n";
+        output += ENGINE_VAR + ".addElement(child);\n";
         addIndentation(2);
         output += "return child;\n";
         addIndentation(1);
@@ -194,7 +195,8 @@ var compiler = (function () {
         addIndentation();
 
         output += "var " + ELEM_PREFIX + " = new " + ELEM_NS + type + "(";
-        output += id ? "\"" + id + "\"" : "";
+        output += ENGINE_VAR;
+        output += id ? ", \"" + id + "\"" : "";
         output += ");\n";
     }
 
@@ -576,9 +578,4 @@ var compiler = (function () {
     return compiler;
 }());
 
-// TODO is this the proper check?
-if (typeof window === 'undefined') {
-    module.exports = compiler;
-} else {
-    window.Bungee.Compiler = compiler;
-}
+module.exports = compiler;

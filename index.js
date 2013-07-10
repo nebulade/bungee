@@ -17,8 +17,25 @@ var fs = require('fs');
 module.exports = (function () {
     var ret = {};
 
-    ret.tokenizer = require('./src/tokenizer.js');
-    ret.compiler = require('./src/compiler.js');
+    ret.Tokenizer = require('./src/tokenizer.js');
+    ret.Compiler = require('./src/compiler.js');
+    ret.Engine = require('./src/engine.js');
+    ret.Elements = require('./src/dom.js');
+    ret.Animation = require('./src/animation.js');
+    ret.Helper = require('./src/helper.js');
+
+    function mixin(obj) {
+        for (var e in obj) {
+            if (obj.hasOwnProperty(e)) {
+                ret[e] = obj[e];
+            }
+        }
+    }
+
+    mixin(ret.Engine);
+    mixin(ret.Elements);
+    mixin(ret.Animation);
+    mixin(ret.Helper);
 
     ret.compileFile = function(file, options, callback) {
         fs.readFile(file, 'utf8', function (error, data) {
@@ -31,9 +48,8 @@ module.exports = (function () {
     };
 
     ret.compile = function(source, options, callback) {
-        var tokens = ret.tokenizer.parse(source);
-        // console.log("$$$$", tokens);
-        ret.compiler.compileAndRender(tokens, options, function (error, result) {
+        var tokens = ret.Tokenizer.parse(source);
+        ret.Compiler.compileAndRender(tokens, options, function (error, result) {
             callback(error, result);
         });
     };

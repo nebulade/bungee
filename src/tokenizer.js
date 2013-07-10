@@ -18,6 +18,8 @@
  **************************************************
  */
 
+var esprima = require("esprima");
+
 if (!Bungee) {
     var Bungee = {};
 }
@@ -103,13 +105,13 @@ var tokenizer = (function () {
 
             if (c === '}') {
                 try {
-                    script = Bungee.esprima.parse(block, { tolerant: true});
+                    script = esprima.parse(block, { tolerant: true});
                     break;
                 } catch (e) {
                     // block statement parsing failed, force esprima to check for object notation
                     var tmp = "var a = " + block;
                     try {
-                        script = Bungee.esprima.parse(tmp, { tolerant: true});
+                        script = esprima.parse(tmp, { tolerant: true});
                         break;
                     } catch (e) {
                     }
@@ -254,11 +256,4 @@ var tokenizer = (function () {
     return ret;
 }());
 
-// TODO is this the proper check?
-if (typeof window === 'undefined') {
-    Bungee.esprima = require("esprima");
-    module.exports = tokenizer;
-} else {
-    window.Bungee.Tokenizer = tokenizer;
-}
-
+module.exports = tokenizer;

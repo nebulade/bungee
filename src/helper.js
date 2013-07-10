@@ -18,17 +18,14 @@
  **************************************************
  */
 
-if (!Bungee) {
-    var Bungee = {};
-}
-
+var Bungee = {};
 Bungee.debug = false;
 Bungee.verbose = false;
 
-Bungee.jump = function () {
+Bungee.jump = function (engine) {
     Bungee.useQueryFlags();
     Bungee.compileScriptTags();
-    Bungee.Engine.start();
+    engine.start();
 };
 
 Bungee.useQueryFlags = function() {
@@ -40,26 +37,26 @@ Bungee.useQueryFlags = function() {
 Bungee.compileScriptTagElement = function(script) {
     var tokens = Bungee.Tokenizer.parse(script.text);
     var moduleName = script.attributes.module && script.attributes.module.textContent;
+    var o, n;
+
     Bungee.Compiler.compileAndRender(tokens, { module: moduleName }, function (error, result) {
         if (error) {
             console.error("Bungee compile error: " + error.line + ": " + error.message);
             console.error(" -- " + error.context);
         } else {
-            try {
-                if (Bungee.verbose || Bungee.debug) {
-                    console.log("----------------------");
-                    console.log(result);
-                    console.log("----------------------");
-                    console.log("eval...");
-                    var o = new Date();
-                    eval(result);
-                    var n = new Date();
-                    console.log("done, eval took time: ", (n - o), "ms");
-                } else {
-                    eval(result);
-                }
-            } catch (e) {
-                console.error("Bungee error in generated JavaScript: ", e);
+            if (Bungee.verbose || Bungee.debug) {
+                console.log("----------------------");
+                console.log(result);
+                console.log("----------------------");
+                console.log("eval...");
+                o = new Date();
+            }
+
+            eval(result);
+
+            if (Bungee.verbose || Bungee.debug) {
+                n = new Date();
+                console.log("done, eval took time: ", (n - o), "ms");
             }
         }
     });
@@ -73,3 +70,6 @@ Bungee.compileScriptTags = function(dom) {
         }
     }
 };
+
+// register in global namespace
+module.exports = Bungee;
