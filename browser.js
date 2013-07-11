@@ -1,40 +1,36 @@
-/*
- **************************************************
- *  Bungee.js
- *
- *  (c) 2012-2013 Johannes Zellner
- *
- *  Bungee may be freely distributed under the MIT license.
- *  For all details and documentation:
- *  http://bungeejs.org
- **************************************************
- */
+'use strict';
 
-"use strict";
+var Bungee = require('./index.js');
 
-/*
- **************************************************
- * Bungee Helper
- **************************************************
- */
+Bungee.debug = false;
+Bungee.verbose = false;
 
-var ret = {};
-ret.debug = false;
-ret.verbose = false;
+function ensureEngine(engine) {
+    if (!engine) {
+        console.log('[Bungee] Using default engine with DOM renderer.');
+        engine = new Bungee.Engine(new Bungee.RendererDOM());
+    }
 
-ret.jump = function (engine) {
-    ret.useQueryFlags();
-    ret.compileScriptTags(engine ? engine : new Bungee.RendererDOM());
+    return engine;
+}
+
+Bungee.jump = function (engine) {
+    engine = ensureEngine(engine);
+
+    Bungee.useQueryFlags();
+    Bungee.compileScriptTags(engine);
     engine.start();
 };
 
-ret.useQueryFlags = function() {
+Bungee.useQueryFlags = function() {
     // TODO improve detection
-    ret.verbose = (window.location.href.indexOf("verbose") >= 0);
-    ret.debug = (window.location.href.indexOf("debug") >= 0);
+    Bungee.verbose = (window.location.href.indexOf("verbose") >= 0);
+    Bungee.debug = (window.location.href.indexOf("debug") >= 0);
 };
 
-ret.compileScriptTagElement = function(engine, script) {
+Bungee.compileScriptTagElement = function(engine, script) {
+    engine = ensureEngine(engine);
+
     var tokens = Bungee.Tokenizer.parse(script.text);
     var moduleName = script.attributes.module && script.attributes.module.textContent;
     var o, n;
@@ -44,7 +40,7 @@ ret.compileScriptTagElement = function(engine, script) {
             console.error("Bungee compile error: " + error.line + ": " + error.message);
             console.error(" -- " + error.context);
         } else {
-            if (ret.verbose || ret.debug) {
+            if (Bungee.verbose || Bungee.debug) {
                 console.log("----------------------");
                 console.log(result);
                 console.log("----------------------");
@@ -54,9 +50,9 @@ ret.compileScriptTagElement = function(engine, script) {
 
             var tmp = eval(result);
             console.log(tmp);
-            tmp(ret, engine);
+            tmp(Bungee, engine);
 
-            if (ret.verbose || ret.debug) {
+            if (Bungee.verbose || Bungee.debug) {
                 n = new Date();
                 console.log("done, eval took time: ", (n - o), "ms");
             }
@@ -64,14 +60,18 @@ ret.compileScriptTagElement = function(engine, script) {
     });
 };
 
-ret.compileScriptTags = function(engine, dom) {
+Bungee.compileScriptTags = function(engine, dom) {
+    engine = ensureEngine(engine);
+
     for (var i = 0; i < window.document.scripts.length; ++i) {
         var script = window.document.scripts[i];
         if (script.type === "text/jmp" || script.type === "text/jump") {
-            ret.compileScriptTagElement(engine, script);
+            Bungee.compileScriptTagElement(engine, script);
         }
     }
 };
 
-// register in global namespace
-module.exports = ret;
+console.log(Bungee);
+
+// since we are in the browser, register it into the global namespace
+window.Bungee = Bungee;

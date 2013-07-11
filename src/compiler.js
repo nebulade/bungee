@@ -96,22 +96,19 @@ var compiler = (function () {
      * Only called once
      */
     function renderBegin(options) {
+        if (options.module) {
+            output += "module.exports = function (Bungee, " + ENGINE_VAR + ") {\n";
+        } else {
+            output += "(function () { return function (Bungee, " + ENGINE_VAR + ") {\n";
+        }
+
+        addIndentation();
+        output += "'use strict';\n\n";
+
         if (Bungee.debug) {
             addIndentation(1);
             output += "debugger;\n";
         }
-
-        // output += "if (!window.Bungee) {\n";
-        // output += "    window.Bungee = {};\n";
-        // output += "}\n\n";
-
-        if (options.module) {
-            output += "module.exports = function (Bungee, " + ENGINE_VAR + ") {\n";
-        } else {
-            output += "(function() {\n";
-        }
-        addIndentation();
-        output += "'use strict';\n\n";
 
         // add pseudo parent
         addIndentation();
@@ -178,6 +175,8 @@ var compiler = (function () {
             output += "return " + ELEM_PREFIX + ";\n";
             output += "};\n";
         } else {
+            addIndentation();
+            output += "};\n";
             output += "})();\n";
         }
     }
@@ -310,7 +309,7 @@ var compiler = (function () {
      */
     function renderDelegate(property, value) {
         addIndentation();
-        output += ELEM_PREFIX + ".create" + property + " = function () {\n";
+        output += ELEM_PREFIX + ".create" + property + " = function (" + ENGINE_VAR + ") {\n";
         addIndentation(1);
         output += "return new " + ELEM_NS + value + "();\n";
         addIndentation();

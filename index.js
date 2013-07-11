@@ -22,7 +22,6 @@ module.exports = (function () {
     ret.Engine = require('./src/engine.js');
     ret.Elements = require('./src/dom.js');
     ret.Animation = require('./src/animation.js');
-    ret.Helper = require('./src/helper.js');
 
     function mixin(obj) {
         for (var e in obj) {
@@ -35,7 +34,6 @@ module.exports = (function () {
     mixin(ret.Engine);
     mixin(ret.Elements);
     mixin(ret.Animation);
-    mixin(ret.Helper);
 
     ret.compileFile = function(file, options, callback) {
         fs.readFile(file, 'utf8', function (error, data) {
