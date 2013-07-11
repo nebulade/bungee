@@ -10,7 +10,7 @@ MODULES_SOURCES   = $(wildcard $(MODULES_FOLDER)/*.jmp)
 MODULES           = $(MODULES_SOURCES:%.jmp=%.js)
 MODULES_MINIFIED  = $(MODULES:%.js=%.min.js)
 
-BROWSERIFY        = ./node_modules/browserify/bin/cmd.js browser.js -o bungee.js
+BROWSERIFY        = ./node_modules/browserify/bin/cmd.js
 
 MINIFIER          = uglifyjs
 MINIFIER_OPTIONS  =
@@ -44,7 +44,7 @@ $(BUNGEE): dependencies $(BUNGEE_SOURCES) $(BUNGEE_BROWSER)
 	@echo "==> Remove old batched $(BUNGEE) file."
 	@rm -f $(BUNGEE)
 	@echo "==> Create batched $(BUNGEE) file."
-	@$(BROWSERIFY) $(BUNGEE_BROWSER) -o $(BUNGEE)
+	$(BROWSERIFY) $(BUNGEE_BROWSER) -o $(BUNGEE)
 
 %.js : %.jmp
 	@echo "==> Generate JavaScript from JUMP ($< -> $@)"
