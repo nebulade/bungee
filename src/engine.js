@@ -143,6 +143,8 @@ Engine.prototype.advance = function () {
  *
  */
 function Element(engine, id, parent, typeHint) {
+    console.assert(engine instanceof Engine);
+
     this.engine = engine;
     this.id = id;
     this.typeHint = typeHint;

@@ -219,12 +219,12 @@ var compiler = (function () {
     function renderBeginType(type, inheritedType) {
         addIndentation();
 
-        output += ELEM_NS + type + " = function (id, parent) {\n";
+        output += ELEM_NS + type + " = function (engine, id, parent) {\n";
 
         ++index;
         addIndentation();
 
-        output += "var " + ELEM_PREFIX + " = new " + ELEM_NS + inheritedType + "(id, parent);\n";
+        output += "var " + ELEM_PREFIX + " = new " + ELEM_NS + inheritedType + "(engine, id, parent);\n";
     }
 
     /*
@@ -309,9 +309,9 @@ var compiler = (function () {
      */
     function renderDelegate(property, value) {
         addIndentation();
-        output += ELEM_PREFIX + ".create" + property + " = function (" + ENGINE_VAR + ") {\n";
+        output += ELEM_PREFIX + ".create" + property + " = function () {\n";
         addIndentation(1);
-        output += "return new " + ELEM_NS + value + "();\n";
+        output += "return new " + ELEM_NS + value + "(" + ENGINE_VAR + ");\n";
         addIndentation();
         output += "}\n";
     }

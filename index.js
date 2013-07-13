@@ -52,5 +52,82 @@ module.exports = (function () {
         });
     };
 
+    ret.debug = false;
+    ret.verbose = false;
+
+    function ensureEngine(engine) {
+        if (!engine) {
+            console.log('[Bungee] Using default engine with DOM renderer.');
+            engine = new ret.Engine(new ret.RendererDOM());
+        }
+
+        return engine;
+    }
+
+    ret.jump = function (engine) {
+        engine = ensureEngine(engine);
+
+        ret.useQueryFlags();
+        ret.compileScriptTags(engine);
+        engine.start();
+    };
+
+    ret.useQueryFlags = function() {
+        // TODO improve detection
+        ret.verbose = (window.location.href.indexOf("verbose") >= 0);
+        ret.debug = (window.location.href.indexOf("debug") >= 0);
+    };
+
+    ret.compileScriptTagElement = function(engine, script) {
+        engine = ensureEngine(engine);
+
+        var tokens = ret.Tokenizer.parse(script.text);
+        var moduleName = script.attributes.module && script.attributes.module.textContent;
+        var o, n;
+
+        ret.Compiler.compileAndRender(tokens, { module: moduleName }, function (error, result) {
+            if (error) {
+                console.error("Bungee compile error: " + error.line + ": " + error.message);
+                console.error(" -- " + error.context);
+            } else {
+                if (ret.verbose || ret.debug) {
+                    console.log("----------------------");
+                    console.log(result);
+                    console.log("----------------------");
+                    console.log("eval...");
+                    o = new Date();
+                }
+
+                if (result.indexOf('module.exports = ') === 0) {
+                    if (!ret.Modules) {
+                        ret.Modules = {};
+                    }
+
+                    result = result.replace('module.exports = ', 'Bungee.Modules.' + moduleName + ' = ');
+                    eval(result);
+                } else {
+                    var tmp = eval(result);
+                    tmp(Bungee, engine);
+                }
+
+                if (ret.verbose || ret.debug) {
+                    n = new Date();
+                    console.log("done, eval took time: ", (n - o), "ms");
+                }
+            }
+        });
+    };
+
+    ret.compileScriptTags = function(engine, dom) {
+        engine = ensureEngine(engine);
+
+        for (var i = 0; i < window.document.scripts.length; ++i) {
+            var script = window.document.scripts[i];
+            if (script.type === "text/jmp" || script.type === "text/jump") {
+                ret.compileScriptTagElement(engine, script);
+            }
+        }
+    };
+
     return ret;
 }());
