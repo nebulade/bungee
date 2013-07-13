@@ -18,9 +18,7 @@
  **************************************************
  */
 
-if (!Bungee) {
-    var Bungee = {};
-}
+var Bungee = require('./engine.js');
 
 Bungee._animationIndex = 0;
 Bungee._debugAnimation = false;
@@ -30,16 +28,16 @@ Bungee._debugAnimation = false;
  * Basic Animation
  **************************************************
  */
-Bungee.Step = function (id, parent) {
-    var elem = new Bungee.Element(id, parent, "object");
+Bungee.Step = function (engine, id, parent) {
+    var elem = new Bungee.Element(engine, id, parent, "object");
 
     elem.addProperty("percentage", 0);
 
     return elem;
 };
 
-Bungee.Animation = function (id, parent) {
-    var elem = new Bungee.Element(id, parent, "object");
+Bungee.Animation = function (engine, id, parent) {
+    var elem = new Bungee.Element(engine, id, parent, "object");
     var index = Bungee._animationIndex++;
     var dirty = true;
     var hasRules = false;
@@ -204,8 +202,8 @@ Bungee.Animation = function (id, parent) {
 };
 
 
-Bungee.Behavior = function (id, parent) {
-    var elem = new Bungee.Element(id, parent, "object");
+Bungee.Behavior = function (engine, id, parent) {
+    var elem = new Bungee.Element(engine, id, parent, "object");
     var index = Bungee._animationIndex++;
     var hasRules = false;
     var animationName = "bungeeAnimation" + index;

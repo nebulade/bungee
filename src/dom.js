@@ -18,17 +18,15 @@
  **************************************************
  */
 
-if (!Bungee) {
-    var Bungee = {};
-}
+var Bungee = require('./engine.js');
 
 /*
  **************************************************
  * Predefined basic elements
  **************************************************
  */
-Bungee.Item = function (id, parent, typeHint) {
-    var elem = new Bungee.Element(id, parent, typeHint ? typeHint : "item");
+Bungee.Item = function (engine, id, parent, typeHint) {
+    var elem = new Bungee.Element(engine, id, parent, typeHint ? typeHint : "item");
 
     elem.addProperty("className", "");
     elem.addProperty("width", 100);
@@ -77,8 +75,8 @@ Bungee.Item = function (id, parent, typeHint) {
     return elem;
 };
 
-Bungee.InputItem = function (id, parent) {
-    var elem = new Bungee.Item(id, parent, "InputItem");
+Bungee.InputItem = function (engine, id, parent) {
+    var elem = new Bungee.Item(engine, id, parent, "InputItem");
 
     // default to fill parent
     elem.addProperty("width", function () { return this.parent ? this.parent.width : 100; });
@@ -104,8 +102,8 @@ Bungee.InputItem = function (id, parent) {
 
 // FIXME global leak
 var tmpTextElement;
-Bungee.Text = function (id, parent) {
-    var elem = new Bungee.Item(id, parent);
+Bungee.Text = function (engine, id, parent) {
+    var elem = new Bungee.Item(engine, id, parent);
 
     elem.addProperty("mouseEnabled", false);
     elem.addProperty("textWidth", 0);
@@ -125,7 +123,7 @@ Bungee.Text = function (id, parent) {
         tmpTextElement.style.width = "auto";
         tmpTextElement.style.height = "auto";
         tmpTextElement.style.left = -10000;
-        document.body.appendChild(tmpTextElement);
+        window.document.body.appendChild(tmpTextElement);
     }
 
     function relayout() {
@@ -154,8 +152,8 @@ Bungee.Text = function (id, parent) {
     return elem;
 };
 
-Bungee.Window = function (id, parent) {
-    var elem = new Bungee.Element(id, parent);
+Bungee.Window = function (engine, id, parent) {
+    var elem = new Bungee.Element(engine, id, parent);
 
     elem.addProperty("innerWidth", window.innerWidth);
     elem.addProperty("innerHeight", window.innerHeight);
@@ -174,8 +172,8 @@ Bungee.Window = function (id, parent) {
     return elem;
 };
 
-Bungee.Rectangle = function (id, parent) {
-    var elem = new Bungee.Item(id, parent);
+Bungee.Rectangle = function (engine, id, parent) {
+    var elem = new Bungee.Item(engine, id, parent);
 
     elem.addProperty("backgroundColor", "white");
     elem.addProperty("borderColor", "black");
@@ -186,8 +184,8 @@ Bungee.Rectangle = function (id, parent) {
     return elem;
 };
 
-Bungee.BackgroundImage = function (id, parent) {
-    var elem = new Bungee.Item(id, parent);
+Bungee.BackgroundImage = function (engine, id, parent) {
+    var elem = new Bungee.Item(engine, id, parent);
 
     elem.addProperty("src", "");
     elem.addProperty("backgroundImage", function () {
@@ -207,8 +205,8 @@ Bungee.BackgroundImage = function (id, parent) {
     return elem;
 };
 
-Bungee.Image = function (id, parent) {
-    var elem = new Bungee.Item(id, parent, "image");
+Bungee.Image = function (engine, id, parent) {
+    var elem = new Bungee.Item(engine, id, parent, "image");
 
     elem.addProperty("src", "");
     elem.addProperty("-image-src", function () {
@@ -218,8 +216,8 @@ Bungee.Image = function (id, parent) {
     return elem;
 };
 
-Bungee.Input = function (id, parent) {
-    var elem = new Bungee.Item(id, parent, "input");
+Bungee.Input = function (engine, id, parent) {
+    var elem = new Bungee.Item(engine, id, parent, "input");
 
     elem.addProperty("-webkit-user-select", "auto");
     elem.addProperty("userSelect", "auto");
@@ -445,3 +443,5 @@ Bungee.RendererDOM.prototype.renderElement = function (element) {
     }
     element._dirtyProperties = {};
 };
+
+module.exports = Bungee;

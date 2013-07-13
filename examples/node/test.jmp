@@ -1,32 +1,189 @@
-Item {
-    width: window.innerWidth
-    height: window.innerHeight
+List @ Item {
+    width: this.childrenWidth
+    height: this.childrenHeight
+    spacing: 10
+    layoutDirection: "vertical"
 
-    hoverEnabled: true
-    onmousemove: {
-        this.foo.bar.left = this.mouseAbsX - this.foo.bar.width/2
-        this.foo.bar.top = this.mouseAbsY - this.foo.bar.height/2
+    function _layout(): {
+        var kids = this.children();
+        var sibling = undefined;
+
+        for (var i in kids) {
+            if (kids.hasOwnProperty(i)) {
+                if (this.layoutDirection === "vertical") {
+                    kids[i].top = sibling ? (this.spacing + sibling.top + sibling.height) : 0;
+                    kids[i].left = 0;
+                } else {
+                    kids[i].top = 0;
+                    kids[i].left = sibling ? (this.spacing + sibling.left + sibling.width) : 0;
+                }
+                sibling = kids[i];
+            }
+        }
     }
 
-    Item {
-        id: foo
-        backgroundColor: "green"
-        overflow: "hidden"
-        width: this.childrenWidth + 10
-        height: this.childrenHeight + 10
+    function _setupListeners(): {
+        var kids = this.children();
+        var that = this;
 
-        Item {
-            left: 10
-            top: 100
-            backgroundColor: "purple";
-            width: 800;
+        this._layout();
+
+        for (var i in kids) {
+            if (kids.hasOwnProperty(i)) {
+                kids[i].addChanged('width', function () { that._layout() });
+                kids[i].addChanged('height', function () { that._layout() });
+            }
+        }
+    }
+
+    onlayoutDirection: this._layout();
+    onload: this._setupListeners();
+}
+
+Button @ InputItem {
+    label: "Demo"
+    src: ""
+
+    backgroundColor: {
+        if (this.mousePressed) {
+            return config.downBackgroundColor
+        } else if (this.containsMouse) {
+            return config.hightlightBackgroundColor
+        } else {
+            return config.normalBackgroundColor
+        }
+    }
+    width: this.textLabel.textWidth + 100
+    height: this.textLabel.textHeight + 10
+    cursor: "default"
+
+    Animation {
+        id: animation
+        target: this.parent
+        duration: 2000
+
+        Step {
+            percentage: 0
+            width: this.parent.parent.width
         }
 
-        Item {
-            id: bar;
-            left: 200
-            top: 40
-            backgroundColor: "blue"
+        Step {
+            percentage: 50
+            width: 0
+        }
+
+        Step {
+            percentage: 70
+            width: this.parent.parent.width * 1.5
+        }
+
+        Step {
+            percentage: 100
+            width: this.parent.parent.width
+        }
+    }
+
+    Animation {
+        id: hoverAnimation
+        target: this.parent
+        duration: 1000
+
+        Step {
+            percentage: 0
+            background-color: config.hightlightBackgroundColor
+        }
+
+        Step {
+            percentage: 25
+            background-color: "pink"
+        }
+
+        Step {
+            percentage: 50
+            background-color: "silver"
+        }
+
+        Step {
+            percentage: 75
+            background-color: "cyan"
+        }
+
+        Step {
+            percentage: 100
+            width: config.hightlightBackgroundColor
+        }
+    }
+
+    Text {
+        id: textLabel
+        fontSize: "24px"
+        text: this.parent.label
+        left: this.parent.width / 2 - this.width / 2
+        top: this.parent.height / 2 - this.height / 2
+        color: config.normalTextColor
+    }
+
+    onmouseover: this.hoverAnimation.restart()
+    onactivated: {
+        this.animation.restart();
+        window.document.getElementById("demoArea").src = this.src;
+    }
+}
+
+Window {
+    top: 0
+    left: 0
+    width: 300
+
+    List {
+        Button {
+            label: "Model Updates"
+            src: "model.html"
+        }
+
+        Button {
+            label: "Pin Entry"
+            src: "pin.html"
+        }
+
+        Button {
+            label: "Animation"
+            src: "animation.html"
+        }
+
+        Button {
+            label: "Bounding Rect"
+            src: "boundingrect.html"
+        }
+
+        Button {
+            label: "Delegates"
+            src: "delegate.html"
+        }
+
+        Button {
+            label: "Widgets"
+            src: "widgets.html"
+        }
+
+        Button {
+            label: "Tracking"
+            src: "tracking.html"
+        }
+
+        Button {
+            label: "Path"
+            src: "path.html"
+        }
+
+        Button {
+            label: "Scaling"
+            src: "scale.html"
+        }
+
+        Button {
+            label: "Dragging"
+            src: "drag.html"
         }
     }
 }
