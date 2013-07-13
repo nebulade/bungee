@@ -29,6 +29,7 @@ var compiler = (function () {
     // TODO sort out this kindof global variable mess
     var ELEM_PREFIX = "e";      // just a define
     var ELEM_NS = "Bungee.";      // main namespace
+    var ENGINE_VAR = 'BungeeEngine';
     var output;                 // output buffer used by all render functions
     var index;                  // index used for tracking the indentation
 
@@ -95,22 +96,19 @@ var compiler = (function () {
      * Only called once
      */
     function renderBegin(options) {
+        if (options.module) {
+            output += "module.exports = function (Bungee, " + ENGINE_VAR + ") {\n";
+        } else {
+            output += "(function () { return function (Bungee, " + ENGINE_VAR + ") {\n";
+        }
+
+        addIndentation();
+        output += "'use strict';\n\n";
+
         if (Bungee.debug) {
             addIndentation(1);
             output += "debugger;\n";
         }
-
-        output += "if (!window.Bungee) {\n";
-        output += "    window.Bungee = {};\n";
-        output += "}\n\n";
-
-        if (options.module) {
-            output += "window.Bungee.Modules." + options.module + " = function () {\n";
-        } else {
-            output += "(function() {\n";
-        }
-        addIndentation();
-        output += "'use strict';\n\n";
 
         // add pseudo parent
         addIndentation();
@@ -138,7 +136,7 @@ var compiler = (function () {
         addIndentation(2);
         output += ELEM_PREFIX + ".children.push(child);\n";
         addIndentation(2);
-        output += "Bungee.Engine.addElement(child);\n";
+        output += ENGINE_VAR + ".addElement(child);\n";
         addIndentation(2);
         output += "return child;\n";
         addIndentation(1);
@@ -177,6 +175,8 @@ var compiler = (function () {
             output += "return " + ELEM_PREFIX + ";\n";
             output += "};\n";
         } else {
+            addIndentation();
+            output += "};\n";
             output += "})();\n";
         }
     }
@@ -194,7 +194,8 @@ var compiler = (function () {
         addIndentation();
 
         output += "var " + ELEM_PREFIX + " = new " + ELEM_NS + type + "(";
-        output += id ? "\"" + id + "\"" : "";
+        output += ENGINE_VAR;
+        output += id ? ", \"" + id + "\"" : "";
         output += ");\n";
     }
 
@@ -218,12 +219,12 @@ var compiler = (function () {
     function renderBeginType(type, inheritedType) {
         addIndentation();
 
-        output += ELEM_NS + type + " = function (id, parent) {\n";
+        output += ELEM_NS + type + " = function (engine, id, parent) {\n";
 
         ++index;
         addIndentation();
 
-        output += "var " + ELEM_PREFIX + " = new " + ELEM_NS + inheritedType + "(id, parent);\n";
+        output += "var " + ELEM_PREFIX + " = new " + ELEM_NS + inheritedType + "(engine, id, parent);\n";
     }
 
     /*
@@ -310,7 +311,7 @@ var compiler = (function () {
         addIndentation();
         output += ELEM_PREFIX + ".create" + property + " = function () {\n";
         addIndentation(1);
-        output += "return new " + ELEM_NS + value + "();\n";
+        output += "return new " + ELEM_NS + value + "(" + ENGINE_VAR + ");\n";
         addIndentation();
         output += "}\n";
     }
@@ -576,9 +577,4 @@ var compiler = (function () {
     return compiler;
 }());
 
-// TODO is this the proper check?
-if (typeof window === 'undefined') {
-    module.exports = compiler;
-} else {
-    window.Bungee.Compiler = compiler;
-}
+module.exports = compiler;

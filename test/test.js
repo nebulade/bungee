@@ -6,23 +6,23 @@
 var assert = require('assert');
 var should = require('should');
 
-var bungee = require('../index');
+var Bungee = require('../index');
 
 describe('Bungee API has', function () {
     it ('tokenizer', function () {
-        should.exist(bungee.tokenizer);
+        should.exist(Bungee.Tokenizer);
     });
 
     it ('tokenizer parse', function () {
-        should.exist(bungee.tokenizer.parse);
+        should.exist(Bungee.Tokenizer.parse);
     });
 
     it ('compile data', function () {
-        should.exist(bungee.compile);
+        should.exist(Bungee.compile);
     });
 
     it ('compile file', function () {
-        should.exist(bungee.compileFile);
+        should.exist(Bungee.compileFile);
     });
 });
 
@@ -33,7 +33,7 @@ describe('Tokenizer', function () {
 
             tmp += "// Foobar\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             tokens.should.have.length(0);
         });
 
@@ -46,7 +46,7 @@ describe('Tokenizer', function () {
             tmp += " Another line\n";
             tmp += "End line of comment */\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             tokens.should.have.length(0);
         });
     });
@@ -70,7 +70,7 @@ describe('Tokenizer', function () {
             tmp += "Element {\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -83,7 +83,7 @@ describe('Tokenizer', function () {
 
             tmp += "Element {}";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -98,7 +98,7 @@ describe('Tokenizer', function () {
             tmp += "left: 100\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -118,7 +118,7 @@ describe('Tokenizer', function () {
             tmp += "width: 50\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -144,7 +144,7 @@ describe('Tokenizer', function () {
             tmp += "c: noQuote\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -171,7 +171,7 @@ describe('Tokenizer', function () {
             tmp += "c: noQuote;\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -198,7 +198,7 @@ describe('Tokenizer', function () {
             tmp += "myProperty: 2\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -216,7 +216,7 @@ describe('Tokenizer', function () {
             tmp += "prop2erty3: 2\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -234,7 +234,7 @@ describe('Tokenizer', function () {
             tmp += "1property: 1\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -252,7 +252,7 @@ describe('Tokenizer', function () {
             tmp += "_prop: 2\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -269,7 +269,7 @@ describe('Tokenizer', function () {
             tmp += "Element2 {\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element2'],
                 ['SCOPE_START', undefined],
@@ -283,7 +283,7 @@ describe('Tokenizer', function () {
             tmp += "Element_Item {\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element_Item'],
                 ['SCOPE_START', undefined],
@@ -297,7 +297,7 @@ describe('Tokenizer', function () {
             tmp += "Element-Item {\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element-Item'],
                 ['SCOPE_START', undefined],
@@ -311,7 +311,7 @@ describe('Tokenizer', function () {
             tmp += "El12-ement-Item {\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'El12-ement-Item'],
                 ['SCOPE_START', undefined],
@@ -326,7 +326,7 @@ describe('Tokenizer', function () {
             tmp += "property: window.does.not.exist.alert('something'); var blah = \"meh\";\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             verifyTokens(tokens, [
                 ['ELEMENT', 'Element'],
                 ['SCOPE_START', undefined],
@@ -342,7 +342,7 @@ describe('Tokenizer', function () {
 describe('Compiler', function () {
     describe('compile large jump file', function () {
         it('64000+ lines', function (done) {
-            bungee.compileFile("snippets/snippet-001.jmp", {}, function (error, result) {
+            Bungee.compileFile("snippets/snippet-001.jmp", {}, function (error, result) {
                 if (error) {
                     throw(error);
                 }
@@ -360,9 +360,9 @@ describe('Compiler', function () {
             tmp += "property: \"alert('something');\"\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             should.exist(tokens);
-            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
+            Bungee.Compiler.createObjectTree(tokens, {}, function (error, result) {
                 should.not.exist(error);
                 should.exist(result);
 
@@ -378,9 +378,9 @@ describe('Compiler', function () {
             tmp += "foobar: 1337\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             should.exist(tokens);
-            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
+            Bungee.Compiler.createObjectTree(tokens, {}, function (error, result) {
                 should.not.exist(error);
                 should.exist(result);
 
@@ -395,9 +395,9 @@ describe('Compiler', function () {
             tmp += "1property: 1;\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             should.exist(tokens);
-            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
+            Bungee.Compiler.createObjectTree(tokens, {}, function (error, result) {
                 should.exist(error);
                 error.code.should.be.equal(7);
                 error.line.should.be.equal(2);
@@ -414,9 +414,9 @@ describe('Compiler', function () {
             tmp += "id: myelement\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             should.exist(tokens);
-            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
+            Bungee.Compiler.createObjectTree(tokens, {}, function (error, result) {
                 should.not.exist(error);
                 should.exist(result);
 
@@ -438,9 +438,9 @@ describe('Compiler', function () {
             tmp += "id: myelement;\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             should.exist(tokens);
-            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
+            Bungee.Compiler.createObjectTree(tokens, {}, function (error, result) {
                 should.not.exist(error);
                 should.exist(result);
 
@@ -464,9 +464,9 @@ describe('Compiler', function () {
             tmp += "delegate2: Item\n";
             tmp += "}\n";
 
-            var tokens = bungee.tokenizer.parse(tmp);
+            var tokens = Bungee.Tokenizer.parse(tmp);
             should.exist(tokens);
-            bungee.compiler.createObjectTree(tokens, {}, function (error, result) {
+            Bungee.Compiler.createObjectTree(tokens, {}, function (error, result) {
                 should.not.exist(error);
                 should.exist(result);
 
@@ -491,7 +491,7 @@ describe('Compiler', function () {
         });
 
         it('with code block', function (done) {
-            bungee.compileFile("snippets/snippet-002.jmp", {}, function (error, result) {
+            Bungee.compileFile("snippets/snippet-002.jmp", {}, function (error, result) {
                 if (error) {
                     throw(error);
                 }
@@ -501,7 +501,7 @@ describe('Compiler', function () {
         });
 
         it('with object', function (done) {
-            bungee.compileFile("snippets/snippet-003.jmp", {}, function (error, result) {
+            Bungee.compileFile("snippets/snippet-003.jmp", {}, function (error, result) {
                 if (error) {
                     throw(error);
                 }
@@ -513,7 +513,7 @@ describe('Compiler', function () {
 
     describe('error', function () {
         it('line number with inline javascript blocks', function (done) {
-            bungee.compileFile("snippets/snippet-000.jmp", {}, function (error, result) {
+            Bungee.compileFile("snippets/snippet-000.jmp", {}, function (error, result) {
                 console.log(error);
                 console.log(result);
                 should.exist(error);

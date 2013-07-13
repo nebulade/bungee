@@ -2,12 +2,15 @@
 MODULES_FOLDER    = modules
 
 BUNGEE_SOURCES    = $(filter-out src/loader.js, $(wildcard src/*.js))
+BUNGEE_BROWSER    = browser.js
 BUNGEE            = bungee.js
 BUNGEE_MINIFIED   = bungee.min.js
 
 MODULES_SOURCES   = $(wildcard $(MODULES_FOLDER)/*.jmp)
 MODULES           = $(MODULES_SOURCES:%.jmp=%.js)
 MODULES_MINIFIED  = $(MODULES:%.js=%.min.js)
+
+BROWSERIFY        = ./node_modules/browserify/bin/cmd.js
 
 MINIFIER          = uglifyjs
 MINIFIER_OPTIONS  =
@@ -29,21 +32,19 @@ endif
 
 build: $(BUNGEE_MINIFIED)
 
-source: src/loader.js
-	@echo "==> Create $(BUNGEE) which loads other library parts at runtime."
-	@cp src/loader.js $(BUNGEE)
-	@cp src/loader.js $(BUNGEE_MINIFIED)
+dependencies: package.json
+	npm install
 
 modules: $(MODULES_MINIFIED)
 
 clean:
 	@rm -f $(BUNGEE) $(BUNGEE_MINIFIED) $(MODULES) $(MODULES_MINIFIED)
 
-$(BUNGEE): $(BUNGEE_SOURCES)
+$(BUNGEE): dependencies $(BUNGEE_SOURCES) $(BUNGEE_BROWSER)
 	@echo "==> Remove old batched $(BUNGEE) file."
 	@rm -f $(BUNGEE)
 	@echo "==> Create batched $(BUNGEE) file."
-	@cat $(BUNGEE_SOURCES) >> $(BUNGEE)
+	$(BROWSERIFY) $(BUNGEE_BROWSER) -o $(BUNGEE)
 
 %.js : %.jmp
 	@echo "==> Generate JavaScript from JUMP ($< -> $@)"

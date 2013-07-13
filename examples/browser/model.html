@@ -79,11 +79,15 @@
 
             Bungee.useQueryFlags();
             Bungee.compileScriptTags();
-            window.app = {};
-            window.app.ui = Bungee.ModelExample();
-            Bungee.Engine.start();
 
-            var anotherModel = new Bungee.Collection();
+            var engine = new Bungee.Engine(new Bungee.RendererDOM());
+
+            window.app = {};
+            window.app.ui = Bungee.Modules.ModelExample(Bungee, engine);
+
+            engine.start();
+
+            var anotherModel = new Bungee.Collection(engine);
             anotherModel.addProperty("a", 1337);
             anotherModel.addProperty("b", 42);
             anotherModel.initializeBindings();
