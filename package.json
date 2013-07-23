@@ -1,6 +1,6 @@
 {
     "name": "bungee",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "Bungee is a declarative language engine to run inside a browser. The node module contains the offline compiler.",
     "keywords": [
         "qml",
@@ -35,7 +35,7 @@
     "dependencies": {
         "optimist": "*",
         "esprima": "*",
-        "browserify": "*"
+        "browserify": "2.17.4"
     },
     "devDependencies": {
         "mocha": "*",

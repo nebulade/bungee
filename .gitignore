@@ -1,6 +1,4 @@
 node_modules/
-bungee.js
-bungee.min.js
 *.jmp.js
 *.jump.js
 test/npm-debug.log
