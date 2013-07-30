@@ -98,16 +98,17 @@ module.exports = (function () {
                     o = new Date();
                 }
 
-                if (result.indexOf('module.exports = ') === 0) {
-                    if (!ret.Modules) {
-                        ret.Modules = {};
-                    }
+                // TODO maybe we can find a better solution here - Johannes
+                // _scriptTagCompile is a flag which will be used in the eval'ed
+                // script to determine the runtime environment.
+                // 'module.exports' would not be sufficient, as we would have such a closure
+                // in this case from including this index.js file.
+                var _scriptTagCompile = true;
+                var tmp = eval(result);
+                _scriptTagCompile = undefined;
 
-                    result = result.replace('module.exports = ', 'Bungee.Modules.' + moduleName + ' = ');
-                    eval(result);
-                } else {
-                    var tmp = eval(result);
-                    tmp(Bungee, engine);
+                if (typeof tmp === 'function') {
+                    tmp(window.Bungee, engine);
                 }
 
                 if (ret.verbose || ret.debug) {

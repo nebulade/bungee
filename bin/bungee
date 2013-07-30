@@ -52,7 +52,7 @@ if (argv.m) {
     options.module = path.basename(input, '.jmp');
 }
 
-log && console.log(" Script will be available under Bungee.Modules." + options.module);
+log && console.log(" If not used with 'require()', script will be available under Bungee.Modules." + options.module);
 
 bungee.compileFile(input, options, function (error, result) {
     if (error) {

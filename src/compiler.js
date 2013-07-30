@@ -97,7 +97,7 @@ var compiler = (function () {
      */
     function renderBegin(options) {
         if (options.module) {
-            output += "module.exports = function (Bungee, " + ENGINE_VAR + ") {\n";
+            output += "var output = function (Bungee, " + ENGINE_VAR + ") {\n";
         } else {
             output += "(function () { return function (Bungee, " + ENGINE_VAR + ") {\n";
         }
@@ -173,7 +173,18 @@ var compiler = (function () {
         if (options.module) {
             addIndentation();
             output += "return " + ELEM_PREFIX + ";\n";
-            output += "};\n";
+            output += "};\n\n";
+            output += "if (typeof _scriptTagCompile === 'undefined' && typeof module !== 'undefined') { \n";
+            addIndentation();
+            output += "module.exports = output;\n";
+            output += "} else { \n";
+            addIndentation();
+            output += "window.Bungee = window.Bungee || {};\n";
+            addIndentation();
+            output += "window.Bungee.Modules = window.Bungee.Modules || {};\n";
+            addIndentation();
+            output += "window.Bungee.Modules['" + options.module + "'] = output;\n";
+            output += "}\n";
         } else {
             addIndentation();
             output += "};\n";

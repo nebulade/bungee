@@ -1,4 +1,3 @@
-
 Label @ Text {
     color: "#3C7DC1"
     fontSize: "32px"
@@ -199,4 +198,64 @@ GridView @ View {
             }
         }
     }
+}
+
+PercentHLayout @ Item {
+    top: this.title.height
+    width: this.parent.width
+    height: 50
+    spacing: 5
+
+    Label {
+        percentage: 0.2
+        text: "Server"
+    }
+
+    Input {
+        placeholder: "http://localhost:3000"
+        height: this.parent.height
+        percentage: 0.6
+    }
+
+    Button {
+        label: "Sync"
+        height: this.parent.height
+        percentage: 0.2
+    }
+
+    function _layout(): {
+        var kids = this.children();
+        var sibling = undefined;
+        var count = 0;
+        var containerWidth = this.width;
+
+        for (var i in kids) {
+            ++count;
+        }
+
+        console.log(count);
+
+        containerWidth -= (count-1) * this.spacing;
+
+        for (var i in kids) {
+            kids[i].width = containerWidth * kids[i].percentage;
+            kids[i].left = sibling ? (sibling.left + sibling.width + this.spacing) : 0;
+            sibling = kids[i];
+        }
+    }
+
+    function _setupListeners(): {
+        var kids = this.children();
+        var that = this;
+
+        for (var i in kids) {
+            if (kids.hasOwnProperty(i)) {
+                kids[i].addChanged('percentage', function () { that._layout() });
+            }
+        }
+
+        this._layout();
+    }
+
+    onload: this._setupListeners();
 }
