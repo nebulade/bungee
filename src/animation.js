@@ -227,7 +227,6 @@ Bungee.Behavior = function (engine, id, parent) {
 
     function updateRules() {
         var rule = "";
-        var rule = "";
         var gotProperties = false;
 
         if (!Bungee._style) {
