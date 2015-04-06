@@ -188,12 +188,11 @@ Bungee.Animation = function (engine, id, parent) {
             dirty = false;
         }
 
-        if (elem._element)
-            elem._element.className = animationName;
+        if (elem._element) elem._element.element.classList.add(animationName);
     };
 
     elem.stop = function () {
-        elem._element.className = "";
+        elem._element.element.classList.remove(animationName);
     };
 
     elem.restart = function () {
