@@ -10,6 +10,9 @@
  **************************************************
  */
 
+/* jshint node:true */
+/* jshint browser:true */
+
 "use strict";
 
 var fs = require('fs');

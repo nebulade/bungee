@@ -1,3 +1,6 @@
+/* jshint node:true */
+/* jshint browser:true */
+
 'use strict';
 
 var Bungee = require('./index.js');
