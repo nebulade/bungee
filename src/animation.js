@@ -227,7 +227,7 @@ Bungee.Behavior = function (engine, id, parent) {
 
     function updateRules() {
         var rule = "";
-        var rulepart = "";
+        var rule = "";
         var gotProperties = false;
 
         if (!Bungee._style) {
@@ -257,29 +257,22 @@ Bungee.Behavior = function (engine, id, parent) {
         for (var property in elem._properties) {
             if (elem.hasOwnProperty(property) && property !== 'target') {
                 if (gotProperties) {
-                    rulepart += ", ";
+                    rule += ", ";
                 } else {
                     gotProperties = true;
                 }
 
-                rulepart += property + " " + elem[property];
+                rule += property + " " + elem[property];
             }
         }
-
-        rule += "." + animationName + " {\n";
-        rule += "   -webkit-transition: " + rulepart + ";\n";
-        rule += "   transition: " + rulepart + ";\n";
-        rule += "}\n";
 
         // only actually insert rules if there is no property undefined
         if (gotProperties && rule.indexOf('undefined') === -1) {
             Bungee._debugAnimation && console.log("Bungee Behavior rule", rule);
 
-            try {
-                Bungee._style.sheet.insertRule(rule, Bungee._style.sheet.rules.length);
-            } catch (e) {
-                Bungee._debugAnimation && console.error("Bungee Animation rule", rule, "could not be inserted.", e);
-            }
+            elem.parent.element.style['transition'] = rule;
+            elem.parent.element.style['-webkit-transition'] = rule;
+
             hasRules = true;
         }
     }
